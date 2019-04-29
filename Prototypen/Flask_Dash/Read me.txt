@@ -12,3 +12,5 @@ Python: https://www.python.org/downloads/
 Für Flask sollte folgender Kommandozeilenbefehl ausreichen: pip install Flask
 
 Falls es zu Problemen mit Dash kommen sollte, ist die Installation hier zu finden: https://dash.plot.ly/installation
+
+Bitte beachten Sie, dass alles für den Betrieb unter Windows ausgelegt ist.
