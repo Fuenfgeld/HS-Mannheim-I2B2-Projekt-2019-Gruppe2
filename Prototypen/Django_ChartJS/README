@@ -1,0 +1,13 @@
+Anleitung
+1. Downloaden Sie bitte die Zip- Datei
+2. Entpacken Sie bitte die Zip-Datei
+3. Öffnen Sie  bitte den Ordner i2b2 und wieder den Ordner i2b2
+4. Führen Sie bitte die cmd Datei aus
+5. Auf ihrem localhost mit Port 8000 sollte eine Django Application laufen
+
+Für die Ausführung wird auf jeden Fall Python, Django und Pandas benötigt. 
+Python: https://www.python.org/downloads/
+
+Für Django und Pandas sollte folgender Kommandozeilenbefehl ausreichen: pip install django sowie pip install pandas
+
+Bitte beachten Sie, dass alles für den Betrieb unter Windows ausgelegt ist.
