@@ -3,7 +3,7 @@ Anleitung für den Ordner testFlask:
 2. Entpacken Sie bitte die Zip-Datei
 3. Öffnen Sie  bitte den Ordner und klicken Sie auf env
 4. Klicken Sie bitte auf den Ordner app
-5. Führen Sie bitte die cmd Datei auf
+5. Führen Sie bitte die cmd Datei aus
 6. Auf ihrem localhost mit Port 5000 sollte eine Dash Application laufen
 
 Für die Ausführung wird auf jeden Fall Python und Flask benötigt. 
