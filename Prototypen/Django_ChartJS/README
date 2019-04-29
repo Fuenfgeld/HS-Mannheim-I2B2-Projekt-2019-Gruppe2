@@ -5,6 +5,10 @@ Anleitung
 4. Führen Sie bitte die cmd Datei aus
 5. Auf ihrem localhost mit Port 8000 sollte eine Django Application laufen
 
+ODER
+
+einfach die Projektmappe in Visual Studio öffnen und das Projekt starten.
+
 Für die Ausführung wird auf jeden Fall Python, Django und Pandas benötigt. 
 Python: https://www.python.org/downloads/
 
