@@ -8,7 +8,7 @@ from dash_sunburst import Sunburst
 import trees2
 import treestructuresidenavigation as tsn
 import tree_dictionary_import_export as tie
-connection = psy.connect(database="i2b2", user="i2b2", password="demouser", host="129.206.7.79", port="5432")
+connection = psy.connect(database="i2b2", user="i2b2", password="demouser", host="129.206.7.75", port="5432")
 cursor = connection.cursor()
 df = pd.read_sql_query("Select *From i2b2demodata.patient_dimension", con=connection)
 
@@ -29,10 +29,10 @@ sunburst_data = jsonbaum
 app.layout = html.Div([
 
     html.Div([
-    html.H1('I2B2 Ersatz'),
+    html.H1('IndiGraph'),
     dcc.Tabs(id="tab-navigation-graph", value='tab-navigation-graphen', children=[
         dcc.Tab(label='Navigation', value='tab-navigation-graphen'),
-        dcc.Tab(label='Graph', value='tab-graph'),
+        dcc.Tab(label='Diagramm', value='tab-graph'),
     ]),
     html.Div([
     dcc.Upload(

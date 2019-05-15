@@ -1,0 +1,14 @@
+.Div1{
+    overflow-x: scroll;
+}
+.Div2{
+    overflow-y: scroll;
+}
+.Div3{
+    overflow-x: scroll;
+    overflow-y: scroll;
+}
+
+
+
+

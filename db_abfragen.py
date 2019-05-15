@@ -1,7 +1,7 @@
 import pandas.io.sql as psql
 import psycopg2 as psy
 
-connection = psy.connect(database="i2b2", user="i2b2", password="demouser", host="129.206.7.79", port="5432")
+connection = psy.connect(database="i2b2", user="i2b2", password="demouser", host="129.206.7.75", port="5432")
 
 
 
