@@ -5,6 +5,7 @@ from dash.dependencies import Input, Output
 import dash_html_components as html
 import dash_core_components as dcc
 import plotly.graph_objs as go
+import treestructuresidenavigation as tsn
 from dash_sunburst import Sunburst
 import tree_dictionary_import_export as tie
 connection = psy.connect(database="i2b2", user="i2b2", password="demouser", host="129.206.7.75", port="5432")
@@ -44,7 +45,7 @@ app.layout = html.Div([
                      style={'height' : '800px', 'width': '70%', 'float': 'right', 'borderStyle' : 'solid'}),
             html.Div(children= 'Search',
                      style={'height' : '25px', 'width': '29%', 'borderStyle' : 'solid'}),
-            html.Div(className= 'Div3', children='Navigation',
+            html.Div(className= 'Div3', children=['Navigation', html.Ul(tsn.add_groundlevel())],
                      style={'height' : '250px', 'width': '29%', 'border-left' : 'solid', 'border-right' : 'solid', 'border-bottom' : 'solid'}),
             html.Div(children=['Number of patients: ', df['patient_num'].count()],
                      style={'height' : '25px', 'width': '29%', 'border-left' : 'solid', 'border-right' : 'solid', 'border-bottom' : 'solid'}),
