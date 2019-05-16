@@ -1,6 +1,6 @@
 # import dash_core_components as dcc
 import dash_html_components as html
-
+import listtree_dictionary_import_export
 import db_abfragen as db  # import from the file with the database query
 
 # import plotly.graph_objs as go
@@ -35,6 +35,7 @@ def add_groundlevel():
             html.Ul(add_second_level(icdCodes[i]), className='nested')],
         ))
 
+    #listtree_dictionary_import_export.treedictionary_in_pickle_exportieren(listGroundLevelDiv)
     return listGroundLevelDiv
 
 

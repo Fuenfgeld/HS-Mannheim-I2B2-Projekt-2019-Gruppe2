@@ -2,7 +2,7 @@
     overflow-x: scroll;
 }
 .Div2{
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 .Div3{
     overflow-x: scroll;
