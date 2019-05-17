@@ -45,7 +45,6 @@ app.layout = html.Div([
             dcc.Input(
                 placeholder='Search',
                 type='text',
-                style={'textAlign': 'center'}
             )),
             html.Div(className='Navigation', children=['Navigation']),
             html.Div(className='NumberOfPatients', children=['Number of patients: ', df['patient_num'].count()]),
