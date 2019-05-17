@@ -24,8 +24,6 @@ app.css.config.serve_locally = True
 
 sunburst_data = baum1
 
-
-
 app.layout = html.Div([
     html.H1(children = 'IndiGraph', style = {'textAlign' : 'center', 'color' : '#0E23BF', 'backgroundColor':'#AED6F1'}),
     dcc.Tabs(id='tabs', children=[
@@ -33,36 +31,24 @@ app.layout = html.Div([
             html.Div([
                 dcc.Upload(
                     id = 'upload-data',
+                    className= 'DragAndDrop',
                     children= html.Div(['Drag and Drop']),
-                    style= {'width': '100%',
-                    'height': '60px',
-                    'lineHeight': '60px',
-                    'borderWidth': '1px',
-                    'borderStyle': 'dashed',
-                    'borderRadius': '5px',
-                    'textAlign': 'center',
-                    'margin': '10px',
-                    'border-color' : 'blue'},
                     multiple=True
                  )
             ], style= {'textAlign' : 'center'}),
-            html.Div(children = html.Div(children=[Sunburst(id='sun', data=sunburst_data)], style= {'margin' : '200px'}),
-                     style={'height' : '800px', 'width': '70%', 'float': 'right', 'borderStyle' : 'solid'}),
-            html.Div(children=
+            html.Div(className= 'Sunburst', children = html.Div(children=[Sunburst(id='sun', data=sunburst_data)], style= {'margin' : '200px'}),),
+            html.Div(className= 'Search', children=
                      dcc.Input(
                          placeholder= 'Search',
                          type = 'text',
                          style= {'textAlign' : 'center'}
-                     )
-                     ,style={'height' : '25px', 'width': '29%', 'borderStyle' : 'solid'}),
-            html.Div(className= 'Div3', children=['Navigation', baum2],
-                     style={'textAlign' : 'center', 'height' : '250px', 'width': '29%', 'border-left' : 'solid', 'border-right' : 'solid', 'border-bottom' : 'solid'}),
-            html.Div(children=['Number of patients: ', df['patient_num'].count()],
-                     style={'textAlign' : 'center', 'height' : '25px', 'width': '29%', 'border-left' : 'solid', 'border-right' : 'solid', 'border-bottom' : 'solid'}),
-            html.Div(className= 'Div2',
+                     )),
+            html.Div(className= 'Navigation', children=['Navigation', baum2]),
+            html.Div(className= 'NumberOfPatients', children=['Number of patients: ', df['patient_num'].count()]),
+            html.Div(className= 'NavSex',
                 children=['Sex',
                         dcc.Graph(
-                        id='graph-geschlecht2',
+                        id='sex',
                         figure={
                          'data': [{
                             'x': df['sex_cd'],
@@ -72,12 +58,11 @@ app.layout = html.Div([
 
                         }
                     )
-            ],
-             style={'textAlign' : 'center', 'height' : '250px', 'width': '29%', 'border-left' : 'solid', 'border-right' : 'solid', 'border-bottom' : 'solid'}),
-            html.Div(className= 'Div2',
+            ]),
+            html.Div(className= 'NavAge',
                 children=['Age',
                         dcc.Graph(
-                         id='graph-alter',
+                         id='age',
                         figure={
                             'data':[{
                             'x':df['age_in_years_num'],
@@ -86,29 +71,21 @@ app.layout = html.Div([
                         }]
                     }
                 )
-            ],
-            style={'textAlign' : 'center', 'height' : '250px', 'width': '29%', 'border-left' : 'solid', 'border-right' : 'solid', 'border-bottom' : 'solid'}),
+            ]),
          ]),
         dcc.Tab(label='Diagram', children=[
             html.Div([
                 dcc.Upload(
                     id = 'upload-data2',
+                    className= 'DragAndDrop',
                     children= html.Div(['Drag and Drop']),
-                    style= {'width': '100%',
-                    'height': '60px',
-                    'lineHeight': '60px',
-                    'borderWidth': '1px',
-                    'borderStyle': 'dashed',
-                    'borderRadius': '5px',
-                    'textAlign': 'center',
-                    'margin': '10px'},
                     multiple=True
                  )
             ], style= {'textAlign' : 'center'}),
-            html.Div(className= 'Div3', children = [
+            html.Div(className= 'Dia', children = [
                 html.Div(children= ['Sex',
                         dcc.Graph(
-                        id='graph-geschlecht',
+                        id='sex2',
                         figure={
                          'data': [{
                             'x': df['sex_cd'],
@@ -121,7 +98,7 @@ app.layout = html.Div([
             ], style= {'textAlign' : 'center'}),
                 html.Div(children= ['Age',
                         dcc.Graph(
-                         id='graph-alter2',
+                         id='age2',
                         figure={
                             'data':[{
                             'x':df['age_in_years_num'],
@@ -131,18 +108,14 @@ app.layout = html.Div([
                     }
                 )
             ], style= {'textAlign' : 'center'})
-            ],
-                     style={'height' : '800px', 'width': '70%', 'float': 'right', 'borderStyle' : 'solid'}),
-            html.Div(children=
+            ]),
+            html.Div(className= 'Search', children=
                      dcc.Input(
                          placeholder= 'Search',
                          type= 'text'
-                     ),
-                     style={'textAlign' : 'center', 'height' : '25px', 'width': '29%', 'borderStyle' : 'solid'}),
-            html.Div(className= 'Div3', children=['Navigation', baum2],
-                     style={'textAlign' : 'center', 'height' : '250px', 'width': '29%', 'border-left' : 'solid', 'border-right' : 'solid', 'border-bottom' : 'solid'}),
-            html.Div(children=['Types '],
-                     style={'textAlign' : 'center', 'height' : '525px', 'width': '29%', 'border-left' : 'solid', 'border-right' : 'solid', 'border-bottom' : 'solid'}),
+                     )),
+            html.Div(className= 'Navigation', children=['Navigation', baum2]),
+            html.Div(className= 'Types', children='Types '),
         ]),
     ]),
 ])

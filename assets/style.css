@@ -1,14 +1,91 @@
-.Div1{
-    overflow-x: scroll;
-}
-.Div2{
-    overflow-y: auto;
-}
-.Div3{
-    overflow-x: scroll;
-    overflow-y: scroll;
+
+.DragAndDrop{
+    height: 60px;
+    width: 100%;
+    line-height: 60px;
+    text-align: center;
+    margin: 10px;
+    border-width: 1px;
+    border-style: dashed;
+    border-radius: 5px;
+    border-color: blue;
 }
 
+.Sunburst{
+    height: 800px;
+    width: 70%;
+    float: right;
+    border-style: solid;
+}
+
+.Search{
+    height: 25px;
+    width: 29%;
+    border-style: solid;
+}
+
+.Navigation{
+    overflow: scroll;
+    height: 250px;
+    width: 29%;
+    text-align: center;
+    border-left: solid;
+    border-right: solid;
+    border-bottom: solid;
+}
+
+.NumberOfPatients{
+    height: 25px;
+    width: 29%;
+    text-align: center;
+    border-left: solid;
+    border-right: solid;
+    border-bottom: solid;
+}
+
+.NavSex{
+    overflow: scroll;
+    height: 250px;
+    width: 29%;
+    text-align: center;
+    border-left: solid;
+    border-right: solid;
+    border-bottom: solid;
+}
+
+.NavAge{
+    overflow: scroll;
+    height: 250px;
+    width: 29%;
+    text-align: center;
+    border-left: solid;
+    border-right: solid;
+    border-bottom: solid;
+}
+
+.Dia{
+    overflow: scroll;
+    height: 800px;
+    width: 70%;
+    float: right;
+    border-style: solid;
+}
+
+.Types{
+    height: 525px;
+    width: 29%;
+    text-align: center;
+    border-left: solid;
+    border-right: solid;
+    border-bottom: solid;
+}
+
+.Scroll{
+    overflow: scroll;
+    border-left: solid;
+    border-right: solid;
+    border-bottom: solid;
+}
 
 
 
