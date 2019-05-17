@@ -54,12 +54,12 @@ def umwandeln_zu_sql_statement(queryelements):
 
 def query_umwandeln_in_ergebniss_dataframes(db_connection, query=[]):
     if query==[]:
-        sql_statement="SELECT patient_num, sex_cd, age_in_years_num from i2b2demodata.patient_dimension where age_in_years_num =19"#Frage ob wir bei der Grundgesamtheit andere Informationen als die Standartsattribute wie patient_num, sex-cd und age_in_years_num
+        sql_statement="SELECT patient_num, sex_cd, age_in_years_num from i2b2demodata.patient_dimension"#Frage ob wir bei der Grundgesamtheit andere Informationen als die Standartsattribute wie patient_num, sex-cd und age_in_years_num
     else:
         sql_statement=umwandeln_zu_sql_statement(query)
 
     query_ergebnis_dataframe=abfrage_durchführen(sql_statement,db_connection=db_connection)
-    geschlechter_dataframe=query_ergebnis_dataframe['sex_cd']
+    geschlechter_dataframe=query_ergebnis_dataframe['sex_cd'].value_counts()
     altersverteilung_dataframe=query_ergebnis_dataframe['age_in_years_num']
     patienten_anzahl=query_ergebnis_dataframe['patient_num'].count()
     return patienten_anzahl, geschlechter_dataframe, altersverteilung_dataframe

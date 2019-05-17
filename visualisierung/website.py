@@ -20,6 +20,7 @@ baum1 = tie.treedictionary_aus_pickle_importieren()
 baum2 = html.Ul(listtree.treedictionary_aus_pickle_importieren())
 df = log.all_patients()
 
+
 app = dash.Dash('')
 app.scripts.config.serve_locally = True
 app.css.config.serve_locally = True
@@ -50,17 +51,9 @@ app.layout = html.Div([
             html.Div(className='NumberOfPatients', children=['Number of patients: ', df['patient_num'].count()]),
             html.Div(className='NavSex',
                      children=['Sex',
-                               dcc.Graph(
-                                   id='sex',
-                                   figure={
-                                       'data': [{
-                                           'x': df['sex_cd'],
-                                           'y': [10, 20, 30, 40, 50],
-                                           'type': 'bar'
-                                       }]
-
-                                   }
-                               )
+                                dcc.Graph(
+                                    id='sex',
+                                    figure=go.Figure( data=[go.Pie(labels=['Male', 'Female'], values=df['sex_cd'].value_counts())]))
                                ]),
             html.Div(className='NavAge',
                      children=['Age',
@@ -88,18 +81,15 @@ app.layout = html.Div([
             html.Div(className='Dia', children=[
                 # Create Div to place a conditionally visible element inside
                 html.Div([
-                    html.H4(children="Age", style={'textAlign': 'center'}),
                     dcc.Graph(
-                        id='diagramm-alter',
-                        figure={'data': [{'x': [20, 30, 40], 'y': [10, 20, 30, 40, 50, 60, 70, 80], 'type': 'bar'}]})
-                ], style={'display': 'block'}  # <-- This is the line that will be changed by the checklist callback
-                ),
-                html.H4(children='Gender', style={'textAlign': 'center'}),
-                dcc.Graph(
-                    id='diagramm-geschlecht',
-                    figure=go.Figure(
-                        data=[go.Pie(labels=['Male', 'Female'],
-                                     values=[20, 80])]))
+                        id='age2',
+                        figure={'data': [{'x': df['age_in_years_num'],
+                                          'y': [10, 20, 30, 40, 50, 60, 70, 80],
+                                          'type': 'bar'}]}),
+                    dcc.Graph(
+                        id='sex2',
+                        figure=go.Figure( data=[go.Pie(labels=['Male', 'Female'], values=df['sex_cd'].value_counts())]))
+                ], style={'display': 'block'}),  # <-- This is the line that will be changed by the checklist callback
             ], style={'display': 'block', 'textAlign': 'center'}),
             html.Div(className='Search', children=
             dcc.Input(
@@ -123,7 +113,7 @@ app.layout = html.Div([
 
 
 @app.callback(
-    Output(component_id='diagramm-alter', component_property='style'),
+    Output(component_id='age2', component_property='style'),
     [Input(component_id='checklistAge', component_property='values')])
 def show_hide_element(visibility_state):
     if visibility_state == ['on']:
@@ -133,7 +123,7 @@ def show_hide_element(visibility_state):
 
 
 @app.callback(
-    Output(component_id='diagramm-geschlecht', component_property='style'),
+    Output(component_id='sex2', component_property='style'),
     [Input(component_id='checklistGender', component_property='values')])
 def show_hide_element(visibility_state):
     if visibility_state == ['on']:
