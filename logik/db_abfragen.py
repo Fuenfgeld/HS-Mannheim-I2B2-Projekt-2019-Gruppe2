@@ -1,11 +1,14 @@
 import pandas.io.sql as psql
 import psycopg2 as psy
+import pandas as pd
 
 connection = psy.connect(database="i2b2", user="i2b2", password="demouser", host="129.206.7.75", port="5432")
 
 
 
-
+def all_patients():
+    df = pd.read_sql_query("Select *From i2b2demodata.patient_dimension", con=connection)
+    return df
 
 def get_icd_level_query_df(icdLevel):
     dfICDLevel = psql.read_sql_query(f"""

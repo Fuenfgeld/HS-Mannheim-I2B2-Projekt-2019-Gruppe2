@@ -5,8 +5,7 @@ from dash.dependencies import Input, Output
 import dash_html_components as html
 import dash_core_components as dcc
 from dash_sunburst import Sunburst
-import trees2
-import treestructuresidenavigation as tsn
+from logik import treestructuresidenavigation as tsn
 import tree_dictionary_import_export as tie
 connection = psy.connect(database="i2b2", user="i2b2", password="demouser", host="129.206.7.75", port="5432")
 cursor = connection.cursor()

@@ -1,7 +1,6 @@
 # import dash_core_components as dcc
 import dash_html_components as html
-import listtree_dictionary_import_export
-import db_abfragen as db  # import from the file with the database query
+from logik import db_abfragen as db
 
 # import plotly.graph_objs as go
 

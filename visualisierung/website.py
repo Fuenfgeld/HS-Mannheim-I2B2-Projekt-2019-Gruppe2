@@ -1,28 +1,29 @@
 import dash
 import psycopg2 as psy
 import pandas as pd
-from dash.dependencies import Input, Output
 import dash_html_components as html
 import dash_core_components as dcc
-import plotly.graph_objs as go
-import treestructuresidenavigation as tsn
 from dash_sunburst import Sunburst
 import tree_dictionary_import_export as tie
 import listtree_dictionary_import_export as listtree
-connection = psy.connect(database="i2b2", user="i2b2", password="demouser", host="129.206.7.75", port="5432")
-cursor = connection.cursor()
-df = pd.read_sql_query("Select *From i2b2demodata.patient_dimension", con=connection)
+from logik import db_abfragen as log
+from datenhaltung import connection as connect
+
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-baum = tie.treedictionary_aus_pickle_importieren()
-baumliste = html.Ul(listtree.treedictionary_aus_pickle_importieren())
+connection = connect.create_connection()
+baum1 = tie.treedictionary_aus_pickle_importieren()
+baum2 = html.Ul(listtree.treedictionary_aus_pickle_importieren())
+df = log.all_patients()
 
 app = dash.Dash('')
 app.scripts.config.serve_locally = True
 app.css.config.serve_locally = True
 
-sunburst_data = baum
+sunburst_data = baum1
+
+
 
 app.layout = html.Div([
     html.H1(children = 'IndiGraph', style = {'textAlign' : 'center', 'color' : '#0E23BF', 'backgroundColor':'#AED6F1'}),
@@ -39,22 +40,24 @@ app.layout = html.Div([
                     'borderStyle': 'dashed',
                     'borderRadius': '5px',
                     'textAlign': 'center',
-                    'margin': '10px'},
+                    'margin': '10px',
+                    'border-color' : 'blue'},
                     multiple=True
                  )
-            ]),
+            ], style= {'textAlign' : 'center'}),
             html.Div(children = html.Div(children=[Sunburst(id='sun', data=sunburst_data)], style= {'margin' : '200px'}),
                      style={'height' : '800px', 'width': '70%', 'float': 'right', 'borderStyle' : 'solid'}),
             html.Div(children=
                      dcc.Input(
                          placeholder= 'Search',
                          type = 'text',
+                         style= {'textAlign' : 'center'}
                      )
                      ,style={'height' : '25px', 'width': '29%', 'borderStyle' : 'solid'}),
-            html.Div(className= 'Div3', children=['Navigation', baumliste],
-                     style={'height' : '250px', 'width': '29%', 'border-left' : 'solid', 'border-right' : 'solid', 'border-bottom' : 'solid'}),
+            html.Div(className= 'Div3', children=['Navigation', baum2],
+                     style={'textAlign' : 'center', 'height' : '250px', 'width': '29%', 'border-left' : 'solid', 'border-right' : 'solid', 'border-bottom' : 'solid'}),
             html.Div(children=['Number of patients: ', df['patient_num'].count()],
-                     style={'height' : '25px', 'width': '29%', 'border-left' : 'solid', 'border-right' : 'solid', 'border-bottom' : 'solid'}),
+                     style={'textAlign' : 'center', 'height' : '25px', 'width': '29%', 'border-left' : 'solid', 'border-right' : 'solid', 'border-bottom' : 'solid'}),
             html.Div(className= 'Div2',
                 children=['Sex',
                         dcc.Graph(
@@ -69,7 +72,7 @@ app.layout = html.Div([
                         }
                     )
             ],
-             style={'height' : '250px', 'width': '29%', 'border-left' : 'solid', 'border-right' : 'solid', 'border-bottom' : 'solid'}),
+             style={'textAlign' : 'center', 'height' : '250px', 'width': '29%', 'border-left' : 'solid', 'border-right' : 'solid', 'border-bottom' : 'solid'}),
             html.Div(className= 'Div2',
                 children=['Age',
                         dcc.Graph(
@@ -83,7 +86,7 @@ app.layout = html.Div([
                     }
                 )
             ],
-            style={'height' : '250px', 'width': '29%', 'border-left' : 'solid', 'border-right' : 'solid', 'border-bottom' : 'solid'}),
+            style={'textAlign' : 'center', 'height' : '250px', 'width': '29%', 'border-left' : 'solid', 'border-right' : 'solid', 'border-bottom' : 'solid'}),
          ]),
         dcc.Tab(label='Diagram', children=[
             html.Div([
@@ -100,7 +103,7 @@ app.layout = html.Div([
                     'margin': '10px'},
                     multiple=True
                  )
-            ]),
+            ], style= {'textAlign' : 'center'}),
             html.Div(className= 'Div3', children = [
                 html.Div(children= ['Sex',
                         dcc.Graph(
@@ -114,7 +117,7 @@ app.layout = html.Div([
 
                         }
                     )
-            ]),
+            ], style= {'textAlign' : 'center'}),
                 html.Div(children= ['Age',
                         dcc.Graph(
                          id='graph-alter2',
@@ -126,7 +129,7 @@ app.layout = html.Div([
                         }]
                     }
                 )
-            ])
+            ], style= {'textAlign' : 'center'})
             ],
                      style={'height' : '800px', 'width': '70%', 'float': 'right', 'borderStyle' : 'solid'}),
             html.Div(children=
@@ -134,11 +137,11 @@ app.layout = html.Div([
                          placeholder= 'Search',
                          type= 'text'
                      ),
-                     style={'height' : '25px', 'width': '29%', 'borderStyle' : 'solid'}),
-            html.Div(className= 'Div3', children=['Navigation', baumliste],
-                     style={'height' : '250px', 'width': '29%', 'border-left' : 'solid', 'border-right' : 'solid', 'border-bottom' : 'solid'}),
+                     style={'textAlign' : 'center', 'height' : '25px', 'width': '29%', 'borderStyle' : 'solid'}),
+            html.Div(className= 'Div3', children=['Navigation', baum2],
+                     style={'textAlign' : 'center', 'height' : '250px', 'width': '29%', 'border-left' : 'solid', 'border-right' : 'solid', 'border-bottom' : 'solid'}),
             html.Div(children=['Types '],
-                     style={'height' : '525px', 'width': '29%', 'border-left' : 'solid', 'border-right' : 'solid', 'border-bottom' : 'solid'}),
+                     style={'textAlign' : 'center', 'height' : '525px', 'width': '29%', 'border-left' : 'solid', 'border-right' : 'solid', 'border-bottom' : 'solid'}),
         ]),
     ]),
 ])

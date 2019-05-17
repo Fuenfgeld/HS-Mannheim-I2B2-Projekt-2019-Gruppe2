@@ -1,6 +1,6 @@
 from anytree import Node
 from anytree.exporter import DictExporter
-import Verarbeitungsschicht as bl
+from logik import Verarbeitungsschicht as bl
 import pandas as pd
 import numpy as np
 
