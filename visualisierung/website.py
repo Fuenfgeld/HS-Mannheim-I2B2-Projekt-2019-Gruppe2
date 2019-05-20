@@ -49,7 +49,7 @@ app.layout = html.Div([
             html.Div(className='Navigation', children=['Navigation']),
             html.Div(className='NumberOfPatients', children=['Number of patients: ', df['patient_num'].count()]),
             html.Div(className='NavSex',
-                     children=['Sex',
+                     children=['Gender',
                                 dcc.Graph(
                                     id='sex',
                                     figure=go.Figure( data=[go.Pie(labels=['Male', 'Female'], values=df['sex_cd'].value_counts())]))
