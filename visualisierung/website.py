@@ -1,4 +1,5 @@
 import dash
+import numpy as np
 import psycopg2 as psy
 import pandas as pd
 import dash_html_components as html
@@ -20,12 +21,15 @@ baum1 = tie.treedictionary_aus_pickle_importieren()
 baum2 = html.Ul(listtree.treedictionary_aus_pickle_importieren())
 df = log.all_patients()
 
-
 app = dash.Dash('')
 app.scripts.config.serve_locally = True
 app.css.config.serve_locally = True
 
 sunburst_data = baum1
+
+age_in_years_num_values_count = df['age_in_years_num'].value_counts()
+age_in_years_num_values = age_in_years_num_values_count.keys().tolist()
+age_in_years_num_counts = age_in_years_num_values_count.tolist()
 
 app.layout = html.Div([
     html.H1(children='IndiGraph', style={'textAlign': 'center', 'color': '#0E23BF', 'backgroundColor': '#AED6F1'}),
@@ -39,31 +43,41 @@ app.layout = html.Div([
                     multiple=True
                 )
             ], style={'textAlign': 'center'}),
-            html.Div(className='Sunburst', children=html.Div(children=Sunburst(id='sunburst', data=sunburst_data),
-                                                             style={'margin': '200px'}), ),
+            html.Div(className='Sunburst', children=html.Div(children=Sunburst(id='sunburst', data=sunburst_data, height = 800, width= 800),
+                                                             style={'margin': '10px'}), ),
             html.Div(className='Search', children=
             dcc.Input(
                 placeholder='Search',
                 type='text',
+                style={'textAlign': 'center'},
+                size= 45
             )),
             html.Div(className='Navigation', children=['Navigation']),
             html.Div(className='NumberOfPatients', children=['Number of patients: ', df['patient_num'].count()]),
             html.Div(className='NavSex',
-                     children=['Gender',
-                                dcc.Graph(
-                                    id='sex',
-                                    figure=go.Figure( data=[go.Pie(labels=['Male', 'Female'], values=df['sex_cd'].value_counts())]))
+                     children=[
+                               dcc.Graph(
+                                   id='sex',
+                                   figure=go.Figure(
+                                       data=[go.Pie(labels=['Male', 'Female'],
+                                                    values=df['sex_cd'].value_counts())],
+                                   layout = go.Layout(title='Gender', height=320)))
                                ]),
             html.Div(className='NavAge',
-                     children=['Age',
+                     children=[
                                dcc.Graph(
                                    id='age',
                                    figure={
                                        'data': [{
-                                           'x': df['age_in_years_num'],
-                                           'y': [10, 20, 30, 40, 50, 60, 70, 80],
+                                           'x': age_in_years_num_values,
+                                           'y': age_in_years_num_counts,
                                            'type': 'bar'
-                                       }]
+                                       }],
+                                       'layout': {
+                                           'height': 310,
+                                           'width': 470,
+                                           'title': 'Age'
+                                       }
                                    }
                                )
                                ]),
@@ -81,19 +95,25 @@ app.layout = html.Div([
                 # Create Div to place a conditionally visible element inside
                 html.Div([
                     dcc.Graph(
-                        id='age2',
-                        figure={'data': [{'x': df['age_in_years_num'],
-                                          'y': [10, 20, 30, 40, 50, 60, 70, 80],
-                                          'type': 'bar'}]}),
-                    dcc.Graph(
-                        id='sex2',
-                        figure=go.Figure( data=[go.Pie(labels=['Male', 'Female'], values=df['sex_cd'].value_counts())]))
-                ], style={'display': 'block'}),  # <-- This is the line that will be changed by the checklist callback
+                        id='diagramm-alter',
+                        figure={'data': [{'x': age_in_years_num_values, 'y': age_in_years_num_counts, 'type': 'bar'}],
+                                'layout': {'title': 'Age'
+                    }})
+                 ], style={'display': 'block'}  # <-- This is the line that will be changed by the checklist callback
+                ),
+                dcc.Graph(
+                    id='diagramm-geschlecht',
+                    figure=go.Figure(
+                        data=[go.Pie(labels=['Male', 'Female'],
+                                     values=df['sex_cd'].value_counts())],
+                layout = go.Layout(title='Gender')))
             ], style={'display': 'block', 'textAlign': 'center'}),
             html.Div(className='Search', children=
             dcc.Input(
                 placeholder='Search',
-                type='text'
+                type='text',
+                style={'textAlign': 'center'},
+                size= 45
             )),
             html.Div(className='Navigation', children=['Navigation']),
             html.Div(className='Types', children=['Types ',
@@ -105,6 +125,7 @@ app.layout = html.Div([
                                                       id='checklistGender',
                                                       options=[{'label': 'Gender', 'value': 'on'}],
                                                       values=['on']),
+
                                                   ]),
         ]),
     ]),
@@ -112,7 +133,7 @@ app.layout = html.Div([
 
 
 @app.callback(
-    Output(component_id='age2', component_property='style'),
+    Output(component_id='diagramm-alter', component_property='style'),
     [Input(component_id='checklistAge', component_property='values')])
 def show_hide_element(visibility_state):
     if visibility_state == ['on']:
@@ -122,7 +143,7 @@ def show_hide_element(visibility_state):
 
 
 @app.callback(
-    Output(component_id='sex2', component_property='style'),
+    Output(component_id='diagramm-geschlecht', component_property='style'),
     [Input(component_id='checklistGender', component_property='values')])
 def show_hide_element(visibility_state):
     if visibility_state == ['on']:
@@ -132,4 +153,7 @@ def show_hide_element(visibility_state):
 
 
 if __name__ == '__main__':
+    print(age_in_years_num_values_count.keys().tolist())
+    print(age_in_years_num_values_count.tolist())
+    print(df['age_in_years_num'].value_counts())
     app.run_server(debug=False)
