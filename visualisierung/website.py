@@ -42,7 +42,7 @@ app.layout = html.Div([
                     children=html.Div(['Drag and Drop']),
                     multiple=True
                 )
-            ], style={'textAlign': 'center', 'font-size' : '20px'}),
+            ], style={'textAlign': 'center'}),
             html.Div(className='Sunburst', children=html.Div(children=Sunburst(id='sunburst', data=sunburst_data, height = 800, width= 800),
                                                              style={'margin': '10px'}), ),
             html.Div(className='Search', children=
@@ -81,7 +81,7 @@ app.layout = html.Div([
                                    }
                                )
                                ]),
-        ]),
+        ], style={'font-size' : '20px',}),
         dcc.Tab(label='Diagram', children=[
             html.Div([
                 dcc.Upload(
@@ -90,7 +90,7 @@ app.layout = html.Div([
                     children=html.Div(['Drag and Drop']),
                     multiple=True
                 )
-            ], style={'textAlign': 'center', 'font-size' : '20px'}),
+            ], style={'textAlign': 'center'}),
             html.Div(className='Dia', children=[
                 # Create Div to place a conditionally visible element inside
                 html.Div([
@@ -127,7 +127,7 @@ app.layout = html.Div([
                                                       values=['on']),
 
                                                   ]),
-        ]),
+        ], style={'font-size' : '20px'}),
     ]),
 ])
 
