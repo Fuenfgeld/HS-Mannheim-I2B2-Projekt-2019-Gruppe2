@@ -42,7 +42,7 @@ app.layout = html.Div([
                     children=html.Div(['Drag and Drop']),
                     multiple=True
                 )
-            ], style={'textAlign': 'center'}),
+            ], style={'textAlign': 'center', 'font-size' : '20px'}),
             html.Div(className='Sunburst', children=html.Div(children=Sunburst(id='sunburst', data=sunburst_data, height = 800, width= 800),
                                                              style={'margin': '10px'}), ),
             html.Div(className='Search', children=
@@ -50,7 +50,7 @@ app.layout = html.Div([
                 placeholder='Search',
                 type='text',
                 style={'textAlign': 'center'},
-                size= 45
+                size= 40
             )),
             html.Div(className='Navigation', children=['Navigation']),
             html.Div(className='NumberOfPatients', children=['Number of patients: ', df['patient_num'].count()]),
@@ -90,7 +90,7 @@ app.layout = html.Div([
                     children=html.Div(['Drag and Drop']),
                     multiple=True
                 )
-            ], style={'textAlign': 'center'}),
+            ], style={'textAlign': 'center', 'font-size' : '20px'}),
             html.Div(className='Dia', children=[
                 # Create Div to place a conditionally visible element inside
                 html.Div([
@@ -113,7 +113,7 @@ app.layout = html.Div([
                 placeholder='Search',
                 type='text',
                 style={'textAlign': 'center'},
-                size= 45
+                size= 40
             )),
             html.Div(className='Navigation', children=['Navigation']),
             html.Div(className='Types', children=['Types ',
@@ -153,7 +153,4 @@ def show_hide_element(visibility_state):
 
 
 if __name__ == '__main__':
-    print(age_in_years_num_values_count.keys().tolist())
-    print(age_in_years_num_values_count.tolist())
-    print(df['age_in_years_num'].value_counts())
     app.run_server(debug=False)
