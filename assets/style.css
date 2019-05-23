@@ -13,7 +13,7 @@
 }
 
 .Sunburst{
-    height: 800px;
+    height: 910px;
     width: 70%;
     float: right;
     border-style: solid;
@@ -62,6 +62,17 @@
 .NavAge{
     overflow: scroll;
     height: 250px;
+    width: 29%;
+    text-align: center;
+    border-left: solid;
+    border-right: solid;
+    border-bottom: solid;
+    font-size: 20px;
+}
+
+.Save_Load{
+    overflow: scroll;
+    height: 100px;
     width: 29%;
     text-align: center;
     border-left: solid;

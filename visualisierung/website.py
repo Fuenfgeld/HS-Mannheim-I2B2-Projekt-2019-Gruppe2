@@ -43,45 +43,46 @@ app.layout = html.Div([
                     multiple=True
                 )
             ], style={'textAlign': 'center'}),
-            html.Div(className='Sunburst', children=html.Div(children=Sunburst(id='sunburst', data=sunburst_data, height = 800, width= 800),
-                                                             style={'margin': '10px'}), ),
+            html.Div(className='Sunburst',
+                     children=html.Div(children=Sunburst(id='sunburst', data=sunburst_data, height=800, width=800),
+                                       style={'marginTop': '100px'}), ),
             html.Div(className='Search', children=
             dcc.Input(
                 placeholder='Search',
                 type='text',
                 style={'textAlign': 'center'},
-                size= 40
             )),
             html.Div(className='Navigation', children=['Navigation']),
             html.Div(className='NumberOfPatients', children=['Number of patients: ', df['patient_num'].count()]),
             html.Div(className='NavSex',
                      children=[
-                               dcc.Graph(
-                                   id='sex',
-                                   figure=go.Figure(
-                                       data=[go.Pie(labels=['Male', 'Female'],
-                                                    values=df['sex_cd'].value_counts())],
-                                   layout = go.Layout(title='Gender', height=320)))
-                               ]),
+                         dcc.Graph(
+                             id='sex',
+                             figure=go.Figure(
+                                 data=[go.Pie(labels=['Male', 'Female'],
+                                              values=df['sex_cd'].value_counts())],
+                                 layout=go.Layout(title='Gender', height=320)))
+                     ]),
             html.Div(className='NavAge',
                      children=[
-                               dcc.Graph(
-                                   id='age',
-                                   figure={
-                                       'data': [{
-                                           'x': age_in_years_num_values,
-                                           'y': age_in_years_num_counts,
-                                           'type': 'bar'
-                                       }],
-                                       'layout': {
-                                           'height': 310,
-                                           'width': 470,
-                                           'title': 'Age'
-                                       }
-                                   }
-                               )
-                               ]),
-        ], style={'font-size' : '20px',}),
+                         dcc.Graph(
+                             id='age',
+                             figure={
+                                 'data': [{
+                                     'x': age_in_years_num_values,
+                                     'y': age_in_years_num_counts,
+                                     'type': 'bar'
+                                 }],
+                                 'layout': {
+                                     'height': 310,
+                                     'width': 470,
+                                     'title': 'Age'
+                                 }
+                             }
+                         )
+                     ]),
+            html.Div(className='Save_Load', children=['Save', 'Load'])
+        ], style={'font-size': '20px', }),
         dcc.Tab(label='Diagram', children=[
             html.Div([
                 dcc.Upload(
@@ -98,22 +99,21 @@ app.layout = html.Div([
                         id='diagramm-alter',
                         figure={'data': [{'x': age_in_years_num_values, 'y': age_in_years_num_counts, 'type': 'bar'}],
                                 'layout': {'title': 'Age'
-                    }})
-                 ], style={'display': 'block'}  # <-- This is the line that will be changed by the checklist callback
+                                           }})
+                ], style={'display': 'block'}  # <-- This is the line that will be changed by the checklist callback
                 ),
                 dcc.Graph(
                     id='diagramm-geschlecht',
                     figure=go.Figure(
                         data=[go.Pie(labels=['Male', 'Female'],
                                      values=df['sex_cd'].value_counts())],
-                layout = go.Layout(title='Gender')))
+                        layout=go.Layout(title='Gender')))
             ], style={'display': 'block', 'textAlign': 'center'}),
             html.Div(className='Search', children=
             dcc.Input(
                 placeholder='Search',
                 type='text',
                 style={'textAlign': 'center'},
-                size= 40
             )),
             html.Div(className='Navigation', children=['Navigation']),
             html.Div(className='Types', children=['Types ',
@@ -127,7 +127,7 @@ app.layout = html.Div([
                                                       values=['on']),
 
                                                   ]),
-        ], style={'font-size' : '20px'}),
+        ], style={'font-size': '20px'}),
     ]),
 ])
 
