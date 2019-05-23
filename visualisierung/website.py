@@ -32,7 +32,7 @@ age_in_years_num_values = age_in_years_num_values_count.keys().tolist()
 age_in_years_num_counts = age_in_years_num_values_count.tolist()
 
 app.layout = html.Div([
-    html.H1(children='IndiGraph', style={'textAlign': 'center', 'color': '#0E23BF', 'backgroundColor': '#AED6F1'}),
+    html.H1(className='IndiGraph', children='IndiGraph'),
     dcc.Tabs(id='tabs', children=[
         dcc.Tab(label='Navigation', children=[
             html.Div([
@@ -81,7 +81,10 @@ app.layout = html.Div([
                              }
                          )
                      ]),
-            html.Div(className='Save_Load', children=['Save', 'Load'])
+            html.Div(className='Save_Load', children=[
+                html.Button(id='save', className='Save', children='Save'),
+                html.Button(id='load', className='Load', children='Load')
+            ])
         ], style={'font-size': '20px', }),
         dcc.Tab(label='Diagram', children=[
             html.Div([
@@ -127,6 +130,10 @@ app.layout = html.Div([
                                                       values=['on']),
 
                                                   ]),
+            html.Div(className='Save_Load', children=[
+                html.Button(id='save2', className='Save', children='Save'),
+                html.Button(id='load2', className='Load', children='Load')
+            ])
         ], style={'font-size': '20px'}),
     ]),
 ])

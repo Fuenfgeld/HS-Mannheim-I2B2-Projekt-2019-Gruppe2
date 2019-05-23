@@ -1,4 +1,8 @@
-
+.IndiGraph{
+    text-align: center;
+    color: #0E23BF;
+    background-color: #AED6F1;
+}
 .DragAndDrop{
     height: 60px;
     width: 100%;
@@ -71,7 +75,6 @@
 }
 
 .Save_Load{
-    overflow: scroll;
     height: 100px;
     width: 29%;
     text-align: center;
@@ -81,9 +84,30 @@
     font-size: 20px;
 }
 
+.Save{
+    height: 100px;
+    width: 49%;
+    float: left;
+    text-align: center;
+    background-color: #AED6F1;
+    border-right: solid;
+    border-bottom: solid;
+    font-size: 20px;
+}
+
+.Load{
+    height: 100px;
+    width: 50%;
+    float: right;
+    text-align: center;
+    background-color: #AED6F1;
+    border-bottom: solid;
+    font-size: 20px;
+}
+
 .Dia{
     overflow: scroll;
-    height: 800px;
+    height: 900px;
     width: 70%;
     float: right;
     border-style: solid;
