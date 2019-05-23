@@ -1,7 +1,6 @@
 setTimeout(wholeFunc, 3000);
 
 function wholeFunc() {
-	alert('Anwesend')
 	$('#jstree-tree').jstree({
 		'core': {
 			'data': {

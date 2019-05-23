@@ -82,7 +82,7 @@ app.layout = html.Div([
                          )
                      ]),
             html.Div(className='Save_Load', children=[
-                html.Button(id='save', className='Save', children='Save'),
+                html.Button(id='save', className='Save', children=['Save']),
                 html.Button(id='load', className='Load', children='Load')
             ])
         ], style={'font-size': '20px', }),
