@@ -1,27 +1,29 @@
 import dash
-import numpy as np
-import psycopg2 as psy
-import pandas as pd
 import dash_html_components as html
 import dash_core_components as dcc
 from dash_sunburst import Sunburst
 import tree_dictionary_import_export as tie
-import listtree_dictionary_import_export as listtree
 from logik import db_abfragen as log
 from datenhaltung import connection as connect
 import plotly.graph_objs as go
 from dash.dependencies import Input, Output
 
-# test3
-
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 connection = connect.create_connection()
 baum1 = tie.treedictionary_aus_pickle_importieren()
-baum2 = html.Ul(listtree.treedictionary_aus_pickle_importieren())
 df = log.all_patients()
 
-app = dash.Dash('')
+app = dash.Dash('__name__',
+                external_stylesheets=['https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css',
+                                      'https://static.jstree.com/3.0.9/assets/dist/themes/default/style.min.css',
+                                      'assets/stylesheet.css'
+                                      ],
+
+                external_scripts=['http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js',
+                                  'https://cdnjs.cloudflare.com/ajax/libs/jstree/3.0.9/jstree.min.js',
+                                  'assets/index.js'
+                                  ])
 app.scripts.config.serve_locally = True
 app.css.config.serve_locally = True
 
@@ -52,7 +54,7 @@ app.layout = html.Div([
                 type='text',
                 style={'textAlign': 'center'},
             )),
-            html.Div(className='Navigation', children=['Navigation']),
+            html.Div(className='Navigation', children=html.Div(className='container', id="jstree-tree", style={'text-align':'left'})),
             html.Div(className='NumberOfPatients', children=['Number of patients: ', df['patient_num'].count()]),
             html.Div(className='NavSex',
                      children=[
@@ -82,7 +84,7 @@ app.layout = html.Div([
                          )
                      ]),
             html.Div(className='Save_Load', children=[
-                html.Button(id='save', className='Save', children='Save'),
+                html.Button(id='save', className='Save', children=['Save']),
                 html.Button(id='load', className='Load', children='Load')
             ])
         ], style={'font-size': '20px', }),
