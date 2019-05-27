@@ -37,24 +37,28 @@ app.layout = html.Div([
     html.H1(className='IndiGraph', children='IndiGraph'),
     dcc.Tabs(id='tabs', children=[
         dcc.Tab(label='Navigation', children=[
-            html.Div([
-                dcc.Upload(
-                    id='upload-data',
-                    className='DragAndDrop',
-                    children=html.Div(['Drag and Drop']),
-                    multiple=True
-                )
-            ], style={'textAlign': 'center'}),
+            # html.Div(className='jstree-drop', children=[
+            #     dcc.Upload(
+            #         id='upload-data',
+            #         className='DragAndDrop',
+            #         children=html.Div(['Drag and Drop']),
+            #         multiple=True
+            #     ),
+            #     html.Div(id='output-data-upload')
+            # ], style={'textAlign': 'center'}),
+            html.Div(className="drop",
+                     style={'height' : '60px', 'width' : '100%', 'border-style': 'dashed', 'line-height' : '60px', 'text-align' : 'center', 'margin' : '10px', 'border-width' : '1px', 'border-radius' : '5px', 'border-color' : 'blue', 'fonz-size' : '20px' }),
             html.Div(className='Sunburst',
                      children=html.Div(children=Sunburst(id='sunburst', data=sunburst_data, height=800, width=800),
                                        style={'marginTop': '100px'}), ),
             html.Div(className='Search', children=
             dcc.Input(
+                id="search-input",
                 placeholder='Search',
                 type='text',
                 style={'textAlign': 'center'},
             )),
-            html.Div(className='Navigation', children=html.Div(className='container', id="jstree-tree", style={'text-align':'left'})),
+            html.Div(className='Navigation', children=html.Div(className='jstree jstree-default', id="jstree-tree", style={'text-align':'left'})),
             html.Div(className='NumberOfPatients', children=['Number of patients: ', df['patient_num'].count()]),
             html.Div(className='NavSex',
                      children=[
@@ -159,6 +163,14 @@ def show_hide_element(visibility_state):
         return {'display': 'block'}
     else:
         return {'display': 'none'}
+
+
+# @app.callback(Output('output-data-upload', component_property='children'),
+#               [Input('upload-data', 'contents')])
+# def update_output(list_of_contents):
+#     if list_of_contents is not None:
+#         children = 'Hallo!'
+#         return children
 
 
 if __name__ == '__main__':
