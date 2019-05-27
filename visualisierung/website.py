@@ -19,12 +19,12 @@ df = log.all_patients()
 app = dash.Dash('__name__',
                 external_stylesheets=['https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css',
                                       'https://static.jstree.com/3.0.9/assets/dist/themes/default/style.min.css',
-                                      'assets/stylesheet.css'
+
                                       ],
 
                 external_scripts=['http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js',
                                   'https://cdnjs.cloudflare.com/ajax/libs/jstree/3.0.9/jstree.min.js',
-                                  'assets/index.js'
+
                                   ])
 app.scripts.config.serve_locally = True
 app.css.config.serve_locally = True
