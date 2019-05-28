@@ -1,3 +1,8 @@
+.IndiGraph{
+    text-align: center;
+    color: #0E23BF;
+    background-color: #AED6F1;
+}
 .DragAndDrop{
     height: 60px;
     width: 100%;
@@ -8,86 +13,115 @@
     border-style: dashed;
     border-radius: 5px;
     border-color: blue;
-
+    font-size: 20px;
 }
 
 .Sunburst{
-    height: 850px;
-    width: 65%;
+    height: 920px;
+    width: 70%;
     float: right;
     border-style: solid;
-
+    font-size: 20px;
 }
 
 .Search{
-    height: 25px;
+    height: 40px;
     width: 29%;
     border-style: solid;
-
+    font-size: 20px;
 }
 
 .Navigation{
     overflow: scroll;
-    height: 300px;
-    width: 35%;
-    text-align: left;
-    border-left: solid;
-    border-right: solid;
-    border-bottom: solid;
-
-
-
-}
-
-.NumberOfPatients{
-    height: 25px;
-    width: 35%;
+    height: 250px;
+    width: 29%;
     text-align: center;
     border-left: solid;
     border-right: solid;
     border-bottom: solid;
+    font-size: 20px;
+}
 
+.NumberOfPatients{
+    height: 30px;
+    width: 29%;
+    text-align: center;
+    border-left: solid;
+    border-right: solid;
+    border-bottom: solid;
+    font-size: 20px;
 }
 
 .NavSex{
     overflow: scroll;
     height: 250px;
-    width: 35%;
+    width: 29%;
     text-align: center;
     border-left: solid;
     border-right: solid;
     border-bottom: solid;
-
+    font-size: 20px;
 }
 
 .NavAge{
     overflow: scroll;
     height: 250px;
-    width: 35%;
+    width: 29%;
     text-align: center;
     border-left: solid;
     border-right: solid;
     border-bottom: solid;
+    font-size: 20px;
+}
 
+.Save_Load{
+    height: 100px;
+    width: 29%;
+    text-align: left;
+    border-left: solid;
+    border-right: solid;
+    border-bottom: solid;
+    font-size: 20px;
+}
+
+.Save{
+    height: 100px;
+    width: 49%;
+    float: left;
+    text-align: center;
+    background-color: #AED6F1;
+    border-right: solid;
+    border-bottom: solid;
+    font-size: 20px;
+}
+
+.Load{
+    height: 100px;
+    width: 50%;
+    float: right;
+    text-align: center;
+    background-color: #AED6F1;
+    border-bottom: solid;
+    font-size: 20px;
 }
 
 .Dia{
     overflow: scroll;
-    height: 850px;
-    width: 65%;
+    height: 920px;
+    width: 70%;
     float: right;
     border-style: solid;
-
+    font-size: 20px;
 }
 
 .Types{
     height: 525px;
-    width: 35%;
+    width: 29%;
     text-align: center;
     border-left: solid;
     border-right: solid;
     border-bottom: solid;
-
+    font-size: 20px;
 }
 
 .Scroll{
@@ -95,11 +129,9 @@
     border-left: solid;
     border-right: solid;
     border-bottom: solid;
-
+    font-size: 20px;
 }
 
 .container {
   margin-top: 20px;
-
-
 }
