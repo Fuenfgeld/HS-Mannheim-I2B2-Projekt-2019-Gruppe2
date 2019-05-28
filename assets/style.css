@@ -17,7 +17,7 @@
 }
 
 .Sunburst{
-    height: 920px;
+    height: 940px;
     width: 70%;
     float: right;
     border-style: solid;
@@ -26,28 +26,27 @@
 
 .Search{
     height: 40px;
-    width: 29%;
-    border-style: solid;
+    width: 30%;
+    border-top: solid;
+    border-left: solid;
+    border-bottom: solid;
     font-size: 20px;
 }
 
 .Navigation{
     overflow: scroll;
-    height: 250px;
-    width: 29%;
+    height: 270px;
+    width: 30%;
     text-align: center;
     border-left: solid;
-    border-right: solid;
     border-bottom: solid;
-    font-size: 20px;
 }
 
 .NumberOfPatients{
     height: 30px;
-    width: 29%;
+    width: 30%;
     text-align: center;
     border-left: solid;
-    border-right: solid;
     border-bottom: solid;
     font-size: 20px;
 }
@@ -55,10 +54,9 @@
 .NavSex{
     overflow: scroll;
     height: 250px;
-    width: 29%;
+    width: 30%;
     text-align: center;
     border-left: solid;
-    border-right: solid;
     border-bottom: solid;
     font-size: 20px;
 }
@@ -66,20 +64,18 @@
 .NavAge{
     overflow: scroll;
     height: 250px;
-    width: 29%;
+    width: 30%;
     text-align: center;
     border-left: solid;
-    border-right: solid;
     border-bottom: solid;
     font-size: 20px;
 }
 
 .Save_Load{
     height: 100px;
-    width: 29%;
+    width: 30%;
     text-align: left;
     border-left: solid;
-    border-right: solid;
     border-bottom: solid;
     font-size: 20px;
 }
@@ -107,7 +103,7 @@
 
 .Dia{
     overflow: scroll;
-    height: 920px;
+    height: 940px;
     width: 70%;
     float: right;
     border-style: solid;
@@ -116,10 +112,9 @@
 
 .Types{
     height: 525px;
-    width: 29%;
+    width: 30%;
     text-align: center;
     border-left: solid;
-    border-right: solid;
     border-bottom: solid;
     font-size: 20px;
 }

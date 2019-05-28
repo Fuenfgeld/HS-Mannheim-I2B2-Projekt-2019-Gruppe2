@@ -4,6 +4,7 @@ import dash_core_components as dcc
 from dash_sunburst import Sunburst
 import tree_dictionary_import_export as tie
 from logik import db_abfragen as log
+from logik import age
 from datenhaltung import connection as connect
 import plotly.graph_objs as go
 from dash.dependencies import Input, Output
@@ -31,12 +32,18 @@ app.css.config.serve_locally = True
 
 sunburst_data = baum1
 
+
+
 age_in_years_num_values_count = df['age_in_years_num'].value_counts()
 age_in_years_num_values = age_in_years_num_values_count.keys().tolist()
 age_in_years_num_counts = age_in_years_num_values_count.tolist()
 
 app.layout = html.Div([
     html.H1(className='IndiGraph', children='IndiGraph'),
+html.Div(className="drop",
+                     style={'height' : '60px', 'width' : '100%', 'border-style': 'dashed', 'line-height' : '60px', 'text-align' : 'center', 'margin' : '10px', 'border-width' : '1px', 'border-radius' : '5px', 'border-color' : 'blue', 'fonz-size' : '20px' }),
+    html.Div(className='Navigation', style={'text-align': 'left', 'position': 'absolute', 'top': '250px'},
+             children=html.Div(className='container', id='jstree-tree')),
     dcc.Tabs(id='tabs', children=[
         dcc.Tab(label='Navigation', children=[
             # html.Div(className='jstree-drop', children=[
@@ -48,8 +55,7 @@ app.layout = html.Div([
             #     ),
             #     html.Div(id='output-data-upload')
             # ], style={'textAlign': 'center'}),
-            html.Div(className="drop",
-                     style={'height' : '60px', 'width' : '100%', 'border-style': 'dashed', 'line-height' : '60px', 'text-align' : 'center', 'margin' : '10px', 'border-width' : '1px', 'border-radius' : '5px', 'border-color' : 'blue', 'fonz-size' : '20px' }),
+
             html.Div(className='Sunburst',
                      children=html.Div(children=Sunburst(id='sunburst', data=sunburst_data, height=800, width=800),
                                        style={'marginTop': '100px'}), ),
@@ -60,7 +66,7 @@ app.layout = html.Div([
                 type='text',
                 style={'textAlign': 'center'},
             )),
-            html.Div(className='Navigation', children=html.Div(className='jstree jstree-default', id="jstree-tree", style={'text-align':'left'})),
+            html.Div(className='Navigation', children=html.Div()),
             html.Div(className='NumberOfPatients', children=['Number of patients: ', df['patient_num'].count()]),
             html.Div(className='NavSex',
                      children=[
@@ -77,12 +83,12 @@ app.layout = html.Div([
                              id='age',
                              figure={
                                  'data': [{
-                                     'x': age_in_years_num_values,
-                                     'y': age_in_years_num_counts,
+                                     'x': ['0-9', '10-17', '18-34', '35-44', '45-54', '55-64', '65-74', '75-84', '>=65', '>=85'],
+                                     'y': [age.x_bis_9, age.x_bis_17, age.x_bis_34, age.x_bis_44, age.x_bis_54, age.x_bis_64, age.x_bis_74, age.x_bis_84, age.x_gr_gl_65, age.x_gr_gl_85],
                                      'type': 'bar'
                                  }],
                                  'layout': {
-                                     'height': 310,
+                                     'height': 290,
                                      'width': 470,
                                      'title': 'Age'
                                  }
@@ -95,20 +101,14 @@ app.layout = html.Div([
             ])
         ], style={'font-size': '20px', }),
         dcc.Tab(label='Diagram', children=[
-            html.Div([
-                dcc.Upload(
-                    id='upload-data2',
-                    className='DragAndDrop',
-                    children=html.Div(['Drag and Drop']),
-                    multiple=True
-                )
-            ], style={'textAlign': 'center'}),
             html.Div(className='Dia', children=[
                 # Create Div to place a conditionally visible element inside
                 html.Div([
                     dcc.Graph(
                         id='diagramm-alter',
-                        figure={'data': [{'x': age_in_years_num_values, 'y': age_in_years_num_counts, 'type': 'bar'}],
+                        figure={'data': [{'x': ['0-9', '10-17', '18-34', '35-44', '45-54', '55-64', '65-74', '75-84', '>=65', '>=85'],
+                                          'y': [age.x_bis_9, age.x_bis_17, age.x_bis_34, age.x_bis_44, age.x_bis_54, age.x_bis_64, age.x_bis_74, age.x_bis_84, age.x_gr_gl_65, age.x_gr_gl_85],
+                                          'type': 'bar'}],
                                 'layout': {'title': 'Age'
                                            }})
                 ], style={'display': 'block'}  # <-- This is the line that will be changed by the checklist callback
@@ -126,7 +126,7 @@ app.layout = html.Div([
                 type='text',
                 style={'textAlign': 'center'},
             )),
-            html.Div(className='Navigation', children=['Navigation']),
+            html.Div(className='Navigation', children=html.Div()),
             html.Div(className='Types', children=['Types ',
                                                   dcc.Checklist(
                                                       id='checklistAge',
