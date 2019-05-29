@@ -32,6 +32,18 @@ class Kohortenabfrage():
         self.df_rasse = self.df_hauptdia['race_cd'] #könnte aber auch noch aussoritert werden
         self.rasse_value_counts= self.df_rasse.value_counts()#könnte mit df_rasse aussortiert
 
+
+        self.nd_df_diagnose=self.df_nebendia['diagnose']
+        self.nd_diagnose_value_list = self.nd_df_diagnose.values.tolist()
+
+        self.nd_df_anzahl = self.df_nebendia['anzahl']
+        self.nd_anzahl_value_list = self.nd_df_anzahl.values.tolist()
+
+        self.nd_df_prozent = self.df_nebendia['prozent']
+        self.nd_prozent_value_list = self.nd_df_prozent.values.tolist()
+
+
+
         #qs.Querystack.push(self,  new_query=self) pushen auf Querystack
 
 
@@ -71,3 +83,6 @@ print(frage_test.zeitpunkt)
 print(frage_test.geschlecht_value_counts)
 print(frage_test.x_achse_altersverteilung)
 print(frage_test.y_achse_altersverteilung)
+print(frage_test.nd_diagnose_value_list)
+print(frage_test.nd_anzahl_value_list)
+print(frage_test.nd_prozent_value_list)
