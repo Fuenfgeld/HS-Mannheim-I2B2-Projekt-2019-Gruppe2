@@ -66,7 +66,9 @@ html.Div(className="drop",
                 style={'textAlign': 'center'},
             )),
             html.Div(className='Navigation', children=html.Div()),
-            html.Div(className='NumberOfPatients', children=['Number of patients: ', df['patient_num'].count()]),
+            html.Div(id = 'data', className='NumberOfPatients',
+                     #children=['Number of patients: ', df['patient_num'].count()]
+                     ),
             html.Div(className='NavSex',
                      children=[
                          dcc.Graph(
