@@ -1,0 +1,39 @@
+- kann man 1 Element auswählen?
+Ja, allgemein kann man 1 Element auswählen,
+jedoch muss man de Verknüpfungen als leere Liste übergeben
+da es sonst zu einer Exception kommt.
+Wohl gemerkt wird trotzdem die Funktion ausgeführt!
+
+
+- kann man 2 Elemente auswählen?
+    - problemlos mit or (auch klein geschrieben
+    allgemein möglich, pytest folgt
+    -problemos mit and(auch klein geschrieben)
+    allgemein möglich, pytest folgt
+    -wenn man and not oder nur  not in Verknüpfungen einträgt
+    wird es einfach mit and ersetzt, zumindest kommt der gleiche
+    Wert wie bei and raus
+
+
+- kann man 10 Elemente auswählen?
+    - Fehlermeldung im Worddokument (für and und or die Gleiche)
+
+
+- was passiert bei einer Verknüpfung zu viel?
+    - Fehlermeldung list index out of range, Fehlermeldung im Worddokument
+
+
+- was passiert bei einer Verknüpfung zu wenig?
+    - sobald eine Verknüpfung zu wenig angegeben wird
+     bei 2 Elementen wird lediglich das Vordere
+     ausgewertet, als wäre kein zweites Element da
+    - auch bei 3 Elementen werden dann nur die ersten beiden
+    für die die Verknüpfung da ist ausgewertet und das 3.
+    ignoriert
+
+
+- gleicht eine beispielhafte Verknüpfung der Abfrage in der Datenbank?
+- was passiert wenn Krankheit gar nicht in I2b2 drin ist?
+    -dann wird es automatisch 0 und leer
+- was wenn Krankheit leer ist?
+    - dann wird es 0 und leer
