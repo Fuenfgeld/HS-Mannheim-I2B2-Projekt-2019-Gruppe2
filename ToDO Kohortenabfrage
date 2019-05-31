@@ -17,6 +17,9 @@ Wohl gemerkt wird trotzdem die Funktion ausgeführt!
 
 - kann man 10 Elemente auswählen?
     - Fehlermeldung im Worddokument (für and und or die Gleiche)
+    - im separaten Projekt funktioniert es einwandfrei, daher der Gedanke
+    ob es an den vorherigen Abfragen lag und somit der Gedanke, ob es bei
+    laufenden Betrieb zu Problemen kommen kann
 
 
 - was passiert bei einer Verknüpfung zu viel?
