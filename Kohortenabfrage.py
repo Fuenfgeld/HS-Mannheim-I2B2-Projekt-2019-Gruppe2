@@ -28,9 +28,18 @@ class Kohortenabfrage():
 
         self.df_sprache = self.df_hauptdia['language_cd']
         self.sprache_value_counts=self.df_sprache.value_counts()
+        self.sprachex = self.sprache_value_counts.keys().tolist()
+        self.sprachey = self.sprache_value_counts.tolist()
+
+
 
         self.df_rasse = self.df_hauptdia['race_cd'] #könnte aber auch noch aussoritert werden
         self.rasse_value_counts= self.df_rasse.value_counts()#könnte mit df_rasse aussortiert
+        self.racex = self.rasse_value_counts.keys().tolist()
+        self.racey = self.rasse_value_counts.tolist()
+
+
+
 
 
         self.nd_df_diagnose=self.df_nebendia['diagnose']
@@ -44,13 +53,14 @@ class Kohortenabfrage():
 
 
 
-        #qs.Querystack.push(self,  new_query=self) pushen auf Querystack
+        querystack=qs.Querystack.instance()
+        querystack.push(self)
 
 
     def __altersverteilung_y_achse(self,df_alter):
 
-        df_alter.fillna(value='-')  # verbesserung/test
-        x_not_recorded = ((df_alter).eq('-')).sum()  # verbesserung/test
+        df_alter.fillna(value='-')
+        x_not_recorded = ((df_alter).eq('-')).sum()
 
         x_bis_9 = ((df_alter).lt(9)).sum()
         x_bis_17 = (((df_alter).ge(10)) & ((df_alter).le(17))).sum()
@@ -69,20 +79,37 @@ class Kohortenabfrage():
 
 
 
-frage_test=Kohortenabfrage(kriterien=["\Diagnoses\(A00-B99) Cert~ugmm"],#["\Diagnoses\(I00-I99) Dise~3w8h","\Diagnoses\(Q00-Q99) Cong~t96i","\Diagnoses\(K00-K94) Dise~rl1r","\Diagnoses\(A00-B99) Cert~ugmm"],
-                                 verknüpfungen=[])#['AND','AND','OR'])
+frage1=Kohortenabfrage(kriterien=["\Diagnoses\(A00-B99) Cert~ugmm"],  #["\Diagnoses\(I00-I99) Dise~3w8h","\Diagnoses\(Q00-Q99) Cong~t96i","\Diagnoses\(K00-K94) Dise~rl1r","\Diagnoses\(A00-B99) Cert~ugmm"],
+                       verknüpfungen=[])#['AND','AND','OR'])
+
+#frage2=Kohortenabfrage(kriterien=["\Diagnoses\(I00-I99) Dise~3w8h","\Diagnoses\(Q00-Q99) Cong~t96i","\Diagnoses\(K00-K94) Dise~rl1r","\Diagnoses\(A00-B99) Cert~ugmm"],
+#                       verknüpfungen=['AND','AND','OR'])
 
 
-print(frage_test.df_hauptdia)
-print(frage_test.df_nebendia)
-print(frage_test.df_alter)
-print(frage_test.df_geschlecht)
-print(frage_test.zeitpunkt)
+#querystack=qs.Querystack.instance()
+
+#querypeek=querystack.peek()
+
+#print(querypeek)
+#print(querystack.peek())
+
+
+
+
+print(frage1.hd_sql_statement)
+
+
+
+#print(frage1.df_hauptdia)
+#print(frage1.df_nebendia)
+#print(frage1.df_alter)
+#print(frage1.df_geschlecht)
+#print(frage1.zeitpunkt)
 #print(frage_test.df_sprache)
 #print(frage_test.df_rasse)
-print(frage_test.geschlecht_value_counts)
-print(frage_test.x_achse_altersverteilung)
-print(frage_test.y_achse_altersverteilung)
-print(frage_test.nd_diagnose_value_list)
-print(frage_test.nd_anzahl_value_list)
-print(frage_test.nd_prozent_value_list)
+#print(frage1.geschlecht_value_counts)
+#print(frage1.x_achse_altersverteilung)
+#print(frage1.y_achse_altersverteilung)
+#print(frage1.nd_diagnose_value_list)
+#print(frage1.nd_anzahl_value_list)
+#print(frage1.nd_prozent_value_list)
