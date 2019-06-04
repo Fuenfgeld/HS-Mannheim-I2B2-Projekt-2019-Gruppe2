@@ -31,10 +31,10 @@ def create_data_from_node(path):
             'children' : [{
                 'name' : i.text,
                 'size' : i.size,
-                'children':[{
-                   'name' : j.text,
-                   'size' : j.size
-                }for j in i.children] #Dieser Bereich könnte einen weiteren äußeren Ring hinzufürgen
+               # 'children':[{
+                #   'name' : j.text,
+                #   'size' : j.size
+              #  }for j in i.children] #Dieser Bereich könnte einen weiteren äußeren Ring hinzufürgen
             }for i in wurzel.children]
         }
 
@@ -63,10 +63,10 @@ def create_data_from_node(path):
                 'children' : [{
                     'name' : i.text,
                     'size' : i.size,
-                    'children': [{
-                       'name': j.text,
-                        'size': j.size
-                    }for j in i.children]#Dieser Bereich könnte eine zweiten äußeren Ring realisieren
+                   # 'children': [{
+                    #   'name': j.text,
+                    #    'size': j.size
+                   # }for j in i.children]#Dieser Bereich könnte eine zweiten äußeren Ring realisieren
 
                 }for i in zwischenwurzel.children]
             }
