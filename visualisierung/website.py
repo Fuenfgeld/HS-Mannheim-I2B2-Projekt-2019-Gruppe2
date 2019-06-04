@@ -5,11 +5,11 @@ from dash_sunburst import Sunburst
 import tree_dictionary_import_export as tie
 from logik import db_abfragen as log
 from logik import age
+from logik import kohortenabfrage
+from logik import liste
 from datenhaltung import connection as connect
 import plotly.graph_objs as go
-from dash.dependencies import Input, Output
-
-# dnd
+from dash.dependencies import Input, Output, State
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -36,15 +36,35 @@ age_in_years_num_values = age_in_years_num_values_count.keys().tolist()
 age_in_years_num_counts = age_in_years_num_values_count.tolist()
 
 app.layout = html.Div([
+    html.Div(id='hidden', style={'display':'none'}),
     html.H1(className='IndiGraph', children='IndiGraph'),
-    dcc.Upload(
-            className="drop",
-            id='upload-data',
-            style= {'height': '60px', 'width': '100%', 'border-style': 'dashed', 'line-height': '60px',
-                    'text-align': 'center', 'margin': '10px', 'border-width': '1px', 'border-radius': '5px',
-                    'border-color': 'blue', 'fonz-size': '20px'},
-            multiple=True),
-    html.Div(className='Navigation', style={'text-align': 'left', 'position': 'absolute', 'top': '250px'},
+    html.Div(
+        className="DragAndDrop", children=[
+            dcc.Input(
+                id="firstarg",
+                type="text",
+                style={'display': 'inline-block', 'height' : '30px', 'text-align' : 'center'}
+            ),
+            dcc.Input(
+                id="connector",
+                value= "",
+                type="text",
+                readOnly = 'readOnly',
+                style={'display': 'inline-block', 'height' : '30px', 'text-align' : 'center'}
+            ),
+            dcc.Input(
+                id="secondarg",
+                type="text",
+                style={'display': 'inline-block', 'height' : '30px', 'text-align' : 'center'}
+            ),
+        ]),
+    html.Button(
+        id="run",
+        children="RUN",
+        style={
+            'height': '30px'}
+    ),
+    html.Div(className='Navigation', style={'text-align': 'left', 'position': 'absolute', 'top': '280px'},
              children=html.Div(className='container', id='jstree-tree')),
     dcc.Tabs(id='tabs', children=[
         dcc.Tab(label='Navigation', children=[
@@ -92,7 +112,7 @@ app.layout = html.Div([
                          )
                      ]),
             html.Div(className='Save_Load', children=[
-                html.Button(id='save', className='Save', children=['Save']),
+                html.Button(id='save', className='Save', children='Save'),
                 html.Button(id='load', className='Load', children='Load')
             ])
         ], style={'font-size': '20px', }),
@@ -165,15 +185,33 @@ def show_hide_element(visibility_state):
     else:
         return {'display': 'none'}
 
+@app.callback(
+    Output(component_id='connector', component_property='value'),
+    [Input(component_id='run', component_property='n_clicks')],
+    [State(component_id='firstarg', component_property='value'),
+     State(component_id='secondarg', component_property='value')])
+def update_list(n_clicks, value1, value2):
+    the_list = liste.The_List()
+    the_list.make_list(value1)
+    the_list.make_list(value2)
+    if not value1 and not value2:
+        print("null")
+        return "Kein Kriterium"
+    elif not value2 or not value1:
+        print("eins")
+        koho = kohortenabfrage.Kohortenabfrage(the_list.get_list(), [""])
+        return ""
+    else:
+        print("zwei")
+        koho = kohortenabfrage.Kohortenabfrage(the_list.get_list(), ["AND"])
+        return ("AND")
 
 
 
-# @app.callback(Output('data', 'children'),
-#               [Input('upload-data', 'children')])
-# def update_output(list_of_contents):
-#     print("Hi")
-#     if list_of_contents is not None:
-#         return "Hallo"
+
+
+
+
 
 
 if __name__ == '__main__':
