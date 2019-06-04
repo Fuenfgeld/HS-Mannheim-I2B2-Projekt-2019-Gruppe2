@@ -104,6 +104,7 @@ app.css.config.serve_locally = True
 #sunburst_data = baum1
 
 app.layout = html.Div([
+
 html.Div(className="drop",
                      style={'height' : '60px', 'width' : '100%', 'border-style': 'dashed', 'line-height' : '60px', 'text-align' : 'center', 'margin' : '10px', 'border-width' : '1px', 'border-radius' : '5px', 'border-color' : 'blue', 'fonz-size' : '20px' }),
     html.Div(className='Navigation', style={'text-align': 'left', 'position': 'absolute', 'top': '160px'},
@@ -121,8 +122,8 @@ html.Div(className="drop",
             # ], style={'textAlign': 'center'}),
 
             html.Div(className='Sunburst',
-                     children=html.Div(children=Sunburst(id='sunburst', data=create_data_from_node([]), height=800, width=1000, selectedPath =[]),
-                                       style={'marginTop': '100px'}), ),
+                     children=html.Div(children=Sunburst(id='sunburst', data=create_data_from_node([]), height=650, width=600, selectedPath =[]),
+                                       style={'position': 'absolute', 'top': '175px', 'left': '670px'}), ),
 
             html.Div (className='path',id='output'),
 
@@ -143,31 +144,35 @@ html.Div(className="drop",
                              figure=go.Figure(
                                  data=[go.Pie(labels=['Male', 'Female'],
                                               values=kh.frage1.geschlecht_value_counts)],
-                                 layout=go.Layout(title='Gender', height=320)))
+                                 layout=go.Layout(title= {
+                                   'text':  'Gender',
+                                     'x': 0.49,
+                                     'y': 0.75
+
+                                 }, height=300)))
                      ]),
             html.Div(className='NavAge',
                      children=[
-                         dcc.Graph(
-                             id='age',
-                             figure={
-                                 'data': [{
-                                     'x': kh.frage1.x_achse_altersverteilung,
-                                     'y': kh.frage1.y_achse_altersverteilung,
-                                     'type': 'bar'
-                                 }],
-                                 'layout': {
-                                     'height': 290,
-                                     'width': 470,
-                                     'title': 'Age'
-                                 }
-                             }
-                         )
-                     ]),
-            html.Div(className='Save_Load', children=[
+                    dcc.Graph(
+                        id='id',
+                        figure=go.Figure(
+                            data=[go.Bar (x = kh.frage1.x_achse_altersverteilung,
+                                         y = kh.frage1.y_achse_altersverteilung,
+                                        text=kh.frage1.y_achse_altersverteilung,
+                                         textposition = 'auto',
+                                        )],
+                            layout=go.Layout(title= {
+                                   'text':  'Age',
+                                     'x': 0.49,
+                                     'y': 0.70
+
+                                 }, height=300, xaxis=dict( title='Age groups'), yaxis=dict( title='Number of patients'))))
+                ]),
+           html.Div(className='Save_Load', children=[
                 html.Button(id='save', className='Save', children=['Save']),
-                html.Button(id='load', className='Load', children='Load')
+               html.Button(id='load', className='Load', children='Load')
             ])
-        ], style={'font-size': '20px', }
+       ], style={'font-size': '20px', }
                   ),
         dcc.Tab(className='TabDia', label='Diagram', children=[
             html.Div(className='Dia', children=[
@@ -294,7 +299,7 @@ html.Div(className="drop",
                                                       values=['on']),
 
                                                   ]),
-            html.Div(className='Save_Load', children=[
+          html.Div(className='Save_Load', children=[
                 html.Button(id='save2', className='Save', children='Save'),
                 html.Button(id='load2', className='Load', children='Load')
             ])
