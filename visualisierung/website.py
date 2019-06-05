@@ -117,7 +117,7 @@ app.layout = html.Div([
                      children=html.Div(
                          children=Sunburst(id='sunburst', data=create_data_from_node([]), height=800, width=800,
                                            selectedPath=[]),
-                         style={'position': 'absolute', 'margin-top': '100px'}), ),
+                         style={'position': 'absolute', 'margin-top': '100px', 'margin-left' : '35px'}), ),
 
             html.Div(className='path', id='output'),
 
