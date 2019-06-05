@@ -1,4 +1,4 @@
-from logik import knoten_mit_wert as kn
+
 from logik import abfragen as ab
 from logik import verarbeitungsschicht as bl
 

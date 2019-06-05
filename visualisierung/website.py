@@ -2,90 +2,15 @@ import dash
 import dash_html_components as html
 import dash_core_components as dcc
 from dash_sunburst import Sunburst
-import tree_dictionary_import_export as tie
-from logik import db_abfragen as log
-from logik import age
 from datenhaltung import connection as connect
 import plotly.graph_objs as go
 from dash.dependencies import Input, Output
-from logik import Kohortenabfrage as kh
-import pandas as pd
+from logik import kohortenabfrage as kh
 
-#dnd
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 connection = connect.create_connection()
-baum1 = tie.treedictionary_aus_pickle_importieren('baum_mit_var_text')
-df = log.all_patients()
-
-
-
-wurzel=baum1.knotenliste_mit_baum[0][0]
-
-def create_data_from_node(path):
-
-    if (path==[]) :
-        data = {
-            'name' : wurzel.text,
-            'children' : [{
-                'name' : i.text,
-                'size' : i.size,
-               # 'children':[{
-                #   'name' : j.text,
-                #   'size' : j.size
-              #  }for j in i.children] #Dieser Bereich könnte einen weiteren äußeren Ring hinzufürgen
-            }for i in wurzel.children]
-        }
-
-    else :
-        index=0
-        #print('Angeklickt' +str(path[-1]))
-        #print(len(path))
-        while baum1.knotenliste_mit_baum[len(path)][index].text != path[-1]:
-        #    print(baum.knotenliste_mit_baum[len(path)][index].text)
-
-            index+=1;
-        zwischenwurzel=baum1.knotenliste_mit_baum[len(path)][index]
-
-
-        if not zwischenwurzel.children:
-
-            data = {
-                'name' : zwischenwurzel.text,
-                'size' : zwischenwurzel.size
-
-            }
-
-        else:
-            data = {
-                'name' : zwischenwurzel.text,
-                'children' : [{
-                    'name' : i.text,
-                    'size' : i.size,
-                   # 'children': [{
-                    #   'name': j.text,
-                    #    'size': j.size
-                   # }for j in i.children]#Dieser Bereich könnte eine zweiten äußeren Ring realisieren
-
-                }for i in zwischenwurzel.children]
-            }
-
-
-    for name in reversed(path[:-1]):
-        data = {
-            'name': name,
-            'children': [data]
-        }
-    if len(path):
-
-        data = {
-            'name': wurzel.text,
-            'children': [data]
-        }
-
-    return data
-
 
 
 app = dash.Dash('__name__',
@@ -122,8 +47,8 @@ html.Div(className="drop",
             # ], style={'textAlign': 'center'}),
 
             html.Div(className='Sunburst',
-                     children=html.Div(children=Sunburst(id='sunburst', data=create_data_from_node([]), height=650, width=600, selectedPath =[]),
-                                       style={'position': 'absolute', 'top': '175px', 'left': '670px'}), ),
+                     children=html.Div(children=Sunburst(id='sunburst', data=create_data_from_node([]), height=800, width=800, selectedPath =[]),
+                                       style={'position': 'absolute', 'margin-top': '100px'}), ),
 
             html.Div (className='path',id='output'),
 
