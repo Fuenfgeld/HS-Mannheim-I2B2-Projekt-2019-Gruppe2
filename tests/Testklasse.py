@@ -1,13 +1,274 @@
 from unittest import TestCase
 import psycopg2 as psy
+import Querystack as qs
 import pandas as pd
 import Verarbeitungsschicht as bl
-import Knotenliste as kl
+import KnotenListe as kl
 import Abfragen as ab
+import Kohortenabfrage as kab
+import pandas as pd
+import Verarbeitungsschicht as bl
 
 con = bl.connection_zu_datenbank_aufbauen()
 
+s = qs.Querystack()
+def test_stack_init():
+    s.size()==0
 
+def test_push1_size():
+        item = 5
+        s.push(item)
+        s.size == 5
+
+def test_push2_size():
+            s.push(5)
+            s.push(6)
+            s.size() == 2
+
+def test_push2_pop1_size():
+            s.push(5)
+            s.push(6)
+            s.pop()
+            s.size == 1
+
+def test_push2_pop1_value():
+            s.push(8)
+            s.push(9)
+            s.pop() == 9
+
+def test_push2_pop2_size():
+        s.push("Glob")
+        s.push("Blob")
+        s.pop()
+        s.pop()
+        s.size == 0
+
+def test_push2_pop2_value():
+        s.push("Glob")
+        s.push("Blob")
+        s.pop()
+        s.pop == "Glob"
+
+def test_peek_push1():
+        s.push(88)
+        s.peek == 88
+
+def test_peek_push3_pop1():
+        s.push(7)
+        s.push(889)
+        s.push(3)
+        s.pop()
+        s.peek == 889
+
+def test_pop_empty():
+        s.pop() == None
+
+def test_peek_empty():
+        s.peek() == None
+
+connection = bl.connection_zu_datenbank_aufbauen()
+
+dfsichereHauptdiagnoseAndOR = pd.read_sql_query(
+    "select distinct i2b2demodata.patient_dimension.patient_num,i2b2demodata.patient_dimension.sex_cd,i2b2demodata.patient_dimension.age_in_years_num,i2b2demodata.patient_dimension.language_cd,i2b2demodata.patient_dimension.race_cd from (select concept.concept_path, concept.concept_cd, i2b2demodata.observation_fact.patient_num from (select i2b2demodata.concept_dimension.concept_path, i2b2demodata.concept_dimension.concept_cd from i2b2demodata.concept_dimension where (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(A00-B99) Cert~ugmm%' escape'')) concept join i2b2demodata.observation_fact       on concept.concept_cd = i2b2demodata.observation_fact.concept_cd join i2b2demodata.patient_dimension on i2b2demodata.patient_dimension.patient_num = i2b2demodata.observation_fact.patient_num) k0 join (select concept.concept_path, concept.concept_cd, i2b2demodata.observation_fact.patient_num from (select i2b2demodata.concept_dimension.concept_path, i2b2demodata.concept_dimension.concept_cd from i2b2demodata.concept_dimension where (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(I00-I99) Dise~3w8h%' escape '') OR (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(Q00-Q99) Cong~t96i%' escape '')) concept join i2b2demodata.observation_fact on concept.concept_cd = i2b2demodata.observation_fact.concept_cd join i2b2demodata.patient_dimension on i2b2demodata.patient_dimension.patient_num = i2b2demodata.observation_fact.patient_num) k1 on k0.patient_num = k1.patient_num join i2b2demodata.patient_dimension on k0.patient_num = i2b2demodata.patient_dimension.patient_num",
+    con=connection)
+dfsichereNebendiagnoseAndOR = pd.read_sql_query(
+    "select nebendia.name_char as diagnose, count(distinct i2b2demodata.patient_dimension.patient_num) as anzahl, TRUNC((count(distinct i2b2demodata.patient_dimension.patient_num)*1.0)/46 * 100 , 2) as prozent from (select concept.concept_path,concept.concept_cd, i2b2demodata.observation_fact.patient_num from (select i2b2demodata.concept_dimension.concept_path, i2b2demodata.concept_dimension.concept_cd from i2b2demodata.concept_dimension where (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(A00-B99) Cert~ugmm%' escape '') ) concept join i2b2demodata.observation_fact on concept.concept_cd = i2b2demodata.observation_fact.concept_cd join i2b2demodata.patient_dimension on i2b2demodata.patient_dimension.patient_num = i2b2demodata.observation_fact.patient_num) k0 join (select concept.concept_path,concept.concept_cd, i2b2demodata.observation_fact.patient_num from(select i2b2demodata.concept_dimension.concept_path, i2b2demodata.concept_dimension.concept_cd from i2b2demodata.concept_dimension where (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(I00-I99) Dise~3w8h%' escape '') OR (i2b2demodata.concept_dimension.concept_path like   '%\Diagnoses\(Q00-Q99) Cong~t96i%' escape '') ) concept join i2b2demodata.observation_fact on concept.concept_cd = i2b2demodata.observation_fact.concept_cd join i2b2demodata.patient_dimension on i2b2demodata.patient_dimension.patient_num = i2b2demodata.observation_fact.patient_num) k1 on k0.patient_num = k1.patient_num join i2b2demodata.patient_dimension on k0.patient_num = i2b2demodata.patient_dimension.patient_num join (select i2b2demodata.observation_fact.patient_num, i2b2demodata.concept_dimension.concept_cd,i2b2demodata.concept_dimension.name_char from i2b2demodata.observation_fact join i2b2demodata.concept_dimension on i2b2demodata.observation_fact.concept_cd=i2b2demodata.concept_dimension.concept_cd) nebendia on (nebendia.patient_num =k0.patient_num) where (nebendia.concept_cd like 'ICD%') AND (nebendia.concept_cd != k0.concept_cd) AND (nebendia.concept_cd != k1.concept_cd) group by nebendia.name_char order by Anzahl desc limit 10",
+    con=connection)
+SichereGrößeAndOR = len(dfsichereHauptdiagnoseAndOR)
+SicheresAlterAndOR = dfsichereHauptdiagnoseAndOR['age_in_years_num']
+SicheresGeschlechtAndOR = dfsichereHauptdiagnoseAndOR['sex_cd']
+SichereSpracheAndOR = dfsichereHauptdiagnoseAndOR['language_cd']
+SichereRasseAndOR = dfsichereHauptdiagnoseAndOR['race_cd']
+
+dfsichereHauptdiagnoseAndAnd = pd.read_sql_query(
+    "select distinct i2b2demodata.patient_dimension.patient_num, i2b2demodata.patient_dimension.sex_cd, i2b2demodata.patient_dimension.age_in_years_num, i2b2demodata.patient_dimension.language_cd, i2b2demodata.patient_dimension.race_cd from (select concept.concept_path,concept.concept_cd, i2b2demodata.observation_fact.patient_num from (select i2b2demodata.concept_dimension.concept_path, i2b2demodata.concept_dimension.concept_cd from i2b2demodata.concept_dimension where (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(A00-B99) Cert~ugmm%' escape '') ) concept join i2b2demodata.observation_fact on concept.concept_cd = i2b2demodata.observation_fact.concept_cd join i2b2demodata.patient_dimension on i2b2demodata.patient_dimension.patient_num = i2b2demodata.observation_fact.patient_num) k0 join (select concept.concept_path,concept.concept_cd, i2b2demodata.observation_fact.patient_num from(select i2b2demodata.concept_dimension.concept_path, i2b2demodata.concept_dimension.concept_cd from i2b2demodata.concept_dimension where (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(I00-I99) Dise~3w8h%' escape '') ) concept join i2b2demodata.observation_fact on concept.concept_cd = i2b2demodata.observation_fact.concept_cd join i2b2demodata.patient_dimension on i2b2demodata.patient_dimension.patient_num = i2b2demodata.observation_fact.patient_num) k1 on k0.patient_num = k1.patient_num join (select concept.concept_path,concept.concept_cd, i2b2demodata.observation_fact.patient_num from(select i2b2demodata.concept_dimension.concept_path, i2b2demodata.concept_dimension.concept_cd from i2b2demodata.concept_dimension where (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(Q00-Q99) Cong~t96i%' escape '') ) concept join i2b2demodata.observation_fact on concept.concept_cd = i2b2demodata.observation_fact.concept_cd join i2b2demodata.patient_dimension on i2b2demodata.patient_dimension.patient_num = i2b2demodata.observation_fact.patient_num) k2 on k1.patient_num = k2.patient_num join i2b2demodata.patient_dimension on k0.patient_num = i2b2demodata.patient_dimension.patient_num",
+    con=connection)
+dfSichereNebendiagnoseAndAnd = pd.read_sql_query(
+    "select nebendia.name_char as diagnose, count(distinct i2b2demodata.patient_dimension.patient_num) as anzahl, TRUNC((count(distinct i2b2demodata.patient_dimension.patient_num)*1.0)/4 * 100 , 2) as prozent from (select concept.concept_path,concept.concept_cd, i2b2demodata.observation_fact.patient_num from (select i2b2demodata.concept_dimension.concept_path, i2b2demodata.concept_dimension.concept_cd from i2b2demodata.concept_dimension where (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(A00-B99) Cert~ugmm%' escape '') ) concept join i2b2demodata.observation_fact on concept.concept_cd = i2b2demodata.observation_fact.concept_cd join i2b2demodata.patient_dimension on i2b2demodata.patient_dimension.patient_num = i2b2demodata.observation_fact.patient_num) k0 join (select concept.concept_path,concept.concept_cd, i2b2demodata.observation_fact.patient_num from(select i2b2demodata.concept_dimension.concept_path, i2b2demodata.concept_dimension.concept_cd from i2b2demodata.concept_dimension where (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(I00-I99) Dise~3w8h%' escape '') ) concept join i2b2demodata.observation_fact on concept.concept_cd = i2b2demodata.observation_fact.concept_cd join i2b2demodata.patient_dimension on i2b2demodata.patient_dimension.patient_num = i2b2demodata.observation_fact.patient_num) k1 on k0.patient_num = k1.patient_num join (select concept.concept_path,concept.concept_cd, i2b2demodata.observation_fact.patient_num from(select i2b2demodata.concept_dimension.concept_path, i2b2demodata.concept_dimension.concept_cd from i2b2demodata.concept_dimension where (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(Q00-Q99) Cong~t96i%' escape '') ) concept join i2b2demodata.observation_fact on concept.concept_cd = i2b2demodata.observation_fact.concept_cd join i2b2demodata.patient_dimension on i2b2demodata.patient_dimension.patient_num = i2b2demodata.observation_fact.patient_num) k2 on k1.patient_num = k2.patient_num join i2b2demodata.patient_dimension on k0.patient_num = i2b2demodata.patient_dimension.patient_num join (select i2b2demodata.observation_fact.patient_num, i2b2demodata.concept_dimension.concept_cd,i2b2demodata.concept_dimension.name_char from i2b2demodata.observation_fact join i2b2demodata.concept_dimension on i2b2demodata.observation_fact.concept_cd=i2b2demodata.concept_dimension.concept_cd) nebendia on (nebendia.patient_num =k0.patient_num) where (nebendia.concept_cd like 'ICD%') AND (nebendia.concept_cd != k0.concept_cd) AND (nebendia.concept_cd != k1.concept_cd) AND (nebendia.concept_cd != k2.concept_cd) group by nebendia.name_char order by Anzahl desc limit 10",
+    con=connection)
+SichereGrößeAndAnd = len(dfsichereHauptdiagnoseAndAnd)
+SicheresAlterAndAnd = dfsichereHauptdiagnoseAndAnd['age_in_years_num']
+SicheresGeschlechtAndAnd = dfsichereHauptdiagnoseAndAnd['sex_cd']
+SichereSpracheAndAnd = dfsichereHauptdiagnoseAndAnd['language_cd']
+SichereRasseAndAnd = dfsichereHauptdiagnoseAndAnd['race_cd']
+
+dfsichereHauptdiagnoseOrAnd = pd.read_sql_query(
+    "select distinct i2b2demodata.patient_dimension.patient_num, i2b2demodata.patient_dimension.sex_cd, i2b2demodata.patient_dimension.age_in_years_num, i2b2demodata.patient_dimension.language_cd, i2b2demodata.patient_dimension.race_cd from (select concept.concept_path,concept.concept_cd, i2b2demodata.observation_fact.patient_num from (select i2b2demodata.concept_dimension.concept_path, i2b2demodata.concept_dimension.concept_cd from i2b2demodata.concept_dimension where (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(A00-B99) Cert~ugmm%' escape '') OR (i2b2demodata.concept_dimension.concept_path like  '%\Diagnoses\(I00-I99) Dise~3w8h%' escape '') ) concept join i2b2demodata.observation_fact on concept.concept_cd = i2b2demodata.observation_fact.concept_cd join i2b2demodata.patient_dimension on i2b2demodata.patient_dimension.patient_num = i2b2demodata.observation_fact.patient_num) k0 join (select concept.concept_path,concept.concept_cd, i2b2demodata.observation_fact.patient_num from(select i2b2demodata.concept_dimension.concept_path, i2b2demodata.concept_dimension.concept_cd from i2b2demodata.concept_dimension where (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(Q00-Q99) Cong~t96i%' escape '') ) concept join i2b2demodata.observation_fact on concept.concept_cd = i2b2demodata.observation_fact.concept_cd join i2b2demodata.patient_dimension on i2b2demodata.patient_dimension.patient_num = i2b2demodata.observation_fact.patient_num) k1 on k0.patient_num = k1.patient_num join i2b2demodata.patient_dimension on k0.patient_num = i2b2demodata.patient_dimension.patient_num",
+    con=connection)
+dfSichereNebendiagnoseOrAnd = pd.read_sql_query(
+    "select nebendia.name_char as diagnose, count(distinct i2b2demodata.patient_dimension.patient_num) as anzahl, TRUNC((count(distinct i2b2demodata.patient_dimension.patient_num)*1.0)/20 * 100 , 2) as prozent from (select concept.concept_path,concept.concept_cd, i2b2demodata.observation_fact.patient_num from (select i2b2demodata.concept_dimension.concept_path, i2b2demodata.concept_dimension.concept_cd from i2b2demodata.concept_dimension where (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(A00-B99) Cert~ugmm%' escape '') OR (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(I00-I99) Dise~3w8h%' escape '') ) concept join i2b2demodata.observation_fact on concept.concept_cd = i2b2demodata.observation_fact.concept_cd join i2b2demodata.patient_dimension on i2b2demodata.patient_dimension.patient_num = i2b2demodata.observation_fact.patient_num) k0 join (select concept.concept_path,concept.concept_cd, i2b2demodata.observation_fact.patient_num from(select i2b2demodata.concept_dimension.concept_path, i2b2demodata.concept_dimension.concept_cd from i2b2demodata.concept_dimension where (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(Q00-Q99) Cong~t96i%' escape '') ) concept join i2b2demodata.observation_fact on concept.concept_cd = i2b2demodata.observation_fact.concept_cd join i2b2demodata.patient_dimension on i2b2demodata.patient_dimension.patient_num = i2b2demodata.observation_fact.patient_num) k1 on k0.patient_num = k1.patient_num join i2b2demodata.patient_dimension on k0.patient_num = i2b2demodata.patient_dimension.patient_num join (select i2b2demodata.observation_fact.patient_num, i2b2demodata.concept_dimension.concept_cd,i2b2demodata.concept_dimension.name_char from i2b2demodata.observation_fact join i2b2demodata.concept_dimension on i2b2demodata.observation_fact.concept_cd=i2b2demodata.concept_dimension.concept_cd) nebendia on (nebendia.patient_num =k0.patient_num) where (nebendia.concept_cd like 'ICD%') AND (nebendia.concept_cd != k0.concept_cd) AND (nebendia.concept_cd != k1.concept_cd) group by nebendia.name_char order by Anzahl desc limit 10",
+    con=connection)
+SichereGrößeOrAnd = len(dfsichereHauptdiagnoseOrAnd)
+SicheresAlterOrAnd = dfsichereHauptdiagnoseOrAnd['age_in_years_num']
+SicheresGeschlechtOrAnd = dfsichereHauptdiagnoseOrAnd['sex_cd']
+SichereSpracheOrAnd = dfsichereHauptdiagnoseOrAnd['language_cd']
+SichereRasseOrAnd = dfsichereHauptdiagnoseOrAnd['race_cd']
+
+dfsichereHauptdiagnoseOrOr = pd.read_sql_query(
+    "select distinct i2b2demodata.patient_dimension.patient_num, i2b2demodata.patient_dimension.sex_cd, i2b2demodata.patient_dimension.age_in_years_num, i2b2demodata.patient_dimension.language_cd, i2b2demodata.patient_dimension.race_cd from (select concept.concept_path,concept.concept_cd, i2b2demodata.observation_fact.patient_num from (select i2b2demodata.concept_dimension.concept_path, i2b2demodata.concept_dimension.concept_cd from i2b2demodata.concept_dimension where (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(A00-B99) Cert~ugmm%' escape '') OR (i2b2demodata.concept_dimension.concept_path like  '%\Diagnoses\(I00-I99) Dise~3w8h%' escape '') OR (i2b2demodata.concept_dimension.concept_path like  '%\Diagnoses\(Q00-Q99) Cong~t96i%' escape '') ) concept join i2b2demodata.observation_fact on concept.concept_cd = i2b2demodata.observation_fact.concept_cd join i2b2demodata.patient_dimension on i2b2demodata.patient_dimension.patient_num = i2b2demodata.observation_fact.patient_num) k0 join i2b2demodata.patient_dimension on k0.patient_num = i2b2demodata.patient_dimension.patient_num ",
+    con=connection)
+dfSichereNebendiagnoseOrOr = pd.read_sql_query(
+    "select nebendia.name_char as diagnose, count(distinct i2b2demodata.patient_dimension.patient_num) as anzahl, TRUNC((count(distinct i2b2demodata.patient_dimension.patient_num)*1.0)/122 * 100 , 2) as prozent from (select concept.concept_path,concept.concept_cd, i2b2demodata.observation_fact.patient_num from (select i2b2demodata.concept_dimension.concept_path, i2b2demodata.concept_dimension.concept_cd from i2b2demodata.concept_dimension where (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(A00-B99) Cert~ugmm%' escape '') OR (i2b2demodata.concept_dimension.concept_path like   '%\Diagnoses\(I00-I99) Dise~3w8h%' escape '') OR (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(Q00-Q99) Cong~t96i%' escape '') ) concept join i2b2demodata.observation_fact  on concept.concept_cd = i2b2demodata.observation_fact.concept_cd join i2b2demodata.patient_dimension on i2b2demodata.patient_dimension.patient_num = i2b2demodata.observation_fact.patient_num) k0 join i2b2demodata.patient_dimension on k0.patient_num = i2b2demodata.patient_dimension.patient_num join (select i2b2demodata.observation_fact.patient_num, i2b2demodata.concept_dimension.concept_cd,i2b2demodata.concept_dimension.name_char from i2b2demodata.observation_fact join i2b2demodata.concept_dimension on i2b2demodata.observation_fact.concept_cd=i2b2demodata.concept_dimension.concept_cd) nebendia on (nebendia.patient_num =k0.patient_num) where (nebendia.concept_cd like 'ICD%') AND (nebendia.concept_cd != k0.concept_cd) group by nebendia.name_char order by Anzahl desc limit 10",
+    con=connection)
+SichereGrößeOrOr = len(dfsichereHauptdiagnoseOrOr)
+SicheresAlterOrOr = dfsichereHauptdiagnoseOrOr['age_in_years_num']
+SicheresGeschlechtOrOr = dfsichereHauptdiagnoseOrOr['sex_cd']
+SichereSpracheOrOr = dfsichereHauptdiagnoseOrOr['language_cd']
+SichereRasseOrOr = dfsichereHauptdiagnoseOrOr['race_cd']
+
+dfsichereHauptdiagnoseAnd=pd.read_sql_query("select distinct i2b2demodata.patient_dimension.patient_num, i2b2demodata.patient_dimension.sex_cd, i2b2demodata.patient_dimension.age_in_years_num, i2b2demodata.patient_dimension.language_cd, i2b2demodata.patient_dimension.race_cd from (select concept.concept_path,concept.concept_cd, i2b2demodata.observation_fact.patient_num from (select i2b2demodata.concept_dimension.concept_path, i2b2demodata.concept_dimension.concept_cd from i2b2demodata.concept_dimension where (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(A00-B99) Cert~ugmm%' escape '') ) concept join i2b2demodata.observation_fact on concept.concept_cd = i2b2demodata.observation_fact.concept_cd join i2b2demodata.patient_dimension on i2b2demodata.patient_dimension.patient_num = i2b2demodata.observation_fact.patient_num) k0 join (select concept.concept_path,concept.concept_cd, i2b2demodata.observation_fact.patient_num from(select i2b2demodata.concept_dimension.concept_path, i2b2demodata.concept_dimension.concept_cd from i2b2demodata.concept_dimension where (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(I00-I99) Dise~3w8h%' escape '') ) concept join i2b2demodata.observation_fact on concept.concept_cd = i2b2demodata.observation_fact.concept_cd join i2b2demodata.patient_dimension on i2b2demodata.patient_dimension.patient_num = i2b2demodata.observation_fact.patient_num) k1 on k0.patient_num = k1.patient_num join i2b2demodata.patient_dimension on k0.patient_num = i2b2demodata.patient_dimension.patient_num",con=connection)
+dfSichereNebendiagnoseAnd=pd.read_sql_query("select nebendia.name_char as diagnose, count(distinct i2b2demodata.patient_dimension.patient_num) as anzahl, TRUNC((count(distinct i2b2demodata.patient_dimension.patient_num)*1.0)/34 * 100 , 2) as prozent from (select concept.concept_path,concept.concept_cd, i2b2demodata.observation_fact.patient_num from (select i2b2demodata.concept_dimension.concept_path, i2b2demodata.concept_dimension.concept_cd from i2b2demodata.concept_dimension where (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(A00-B99) Cert~ugmm%' escape '') ) concept join i2b2demodata.observation_fact on concept.concept_cd = i2b2demodata.observation_fact.concept_cd join i2b2demodata.patient_dimension on i2b2demodata.patient_dimension.patient_num = i2b2demodata.observation_fact.patient_num) k0 join (select concept.concept_path,concept.concept_cd, i2b2demodata.observation_fact.patient_num from(select i2b2demodata.concept_dimension.concept_path, i2b2demodata.concept_dimension.concept_cd from i2b2demodata.concept_dimension where (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(I00-I99) Dise~3w8h%' escape '') ) concept join i2b2demodata.observation_fact on concept.concept_cd = i2b2demodata.observation_fact.concept_cd join i2b2demodata.patient_dimension on i2b2demodata.patient_dimension.patient_num = i2b2demodata.observation_fact.patient_num) k1 on k0.patient_num = k1.patient_num join i2b2demodata.patient_dimension on k0.patient_num = i2b2demodata.patient_dimension.patient_num join (select i2b2demodata.observation_fact.patient_num, i2b2demodata.concept_dimension.concept_cd,i2b2demodata.concept_dimension.name_char from i2b2demodata.observation_fact join i2b2demodata.concept_dimension on i2b2demodata.observation_fact.concept_cd=i2b2demodata.concept_dimension.concept_cd) nebendia on (nebendia.patient_num =k0.patient_num) where (nebendia.concept_cd like 'ICD%') AND (nebendia.concept_cd != k0.concept_cd) AND (nebendia.concept_cd != k1.concept_cd) group by nebendia.name_char order by Anzahl desc limit 10",con=connection)
+SichereGrößeAnd = len(dfsichereHauptdiagnoseAnd)
+SicheresAlterAnd = dfsichereHauptdiagnoseAnd['age_in_years_num']
+SicheresGeschlechtAnd = dfsichereHauptdiagnoseAnd['sex_cd']
+SichereSpracheAnd = dfsichereHauptdiagnoseAnd['language_cd']
+SichereRasseAnd = dfsichereHauptdiagnoseAnd['race_cd']
+
+dfsichereHauptdiagnoseOr=pd.read_sql_query("select distinct i2b2demodata.patient_dimension.patient_num, i2b2demodata.patient_dimension.sex_cd, i2b2demodata.patient_dimension.age_in_years_num, i2b2demodata.patient_dimension.language_cd, i2b2demodata.patient_dimension.race_cd from (select concept.concept_path,concept.concept_cd, i2b2demodata.observation_fact.patient_num from (select i2b2demodata.concept_dimension.concept_path, i2b2demodata.concept_dimension.concept_cd from i2b2demodata.concept_dimension where (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(A00-B99) Cert~ugmm%' escape '') OR (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(I00-I99) Dise~3w8h%' escape '') ) concept join i2b2demodata.observation_fact on concept.concept_cd = i2b2demodata.observation_fact.concept_cd join i2b2demodata.patient_dimension  on i2b2demodata.patient_dimension.patient_num = i2b2demodata.observation_fact.patient_num) k0 join i2b2demodata.patient_dimension on k0.patient_num = i2b2demodata.patient_dimension.patient_num",con=connection)
+dfSichereNebendiagnoseOr=pd.read_sql_query("select nebendia.name_char as diagnose, count(distinct i2b2demodata.patient_dimension.patient_num) as anzahl, TRUNC((count(distinct i2b2demodata.patient_dimension.patient_num)*1.0)/117 * 100 , 2) as prozent from (select concept.concept_path,concept.concept_cd, i2b2demodata.observation_fact.patient_num from (select i2b2demodata.concept_dimension.concept_path, i2b2demodata.concept_dimension.concept_cd from i2b2demodata.concept_dimension where (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(A00-B99) Cert~ugmm%' escape '') OR (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(I00-I99) Dise~3w8h%' escape '') ) concept join i2b2demodata.observation_fact on concept.concept_cd = i2b2demodata.observation_fact.concept_cd join i2b2demodata.patient_dimension on i2b2demodata.patient_dimension.patient_num = i2b2demodata.observation_fact.patient_num) k0 join i2b2demodata.patient_dimension on k0.patient_num = i2b2demodata.patient_dimension.patient_num join (select i2b2demodata.observation_fact.patient_num, i2b2demodata.concept_dimension.concept_cd,i2b2demodata.concept_dimension.name_char from i2b2demodata.observation_fact join i2b2demodata.concept_dimension on i2b2demodata.observation_fact.concept_cd=i2b2demodata.concept_dimension.concept_cd) nebendia on (nebendia.patient_num =k0.patient_num) where (nebendia.concept_cd like 'ICD%') AND (nebendia.concept_cd != k0.concept_cd) group by nebendia.name_char order by Anzahl desc limit 10",con=connection)
+SichereGrößeOr = len(dfsichereHauptdiagnoseOr)
+SicheresAlterOr = dfsichereHauptdiagnoseOr['age_in_years_num']
+SicheresGeschlechtOr = dfsichereHauptdiagnoseOr['sex_cd']
+SichereSpracheOr = dfsichereHauptdiagnoseOr['language_cd']
+SichereRasseOr = dfsichereHauptdiagnoseOr['race_cd']
+
+dfsichereHauptdiagnose=pd.read_sql_query("select distinct i2b2demodata.patient_dimension.patient_num, i2b2demodata.patient_dimension.sex_cd,i2b2demodata.patient_dimension.age_in_years_num, i2b2demodata.patient_dimension.language_cd, i2b2demodata.patient_dimension.race_cd from (select concept.concept_path,concept.concept_cd, i2b2demodata.observation_fact.patient_num from (select i2b2demodata.concept_dimension.concept_path, i2b2demodata.concept_dimension.concept_cd from i2b2demodata.concept_dimension where (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(A00-B99) Cert~ugmm%' escape '') ) concept join i2b2demodata.observation_fact on concept.concept_cd = i2b2demodata.observation_fact.concept_cd join i2b2demodata.patient_dimension on i2b2demodata.patient_dimension.patient_num = i2b2demodata.observation_fact.patient_num) k0 join i2b2demodata.patient_dimension on k0.patient_num = i2b2demodata.patient_dimension.patient_num ",con=connection)
+dfSichereNebendiagnose=pd.read_sql_query("select nebendia.name_char as diagnose, count(distinct i2b2demodata.patient_dimension.patient_num) as anzahl,TRUNC((count(distinct i2b2demodata.patient_dimension.patient_num)*1.0)/83 * 100 , 2) as prozent from (select concept.concept_path,concept.concept_cd, i2b2demodata.observation_fact.patient_num from (select i2b2demodata.concept_dimension.concept_path, i2b2demodata.concept_dimension.concept_cd from i2b2demodata.concept_dimension where (i2b2demodata.concept_dimension.concept_path like '%\Diagnoses\(A00-B99) Cert~ugmm%' escape '') ) concept join i2b2demodata.observation_fact on concept.concept_cd = i2b2demodata.observation_fact.concept_cd join i2b2demodata.patient_dimension on i2b2demodata.patient_dimension.patient_num = i2b2demodata.observation_fact.patient_num) k0 join i2b2demodata.patient_dimension on k0.patient_num = i2b2demodata.patient_dimension.patient_num join (select i2b2demodata.observation_fact.patient_num, i2b2demodata.concept_dimension.concept_cd,i2b2demodata.concept_dimension.name_char from i2b2demodata.observation_fact join i2b2demodata.concept_dimension on i2b2demodata.observation_fact.concept_cd=i2b2demodata.concept_dimension.concept_cd) nebendia on (nebendia.patient_num =k0.patient_num) where (nebendia.concept_cd like 'ICD%') AND (nebendia.concept_cd != k0.concept_cd) group by nebendia.name_char order by Anzahl desc limit 10",con=connection)
+SichereGröße = len(dfsichereHauptdiagnose)
+SicheresAlter = dfsichereHauptdiagnose['age_in_years_num']
+SicheresGeschlecht = dfsichereHauptdiagnose['sex_cd']
+SichereSprache = dfsichereHauptdiagnose['language_cd']
+SichereRasse = dfsichereHauptdiagnose['race_cd']
+def testKohortenabfrageDreiKriterienAndOR():
+    zutestendeAbfrage = kab.Kohortenabfrage(kriterien=["\Diagnoses\(A00-B99) Cert~ugmm",
+                                                       "\Diagnoses\(I00-I99) Dise~3w8h",
+                                                       "\Diagnoses\(Q00-Q99) Cong~t96i"],
+                                            verknüpfungen=['AND', 'or']
+                                            )
+    KlasseKohortengröße = zutestendeAbfrage.kohortengröße
+    KlasseAlterDF = zutestendeAbfrage.df_alter
+    KlasseGeschlechtDF = zutestendeAbfrage.df_geschlecht
+    KlasseSpracheDF = zutestendeAbfrage.df_sprache
+    KlasseRasseDF = zutestendeAbfrage.df_rasse
+    KlasseNebendiaDF = zutestendeAbfrage.df_nebendia
+    SichereGrößeAndOR == KlasseKohortengröße
+    SichereRasseAndOR == KlasseRasseDF
+    SichereSpracheAndOR == KlasseSpracheDF
+    SicheresGeschlechtAndOR == KlasseGeschlechtDF
+    SicheresAlterAndOR == KlasseAlterDF
+    dfsichereNebendiagnoseAndOR == KlasseNebendiaDF
+
+
+def testKohortenabfrageDreiKritierenAndAnd():
+    zutestendeAbfrage = kab.Kohortenabfrage(kriterien=["\Diagnoses\(A00-B99) Cert~ugmm",
+                                                       "\Diagnoses\(I00-I99) Dise~3w8h",
+                                                       "\Diagnoses\(Q00-Q99) Cong~t96i"],
+                                            verknüpfungen=['AND', 'AND']
+                                            )
+    KlasseKohortengröße = zutestendeAbfrage.kohortengröße
+    KlasseAlterDF = zutestendeAbfrage.df_alter
+    KlasseGeschlechtDF = zutestendeAbfrage.df_geschlecht
+    KlasseSpracheDF = zutestendeAbfrage.df_sprache
+    KlasseRasseDF = zutestendeAbfrage.df_rasse
+    SichereGrößeAndAnd == KlasseKohortengröße
+    SichereRasseAndAnd == KlasseRasseDF
+    SichereSpracheAndAnd == KlasseSpracheDF
+    SicheresGeschlechtAndAnd == KlasseGeschlechtDF
+    SicheresAlterAndAnd == KlasseAlterDF
+    dfSichereNebendiagnoseAndAnd == zutestendeAbfrage.df_nebendia
+
+
+def testKohortenabfrageDreiKritierenOrAnd():
+    zutestendeAbfrage = kab.Kohortenabfrage(kriterien=["\Diagnoses\(A00-B99) Cert~ugmm",
+                                                       "\Diagnoses\(I00-I99) Dise~3w8h",
+                                                       "\Diagnoses\(Q00-Q99) Cong~t96i"],
+                                            verknüpfungen=['OR', 'AND']
+                                            )
+    KlasseKohortengröße = zutestendeAbfrage.kohortengröße
+    KlasseAlterDF = zutestendeAbfrage.df_alter
+    KlasseGeschlechtDF = zutestendeAbfrage.df_geschlecht
+    KlasseSpracheDF = zutestendeAbfrage.df_sprache
+    KlasseRasseDF = zutestendeAbfrage.df_rasse
+    SichereGrößeOrAnd == KlasseKohortengröße
+    SichereRasseOrAnd == KlasseRasseDF
+    SichereSpracheOrAnd == KlasseSpracheDF
+    SicheresGeschlechtOrAnd == KlasseGeschlechtDF
+    SicheresAlterOrAnd == KlasseAlterDF
+    dfSichereNebendiagnoseOrAnd == zutestendeAbfrage.df_nebendia
+
+
+def testKohortenabfrageDreiKritierenOrOr():
+    zutestendeAbfrage = kab.Kohortenabfrage(kriterien=["\Diagnoses\(A00-B99) Cert~ugmm",
+                                                       "\Diagnoses\(I00-I99) Dise~3w8h",
+                                                       "\Diagnoses\(Q00-Q99) Cong~t96i"],
+                                            verknüpfungen=['OR', 'or']
+                                            )
+    KlasseKohortengröße = zutestendeAbfrage.kohortengröße
+    KlasseAlterDF = zutestendeAbfrage.df_alter
+    KlasseGeschlechtDF = zutestendeAbfrage.df_geschlecht
+    KlasseSpracheDF = zutestendeAbfrage.df_sprache
+    KlasseRasseDF = zutestendeAbfrage.df_rasse
+    KlasseNebendiaDF = zutestendeAbfrage.df_nebendia
+    SichereGrößeOrOr == KlasseKohortengröße
+    SichereRasseOrOr == KlasseRasseDF
+    SichereSpracheOrOr == KlasseSpracheDF
+    SicheresGeschlechtOrOr == KlasseGeschlechtDF
+    SicheresAlterOrOr == KlasseAlterDF
+    dfSichereNebendiagnoseOrOr == KlasseNebendiaDF
+
+
+def testKohortenabfrageZweiKritierenAnd():
+    zutestendeAbfrage = kab.Kohortenabfrage(kriterien=["\Diagnoses\(A00-B99) Cert~ugmm",
+                                                       "\Diagnoses\(I00-I99) Dise~3w8h"],
+                                            verknüpfungen=['and']
+                                            )
+    KlasseKohortengröße = zutestendeAbfrage.kohortengröße
+    KlasseAlterDF = zutestendeAbfrage.df_alter
+    KlasseGeschlechtDF = zutestendeAbfrage.df_geschlecht
+    KlasseSpracheDF = zutestendeAbfrage.df_sprache
+    KlasseRasseDF = zutestendeAbfrage.df_rasse
+    KlasseNebendiaDF = zutestendeAbfrage.df_nebendia
+    SichereGrößeAnd == KlasseKohortengröße
+    SichereRasseAnd == KlasseRasseDF
+    SichereSpracheAnd == KlasseSpracheDF
+    SicheresGeschlechtAnd == KlasseGeschlechtDF
+    SicheresAlterAnd == KlasseAlterDF
+    dfSichereNebendiagnoseAnd == KlasseNebendiaDF
+
+
+def testKohortenabfrageZweiKritierenAnd():
+    zutestendeAbfrage = kab.Kohortenabfrage(kriterien=["\Diagnoses\(A00-B99) Cert~ugmm",
+                                                       "\Diagnoses\(I00-I99) Dise~3w8h"],
+                                            verknüpfungen=['or']
+                                            )
+    KlasseKohortengröße = zutestendeAbfrage.kohortengröße
+    KlasseAlterDF = zutestendeAbfrage.df_alter
+    KlasseGeschlechtDF = zutestendeAbfrage.df_geschlecht
+    KlasseSpracheDF = zutestendeAbfrage.df_sprache
+    KlasseRasseDF = zutestendeAbfrage.df_rasse
+    SichereGrößeOr == KlasseKohortengröße
+    SichereRasseOr == KlasseRasseDF
+    SichereSpracheOr == KlasseSpracheDF
+    SicheresGeschlechtOr == KlasseGeschlechtDF
+    SicheresAlterOr == KlasseAlterDF
+    dfSichereNebendiagnoseOr == zutestendeAbfrage.df_nebendia
+
+def testKohortenabfrageEinKritieren():
+    zutestendeAbfrage = kab.Kohortenabfrage(kriterien=["\Diagnoses\(A00-B99) Cert~ugmm"],
+                                            verknüpfungen=[]
+                                            )
+    KlasseKohortengröße = zutestendeAbfrage.kohortengröße
+    KlasseAlterDF = zutestendeAbfrage.df_alter
+    KlasseGeschlechtDF = zutestendeAbfrage.df_geschlecht
+    KlasseSpracheDF = zutestendeAbfrage.df_sprache
+    KlasseRasseDF = zutestendeAbfrage.df_rasse
+    KlasseNebendiaDF = zutestendeAbfrage.df_nebendia
+    SichereGröße == KlasseKohortengröße
+    SichereRasse == KlasseRasseDF
+    SichereSprache == KlasseSpracheDF
+    SicheresGeschlecht == KlasseGeschlechtDF
+    SicheresAlter == KlasseAlterDF
+    dfSichereNebendiagnose == KlasseNebendiaDF
 
 
 # Abfragen
@@ -281,13 +542,13 @@ def test_knotenliste():
 
 
 class TestAus_knotenliste_baum_erstellen(TestCase):
-    def test_aus_knotenliste_baum_erstellen(self):
-        from Knotenliste import knotenliste_gesamt_erstellen, aus_knotenliste_baum_erstellen
+    def  test_aus_knotenliste_baum_erstellen(self):
+        from KnotenListe import knotenliste_gesamt_erstellen, aus_knotenliste_baum_erstellen
         knoten=knotenliste_gesamt_erstellen()
-        baum=aus_knotenliste_baum_erstellen()
+        baum=aus_knotenliste_baum_erstellen(knoten)
         baum==knotenliste_gesamt_erstellen()
     def knotenlistegesamterstellen(self):
-        from Knotenliste import knotenliste_für_eine_ebene_erstellen
+        from KnotenListe import knotenliste_für_eine_ebene_erstellen
         con=bl.connection_zu_datenbank_aufbauen()
         knotenliste_gesamt=[]
 
@@ -303,27 +564,51 @@ class TestKnotenliste_für_eine_ebene_erstellen(TestCase):
                       'Pfad': ['Pfad1', 'Pfad2'],
                       'Symbol': ['Symbol1', 'Symbol2'], 'Size': [0, 1]}
         df_ebene = pd.DataFrame(data=dict_ebene)
-
-        # print(df_ebene)
-
+        print(df_ebene)
         from KnotenMitWert import node_with_value
         knotenliste = [
             node_with_value(name='Knoten1', fullname='Fullname1', pfad='Pfad1', size=0),
             node_with_value(name='Knoten2', fullname='Fullname2', pfad='Pfad2', size=1)]
-        from Knotenliste import knotenliste_für_eine_ebene_erstellen
-        # self.assertEqual(knotenliste_für_eine_ebene_erstellen(dataframe_ebene), knotenliste)
-        self.assertEqual(knotenliste_für_eine_ebene_erstellen(df_ebene), knotenliste)
+        from KnotenListe import knotenliste_für_eine_ebene_erstellen
+        knotenliste_für_eine_ebene_erstellen(df_ebene)==knotenliste
 
 
 class TestKnotenliste_gesamt_erstellen(TestCase):
     def test_knotenliste_gesamt_erstellen(self):
 
-        from Knotenliste import knotenliste_gesamt_erstellen
-        from treedictionary_in_pickle_exportieren import treedictionary_aus_pickle_importieren
+        from KnotenListe import knotenliste_gesamt_erstellen
+        from tree_dictionary_import_export import treedictionary_aus_pickle_importieren
         baum=treedictionary_aus_pickle_importieren('baum_mit_var_text')
         baum_Methode=knotenliste_gesamt_erstellen()
-        baum.equals(baum_Methode)
+        baum==baum_Methode
+
+class TestQueryStackSingleton(TestCase):
+
+    def testQueryStackerstInstanzDannKonstruktor(self):
+        import Querystack
+        import pytest
+        with pytest.raises(Exception):
+            qIK = Querystack.instance()
+            print(qIK)
+            qIK2 = Querystack()
+            print(qIK2)
+
+    def testQueryStackerstInstanzDannKonstruktor(self):
+        import Querystack
+        import pytest
+        with pytest.raises(Exception):
+            q1K = Querystack()
+            print(q1K)
+            q2K = Querystack()
+            print(q2K)
+
+    def testQueryStackerstInstanzDannKonstruktor(self):
+        import Querystack
+        q1 = Querystack.Querystack.instance()
+        print(q1)
+        q2 = Querystack.Querystack.instance()
+        print(q2)
+        q1 == q2
 
 
-
-
+con.close
