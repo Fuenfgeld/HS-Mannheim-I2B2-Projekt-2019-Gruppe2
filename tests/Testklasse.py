@@ -15,88 +15,89 @@ class TestDataframe_ebene_finden(TestCase):
 
     def test_dataframe_ebene_finden0(self):
 
-        from verarbeitungsschicht import connection_zu_datenbank_aufbauen
+        from logik.Verarbeitungsschicht_neu import connection_zu_datenbank_aufbauen
 
     df = pd.read_sql_query("SELECT c_symbol, c_fullname, c_path, c_name  from i2b2metadata.icd10_icd9 where c_tablename='concept_dimension' and c_hlevel=0", con=con)
-    from Abfragen import dataframe_ebene_finden
+    from logik.abfragen import dataframe_ebene_finden
     df_2 = dataframe_ebene_finden(0,con)
     df.equals(df_2)
 
     def test_dataframe_ebene_finden1(self):
 
-        from Verarbeitungsschicht import connection_zu_datenbank_aufbauen
+        from logik.Verarbeitungsschicht_neu import connection_zu_datenbank_aufbauen
 
     df = pd.read_sql_query("SELECT c_symbol, c_fullname, c_path, c_name  from i2b2metadata.icd10_icd9 where c_tablename='concept_dimension' and c_hlevel=1", con=con)
-    from Abfragen import dataframe_ebene_finden
+    from logik.abfragen import dataframe_ebene_finden
     df_2 = dataframe_ebene_finden(1,con)
     df.equals(df_2)
 
     def test_dataframe_ebene_finden2(self):
 
-        from Verarbeitungsschicht import connection_zu_datenbank_aufbauen
+        from logik.Verarbeitungsschicht_neu import connection_zu_datenbank_aufbauen
 
     df = pd.read_sql_query("SELECT c_symbol, c_fullname, c_path, c_name  from i2b2metadata.icd10_icd9 where c_tablename='concept_dimension' and c_hlevel=2", con=con)
-    from Abfragen import dataframe_ebene_finden
+    from logik.abfragen import dataframe_ebene_finden
     df_2 = dataframe_ebene_finden(2,con)
     df.equals(df_2)
 
     def test_dataframe_ebene_finden3(self):
 
-        from Verarbeitungsschicht import connection_zu_datenbank_aufbauen
+        from logik.Verarbeitungsschicht_neu import connection_zu_datenbank_aufbauen
 
     df = pd.read_sql_query("SELECT c_symbol, c_fullname, c_path, c_name  from i2b2metadata.icd10_icd9 where c_tablename='concept_dimension' and c_hlevel=3", con=con)
-    from Abfragen import dataframe_ebene_finden
+    from logik.abfragen import dataframe_ebene_finden
     df_2 = dataframe_ebene_finden(3,con)
     df.equals(df_2)
 
     def test_dataframe_ebene_finden4(self):
 
-        from Verarbeitungsschicht import connection_zu_datenbank_aufbauen
+        from logik.Verarbeitungsschicht_neu import connection_zu_datenbank_aufbauen
 
     df = pd.read_sql_query("SELECT c_symbol, c_fullname, c_path, c_name  from i2b2metadata.icd10_icd9 where c_tablename='concept_dimension' and c_hlevel=4", con=con)
-    from Abfragen import dataframe_ebene_finden
+    from logik.abfragen import dataframe_ebene_finden
     df_2 = dataframe_ebene_finden(4,con)
     df.equals(df_2)
 
     def test_dataframe_ebene_finden5(self):
 
-        from Verarbeitungsschicht import connection_zu_datenbank_aufbauen
+        from logik.Verarbeitungsschicht_neu import connection_zu_datenbank_aufbauen
+
 
     df = pd.read_sql_query("SELECT c_symbol, c_fullname, c_path, c_name  from i2b2metadata.icd10_icd9 where c_tablename='concept_dimension' and c_hlevel=5", con=con)
-    from Abfragen import dataframe_ebene_finden
+    from logik.abfragen import dataframe_ebene_finden
     df_2 = dataframe_ebene_finden(5,con)
     df.equals(df_2)
 
     def test_dataframe_ebene_finden6(self):
 
-        from Verarbeitungsschicht import connection_zu_datenbank_aufbauen
+        from logik.Verarbeitungsschicht_neu import connection_zu_datenbank_aufbauen
 
     df = pd.read_sql_query("SELECT c_symbol, c_fullname, c_path, c_name  from i2b2metadata.icd10_icd9 where c_tablename='concept_dimension' and c_hlevel=6", con=con)
-    from Abfragen import dataframe_ebene_finden
+    from logik.abfragen import dataframe_ebene_finden
     df_2 = dataframe_ebene_finden(6,con)
     df.equals(df_2)
 
     def test_dataframe_ebene_finden7(self):
 
-        from Verarbeitungsschicht import connection_zu_datenbank_aufbauen
+        from logik.Verarbeitungsschicht_neu import connection_zu_datenbank_aufbauen
 
     df = pd.read_sql_query("SELECT c_symbol, c_fullname, c_path, c_name  from i2b2metadata.icd10_icd9 where c_tablename='concept_dimension' and c_hlevel=7", con=con)
-    from Abfragen import dataframe_ebene_finden
+    from logik.abfragen import dataframe_ebene_finden
     df_2 = dataframe_ebene_finden(7,con)
     df.equals(df_2)
 
     def test_dataframe_ebene_finden8(self):
 
-        from Verarbeitungsschicht import connection_zu_datenbank_aufbauen
+        from logik.Verarbeitungsschicht_neu import connection_zu_datenbank_aufbauen
 
     df = pd.read_sql_query("SELECT c_symbol, c_fullname, c_path, c_name  from i2b2metadata.icd10_icd9 where c_tablename='concept_dimension' and c_hlevel=8", con=con)
-    from Abfragen import dataframe_ebene_finden
+    from logik.abfragen import dataframe_ebene_finden
     df_2 = dataframe_ebene_finden(8,con)
     df.equals(df_2)
 
     def test_dataframe_ebene_finden9(self):
 
-        from Verarbeitungsschicht import connection_zu_datenbank_aufbauen
+        from logik.Verarbeitungsschicht_neu import connection_zu_datenbank_aufbauen
 
     df = pd.read_sql_query("SELECT c_symbol, c_fullname, c_path, c_name  from i2b2metadata.icd10_icd9 where c_tablename='concept_dimension' and c_hlevel=9", con=con)
     from Abfragen import dataframe_ebene_finden
@@ -104,11 +105,10 @@ class TestDataframe_ebene_finden(TestCase):
     df.equals(df_2)
 
     def test_dataframe_ebene_finden10(self):
-
-        from Verarbeitungsschicht import connection_zu_datenbank_aufbauen
+        from logik.Verarbeitungsschicht_neu import connection_zu_datenbank_aufbauen
 
     df = pd.read_sql_query("SELECT c_symbol, c_fullname, c_path, c_name  from i2b2metadata.icd10_icd9 where c_tablename='concept_dimension' and c_hlevel=10", con=con)
-    from Abfragen import dataframe_ebene_finden
+    from logik.abfragen import dataframe_ebene_finden
     df_2 = dataframe_ebene_finden(10,con)
     df.equals(df_2)
 
@@ -211,8 +211,8 @@ class TestConnection_zu_datenbank_aufbauen(TestCase):
 
 class TestAbfrage_grundgesamtheit(TestCase):
     def test_abfrage_grundgesamtheit(self):
-        from Verarbeitungsschicht import abfrage_grundgesamtheit
-        from Verarbeitungsschicht import connection_zu_datenbank_aufbauen
+        from logik.Verarbeitungsschicht_neu import abfrage_grundgesamtheit
+        from logik.Verarbeitungsschicht_neu import connection_zu_datenbank_aufbauen
         pd.testing.assert_frame_equal(abfrage_grundgesamtheit(db_connection=connection_zu_datenbank_aufbauen()),
                                       pd.read_sql_query('SELECT * from i2b2demodata.patient_dimension',
                                                         con=psy.connect(database="i2b2", user="i2b2",
@@ -222,7 +222,7 @@ class TestAbfrage_grundgesamtheit(TestCase):
 
 class TestAbfrage_durchführen(TestCase):
     def test_abfrage_durchführen(self):
-        from Verarbeitungsschicht import abfrage_durchführen
+        from logik.Verarbeitungsschicht_neu import abfrage_durchführen
         df=pd.read_sql_query('SELECT * from i2b2demodata.patient_dimension', con=con)
         abfrage='SELECT * from i2b2demodata.patient_dimension'
         df_2= abfrage_durchführen(abfrage,con)
@@ -236,7 +236,7 @@ class TestUmwandeln_zu_sql_statement(TestCase):
         sql_statement='SELECT * FROM i2b2demodata.patient_dimension WHERE a b c'
         print(sql_statement)
 
-        from Verarbeitungsschicht import umwandeln_zu_sql_statement
+        from logik.Verarbeitungsschicht import umwandeln_zu_sql_statement
         print(umwandeln_zu_sql_statement(elementliste))
 
         self.assertEqual(umwandeln_zu_sql_statement(elementliste), sql_statement)
@@ -249,7 +249,7 @@ class TestQuery_umwandeln_in_ergebniss_dataframes(TestCase):
          df_geschlecht= df['sex_cd']
          df_alter=df['age_in_years_num']
          df_patient_Anzahl=df['patient_num'].count()
-         from Verarbeitungsschicht import query_umwandeln_in_ergebniss_dataframes
+         from logik.Verarbeitungsschicht_neu import query_umwandeln_in_ergebniss_dataframes
          alles=query_umwandeln_in_ergebniss_dataframes(con,[])
          allesAnzahl=alles[0]
          allesAlter=alles[2]
@@ -282,12 +282,12 @@ def test_knotenliste():
 
 class TestAus_knotenliste_baum_erstellen(TestCase):
     def test_aus_knotenliste_baum_erstellen(self):
-        from Knotenliste import knotenliste_gesamt_erstellen, aus_knotenliste_baum_erstellen
+        from logik.knotenliste import knotenliste_gesamt_erstellen, aus_knotenliste_baum_erstellen
         knoten=knotenliste_gesamt_erstellen()
         baum=aus_knotenliste_baum_erstellen()
         baum==knotenliste_gesamt_erstellen()
     def knotenlistegesamterstellen(self):
-        from Knotenliste import knotenliste_für_eine_ebene_erstellen
+        from logik.knotenliste import knotenliste_für_eine_ebene_erstellen
         con=bl.connection_zu_datenbank_aufbauen()
         knotenliste_gesamt=[]
 
@@ -310,7 +310,7 @@ class TestKnotenliste_für_eine_ebene_erstellen(TestCase):
         knotenliste = [
             node_with_value(name='Knoten1', fullname='Fullname1', pfad='Pfad1', size=0),
             node_with_value(name='Knoten2', fullname='Fullname2', pfad='Pfad2', size=1)]
-        from Knotenliste import knotenliste_für_eine_ebene_erstellen
+        from logik.knotenliste import knotenliste_für_eine_ebene_erstellen
         # self.assertEqual(knotenliste_für_eine_ebene_erstellen(dataframe_ebene), knotenliste)
         self.assertEqual(knotenliste_für_eine_ebene_erstellen(df_ebene), knotenliste)
 
@@ -318,8 +318,8 @@ class TestKnotenliste_für_eine_ebene_erstellen(TestCase):
 class TestKnotenliste_gesamt_erstellen(TestCase):
     def test_knotenliste_gesamt_erstellen(self):
 
-        from Knotenliste import knotenliste_gesamt_erstellen
-        from treedictionary_in_pickle_exportieren import treedictionary_aus_pickle_importieren
+        from logik.knotenliste import knotenliste_gesamt_erstellen
+        from tree_dictionary_import_export import treedictionary_aus_pickle_importieren
         baum=treedictionary_aus_pickle_importieren('baum_mit_var_text')
         baum_Methode=knotenliste_gesamt_erstellen()
         baum.equals(baum_Methode)
