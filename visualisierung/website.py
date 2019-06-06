@@ -7,7 +7,7 @@ import plotly.graph_objs as go
 from dash.dependencies import Input, Output
 from logik import kohortenabfrage as kh
 
-#Release Branch
+#Master
 
 import tree_dictionary_import_export as tie
 
