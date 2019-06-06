@@ -1,6 +1,6 @@
 import datetime
-import Verarbeitungsschicht_neu as bl
-import Querystack as qs
+from logik import Verarbeitungsschicht_neu as bl
+#import Querystack as qs
 
 class Kohortenabfrage():
 
@@ -53,8 +53,8 @@ class Kohortenabfrage():
 
 
 
-        querystack=qs.Querystack.instance()
-        querystack.push(self)
+      #  querystack=qs.Querystack.instance()
+      #  querystack.push(self)
 
 
     def __altersverteilung_y_achse(self,df_alter):
@@ -82,4 +82,34 @@ class Kohortenabfrage():
 frage1=Kohortenabfrage(kriterien=["\Diagnoses\(A00-B99) Cert~ugmm"],  #["\Diagnoses\(I00-I99) Dise~3w8h","\Diagnoses\(Q00-Q99) Cong~t96i","\Diagnoses\(K00-K94) Dise~rl1r","\Diagnoses\(A00-B99) Cert~ugmm"],
                        verknüpfungen=[])#['AND','AND','OR'])
 
+#frage2=Kohortenabfrage(kriterien=["\Diagnoses\(I00-I99) Dise~3w8h","\Diagnoses\(Q00-Q99) Cong~t96i","\Diagnoses\(K00-K94) Dise~rl1r","\Diagnoses\(A00-B99) Cert~ugmm"],
+#                       verknüpfungen=['AND','AND','OR'])
 
+
+#querystack=qs.Querystack.instance()
+
+#querypeek=querystack.peek()
+
+#print(querypeek)
+#print(querystack.peek())
+
+
+
+
+print(frage1.hd_sql_statement)
+
+
+
+#print(frage1.df_hauptdia)
+#print(frage1.df_nebendia)
+#print(frage1.df_alter)
+#print(frage1.df_geschlecht)
+#print(frage1.zeitpunkt)
+#print(frage_test.df_sprache)
+#print(frage_test.df_rasse)
+#print(frage1.geschlecht_value_counts)
+#print(frage1.x_achse_altersverteilung)
+#print(frage1.y_achse_altersverteilung)
+#print(frage1.nd_diagnose_value_list)
+#print(frage1.nd_anzahl_value_list)
+#print(frage1.nd_prozent_value_list)
