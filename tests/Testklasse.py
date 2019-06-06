@@ -1,9 +1,9 @@
 from unittest import TestCase
 import psycopg2 as psy
 import pandas as pd
-import Verarbeitungsschicht as bl
-import Knotenliste as kl
-import Abfragen as ab
+from logik import Verarbeitungsschicht_neu as bl
+from logik import knotenliste as kl
+from logik import abfragen as ab
 
 con = bl.connection_zu_datenbank_aufbauen()
 
@@ -15,7 +15,7 @@ class TestDataframe_ebene_finden(TestCase):
 
     def test_dataframe_ebene_finden0(self):
 
-        from Verarbeitungsschicht import connection_zu_datenbank_aufbauen
+        from verarbeitungsschicht import connection_zu_datenbank_aufbauen
 
     df = pd.read_sql_query("SELECT c_symbol, c_fullname, c_path, c_name  from i2b2metadata.icd10_icd9 where c_tablename='concept_dimension' and c_hlevel=0", con=con)
     from Abfragen import dataframe_ebene_finden
