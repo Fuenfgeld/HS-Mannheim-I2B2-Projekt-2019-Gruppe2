@@ -95,7 +95,7 @@ app.css.config.serve_locally = True
 
 app.layout = html.Div([
 
-    html.Div(className="drop",
+    dcc.Input(className="drop", id="upload-data",
              style={'height': '60px', 'width': '100%', 'border-style': 'dashed', 'line-height': '60px',
                     'text-align': 'center', 'margin': '10px', 'border-width': '1px', 'border-radius': '5px',
                     'border-color': 'blue', 'fonz-size': '20px'}),
