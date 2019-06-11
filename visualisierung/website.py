@@ -93,13 +93,13 @@ app.layout = html.Div([
         dcc.Tab(label='Navigation', children=[
             html.Div(className='Sunburst',
                      children=html.Div(
-                         children=[Sunburst(id='sunburst', data=create_data_from_node([]), height=800, width=800,
-                                            selectedPath=[]),
-                                   html.Button(
+                         children=[html.Button(
                                        id="add",
                                        children="add",
                                        className="button-a"
-                                   )],
+                                   ),
+                             Sunburst(id='sunburst', data=create_data_from_node([]), height=800, width=800,
+                                            selectedPath=[])],
                          style={'position': 'absolute', 'margin-top': '100px', 'margin-left': '35px'}), ),
             html.Div(className='path', id='output'),
             html.Div(className='Search', children=[

@@ -146,7 +146,6 @@
     font: normal normal normal 15px arial;
     color: #1212eb;
     text-decoration: none;
-    display: inline-block;
 }
 .button-s:hover,
 .button-s:focus {
@@ -218,6 +217,9 @@
 }
 
 .button-a {
+    position: relative;
+    top: -90px;
+    float: right;
     display: inline-block;
     text-align: center;
     vertical-align: middle;
