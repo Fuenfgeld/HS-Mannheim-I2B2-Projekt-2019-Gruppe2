@@ -331,6 +331,11 @@ def display_sun(selectedPath):
 def display_selected(selected_path):
     return 'Path: {}'.format('->'.join(selected_path or []) or 'Diagnoses')
 
+@app.callback(Output('search-input', 'value'), [Input('reset', 'n_clicks')])
+def reset_input(n_clicks):
+    if(n_clicks is not None):
+        print("hiiii")
+        return ""
 
 if __name__ == '__main__':
     app.run_server(debug=False)
