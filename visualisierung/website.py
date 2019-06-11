@@ -110,13 +110,18 @@ app.layout = html.Div([
                                            selectedPath=[]),
                          style={'position': 'absolute', 'margin-top': '100px', 'margin-left': '35px'}), ),
             html.Div(className='path', id='output'),
-            html.Div(className='Search', children=
+            html.Div(className='Search', children=[
             dcc.Input(
                 id="search-input",
-                placeholder='Search',
+                className='search-input',
                 type='text',
                 style={'textAlign': 'center'},
-            )),
+            ),
+             html.Button(
+                 id="search",
+                 children="search"
+
+             )]),
             html.Div(className='Navigation', children=html.Div()),
             html.Div(className='NumberOfPatients', children=['Number of patients: ', kh.frage1.kohortengröße]),
             html.Div(className='NavSex',
