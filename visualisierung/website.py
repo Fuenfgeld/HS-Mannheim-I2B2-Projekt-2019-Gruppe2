@@ -100,7 +100,7 @@ app.layout = html.Div([
               style={'height': '60px', 'width': '100%', 'border-style': 'dashed', 'line-height': '60px',
                      'text-align': 'center', 'margin': '10px', 'border-width': '1px', 'border-radius': '5px',
                      'border-color': 'blue', 'fonz-size': '20px'}),
-    html.Div(className='Navigation', style={'text-align': 'left', 'position': 'absolute', 'top': '185px'},
+    html.Div(className='Navigation', style={'text-align': 'left', 'position': 'absolute', 'top': '170px'},
              children=html.Div(className='container', id='jstree-tree')),
     dcc.Tabs(className='Tabs', id='tabs', children=[
         dcc.Tab(label='Navigation', children=[
@@ -119,8 +119,13 @@ app.layout = html.Div([
             ),
              html.Button(
                  id="search",
-                 children="search"
-
+                 children="search",
+                 className ="button-s"
+             ),
+             html.Button(
+                 id="reset",
+                 children="reset",
+                 className="button-r"
              )]),
             html.Div(className='Navigation', children=html.Div()),
             html.Div(className='NumberOfPatients', children=['Number of patients: ', kh.frage1.kohortengröße]),
