@@ -113,6 +113,14 @@
     font-size: 20px;
 }
 
+.Search{
+    height: 40px;
+    width: 30%;
+    border-top: solid;
+    border-left: solid;
+    border-bottom: solid;
+    font-size: 20px;
+}
 
 .container {
   margin-top: 5%;
@@ -137,6 +145,7 @@
     font: normal normal normal 15px arial;
     color: #1212eb;
     text-decoration: none;
+    display: inline-block;
 }
 .button-s:hover,
 .button-s:focus {
@@ -177,6 +186,7 @@
     font: normal normal normal 15px arial;
     color: #1212eb;
     text-decoration: none;
+    display: inline-block;
 }
 .button-r:hover,
 .button-r:focus {
