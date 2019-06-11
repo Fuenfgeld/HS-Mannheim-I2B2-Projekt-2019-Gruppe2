@@ -216,3 +216,44 @@
     background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAC+UlEQVRIibWVT4jVVRTHP9877z2HHKiFiAwhLQbcSEl/UEQkIWjZH1oI4VgzZmGLNm+YdGbQx8xU+pQWBtnijfPEwkUZ1qJFtjVbKFEgBkNtZBBxNYTMG3/z+7Zwfnrfz98bX0QHDvfLufecc8+fe66AwP9IpZU17eAoBUK94cfA+wSz1eGwkDu/Kg45Y2kOByCV2AiqA98fb7gvk8dnOmFFwowCkH76hcNy2ZuB94GXbJ6SCJizv/+19INhEnNR6GTi5NqXH62NbbQZy9aMOXHapeUyNawrWLttXQeBlYC+tXVN6Fek3cZXetRz+K2xpVLOTgBCPoJwYsak5qTwAcOM0KhhPfAz8O7IsM5lOoPji+tAR7GHQJ+Vy5UPGkeURpdOsyLfr0MKg8IHQJ8kdxk7+J5S4DbweD78M1O9t/eP+p1WuXUTcyi52/oFOBufySIAoD7jPpk/gDnEruqQCvOap73jS8GkP8kMgDY1p9fcyddgpfJ+HbEBPFYdUtK+1xk3pyoJ1gRSP+KN+Ey+91/DnjO6FBmhAD9Eki8Zz4FfieVtXSS0BXR5ZFhZH3di8rg51ZvKXMY8G8vbU2T3G250k5YibOmGoT+Wt3WRtWpausH32iaSxw4CaB7YGIX478h+UtJ8rJ+bRb4KbKvPOH58XaVoz/hiQGyzuRrL229qXcAeEGyPw+wGC23HDIAvxPLYQZD4GjRvmDzWcOFsKeLBiaUSeFripuB8vNeWouqQ/pYYldkZRO3jU35kivYfMUpdA3bYGm1O9y7QqYsAQspXy2Kr7EOlMhvqDR8cGdatTGlwbPFVpM/Bu0C3WknrqGEf1qkeJ/EcWkndg2l6P5rjpx2cMgF8KFi0uChT/+3P1jrgG6ES8nfAi5g+o2Mh6PDsZOWh1174o1XfVpLimsRzFuewt1jeLHgTUQGC0fOg8xYvWMsTs5OVwtlV9KN1pL3jrSeAH20/LXimOd17/VE6IYdX5ebUmgXMy0I1YL4bnbyTIqf/Cf8Ds/xkmLJ+9/EAAAAASUVORK5CYII=") no-repeat left center transparent;
     background-size: 100% 100%;
 }
+
+.button-a {
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    padding: 5px 10px;
+    border: 1px solid #2230d1;
+    border-radius: 8px;
+    background: #ffffff;
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
+    background: -moz-linear-gradient(top, #ffffff, #ffffff);
+    background: linear-gradient(to bottom, #ffffff, #ffffff);
+    font: normal normal normal 15px arial;
+    color: #1a34d9;
+    text-decoration: none;
+}
+.button-a:hover,
+.button-a:focus {
+    border: 1px solid #364dff;
+    color: #1a34d9;
+    text-decoration: none;
+}
+.button-a:active {
+    background: #999999;
+    background: -webkit-gradient(linear, left top, left bottom, from(#999999), to(#ffffff));
+    background: -moz-linear-gradient(top, #999999, #ffffff);
+    background: linear-gradient(to bottom, #999999, #ffffff);
+}
+.button-a:after{
+    content:  "\0000a0";
+    display: inline-block;
+    height: 24px;
+    width: 24px;
+    line-height: 24px;
+    margin: 0 -4px -6px 4px;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAEZElEQVRIibWWXWgcVRTHf+fOnf2YbD52u0mbaM0Hqdqa1lLBilhfC6JSCsWPpFbyIIJGxYKIpfShD4pPQkVFRdSmBRH6IAgVoWIFwaBQfShYY5qkidYkTbbbZHezOzPHh/3oJmlBRM/Tf8498z/n/O+dc0cAw/9oVfLwJuvhP8HzY8OJm8VIJUkIcHXshAmFLShTKtoiig/kkj0D8/VxgJnIlLoE2eOULie8xW93KxxMdfeP1McAoa0vN4C2VHf/+UpQpuqfGx3edt8LjlUVz3HEvPbcvftQnlXUBnY9y7GtBDY9d6MOqgkMgMiK7DXb+ZI72XznxiuJ7nYD8OF3s+y8ewNe3CUALpvNWOTxryb8eEecP89clh9f3OaM1CeoEGsCqK/EAKExYtzmhInf2oqI4OfzzC1DOlLWOBkB0KObmwVVZc9GnWkfDYZOT5svVp4glTVtTi746c+PPfQJq2xdRPEcxbNaT1AFbTvX6ZAV9aoJDGAQ7cj8ftxWnycz/v0q/OBY83BZQqlRiRYoKyqISGWtDgvbOjzSKyRS0QuItEwslBZFOAy8UgqIZItlYlWtJVGJIVpCMbW6RcoSAWRL4rtGJy3A09+oAXjm7TMc3m8Hrc0ewIn3LYdCoBAJSqsVYinvAw4SXkWNV0vgxS0g+Mrrh3Y4BQsght6+ljC2fnfvwcFPp59ym6fXEMbbU7XqTTrJ0MnxNTEml+foYz2kO5IXPhh13geMHTyrVtCjrmFvYyJqva52vI2toCtbrscm1URzsgnQir+8wc6VDNPXAjpdel69K+h5B87ZI30lP+ubdNTB/vrbyooULZ9DrcPcHAMsB4IraoFe4JzFSKQpojtCFQLHIT9xmdLCtTXtxzakiLUmQSCcz5Kdmr2hRD339CD4OVX3e8DYomOL0SA4tRwwuL23heMvb69JAT5gWMqHPH9inGhrEgHCuQWOPdlFQ7x8CIuhUAyh0ZbwvBix3MgvbnHcB0KzqVH4bNwcWQ4ZEcCLWxo8lwbPJeHFaYou1oiQ6x9VQ9wS9yL4boREg8v6JkuDF8WEuffcYH5XsntgBiqjojmisWSErhViVix0kojmK/xSC5ldFhIOtMZqGxYq5o2Ga18fT3btC6nMMwPQ26gPKLRVjgOqWieTQcVWOK5bKqqko1r1ZxXZJ2Fw2ITFyYWLJ2v3jAH4IydTqPpaIa+aqqJAWB2udRI5ZQegp1Hd2pm0p25bFwudwC8oejuV6WAAzvxlRmYK8pav12dKIRQKgZAtCUu+4GeXyF+aJXdphkJmEYUphH4V80hn0p2qcJmmTQcQ1dqzBfjoQclyVg8N3RF8ebXEE7fE6S34FFuiuhiDvU2uNW8O9FIoBoShLmbmvY9TwU/vtrfsOs+qm66CU8AiEMqqgDU2mfG3gD6qSKPAzwqnO1tsFmBh7EQfoqOgxWT3/hBg4eJwb7J7YLT6fn2Cf/V3sTA2HENoU6UI4gO5VE9/rj5mNbH5L/HfI6rX/coWNwUAAAAASUVORK5CYII=") no-repeat left center transparent;
+    background-size: 100% 100%;
+}

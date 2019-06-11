@@ -1,8 +1,22 @@
+from logik import kohortenabfrage as kh
 class Querystack:
 
-    def __init__(self):
-        self.__stack=[]
+    __instance=None
 
+    @staticmethod
+    def getInstance():
+        if Querystack.__instance == None:
+            Querystack()
+
+        return Querystack.__instance
+
+    def __init__(self):
+        if Querystack.__instance != None:
+            raise Exception
+
+        else:
+            self.__stack=[kh.Kohortenabfrage(kriterien=['\Diagnoses'],verknüpfungen=[],flag_push=False)]
+            Querystack.__instance = self
 
     def peek(self):
         if self.__stack==[]:
@@ -21,3 +35,9 @@ class Querystack:
 
     def size(self):
         return len(self.__stack)
+
+    def bottom(self):
+        if self.__stack==[]:
+            return None
+        else:
+            return self.__stack[0]
