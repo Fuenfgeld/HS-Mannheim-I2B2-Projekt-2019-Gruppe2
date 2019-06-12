@@ -335,14 +335,15 @@ def reset_input(n_clicks):
         return ""
 
 
-@app.callback(Output(component_id='upload-data', component_property='value'),
-              [Input(component_id='add', component_property='n_clicks')],
-              [State(component_id='sunburst', component_property='selectedPath'),
-               State(component_id='upload-data', component_property='value')])
-def kriterium_sunburst_adden(n_clicks, selectedPath, value_vorher):
+@app.callback(Output(component_id='upload-data',component_property='value'),
+              [Input(component_id='add',component_property='n_clicks')],
+              [State(component_id='sunburst',component_property='selectedPath'),
+               State(component_id='upload-data',component_property='value')])
+def kriterium_sunburst_adden(n_clicks,selectedPath,value_vorher):
+
     if value_vorher:
         return f"""{value_vorher} AND {selectedPath[-1]}"""
-    else:
+    elif selectedPath:
         return selectedPath[-1]
 
 

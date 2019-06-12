@@ -31,6 +31,7 @@ class Kohortenabfrage():
             if or_index < len(or_positions):
                 for i in range(or_index, len(or_positions)):
                     verknüpfungen.append('OR')
+
             if and_index < len(and_positions):
                 for i in range(and_index, len(and_positions)):
                     verknüpfungen.append('AND')
@@ -59,7 +60,7 @@ class Kohortenabfrage():
         print(verknüpfungen)
         return Kohortenabfrage(fullnames, verknüpfungen)
 
-    def __init__(self, kriterien, verknüpfungen, flag_push=True):
+    def __init__(self, kriterien=[], verknüpfungen=[], flag_push=True):
         self.kriterien = kriterien
         self.verknüpfungen = verknüpfungen
         self.zeitpunkt = datetime.datetime.now()
@@ -68,7 +69,7 @@ class Kohortenabfrage():
         self.df_hauptdia, self.df_nebendia = bl.umwandeln_in_sql_statement_und_df_hauptdia_nebendia(self.kriterien,
                                                                                                     self.verknüpfungen)
         self.kohortengröße = len(self.df_hauptdia)
-        self.kohortengröße_prozent = round(((self.kohortengröße / 133) * 100), 2)
+        print(self.kohortengröße)
         self.df_alter = self.df_hauptdia['age_in_years_num']
         self.x_achse_altersverteilung = Kohortenabfrage.__x_achse_altersverteilung
         self.y_achse_altersverteilung = self.__altersverteilung_y_achse(df_alter=self.df_alter)
@@ -90,7 +91,11 @@ class Kohortenabfrage():
         self.nd_prozent_value_list = self.nd_df_prozent.values.tolist()
         if (flag_push == True):
             querystack = qs.Querystack.getInstance()
+            self.kohortengröße_prozent = round(((self.kohortengröße / querystack.bottom().kohortengröße) * 100), 2)
+            print(self.kohortengröße_prozent)
             querystack.push(self)
+        else:
+            self.kohortengröße_prozent = 100
 
     def __altersverteilung_y_achse(self, df_alter):
         df_alter.fillna(value='-')

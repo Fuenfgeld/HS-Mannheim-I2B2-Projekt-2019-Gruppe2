@@ -15,7 +15,7 @@ class Querystack:
             raise Exception
 
         else:
-            self.__stack=[kh.Kohortenabfrage(kriterien=['\Diagnoses'],verknüpfungen=[],flag_push=False)]
+            self.__stack=[kh.Kohortenabfrage(kriterien=[],verknüpfungen=[],flag_push=False)]
             Querystack.__instance = self
 
     def peek(self):
