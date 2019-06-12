@@ -13,24 +13,25 @@ baum1 = tie.treedictionary_aus_pickle_importieren('baum_mit_var_text')
 qs = querystack.Querystack.getInstance()
 wurzel = baum1.knotenliste_mit_baum[0][0]
 
+
 def create_data_from_node(path):
     if (path == []):
         data = {
-            'name' : wurzel.text,
-            'children' : [{
-                'name' : i.text,
-                'size' : i.size,
-               # 'children':[{
+            'name': wurzel.text,
+            'children': [{
+                'name': i.text,
+                'size': i.size,
+                # 'children':[{
                 #   'name' : j.text,
                 #   'size' : j.size
-              #  }for j in i.children] #Dieser Bereich könnte einen weiteren äußeren Ring hinzufürgen
-            }for i in wurzel.children]
+                #  }for j in i.children] #Dieser Bereich könnte einen weiteren äußeren Ring hinzufürgen
+            } for i in wurzel.children]
         }
 
-    else :
-        index=0
-        #print('Angeklickt' +str(path[-1]))
-        #print(len(path))
+    else:
+        index = 0
+        # print('Angeklickt' +str(path[-1]))
+        # print(len(path))
         while baum1.knotenliste_mit_baum[len(path)][index].text != path[-1]:
             #    print(baum.knotenliste_mit_baum[len(path)][index].text)
 
@@ -94,48 +95,51 @@ app.layout = html.Div([
               style={'height': '60px', 'width': '100%', 'border-style': 'dashed', 'line-height': '60px',
                      'text-align': 'center', 'margin': '10px', 'border-width': '1px', 'border-radius': '5px',
                      'border-color': 'blue', 'fonz-size': '20px'}),
-    html.Div(className='Navigation', style={'text-align': 'left', 'position': 'absolute', 'top': '185px'},
+
+    html.Div(className='Search', children=[
+        dcc.Input(
+            id="search-input",
+            className='search-input',
+            type='text',
+            style={'textAlign': 'center', 'width': '70%'},
+        ),
+        html.Button(
+            id="search",
+            # children="search",
+            className="button-s"
+        ),
+        html.Button(
+            id="reset",
+            # children="reset",
+            className="button-r"
+        )], style={'top': '120px', 'position': 'absolute'}),
+    html.Div(className='Navigation', style={'text-align': 'left', 'position': 'absolute', 'top': '160px'},
              children=html.Div(className='container', id='jstree-tree')),
 
-html.Div( html.Button('Save', id='save')
-            ),
+    html.Div(html.Button(id='save')
+             ),
 
-html.Div(html.Button('Load', id='load'),
-            ),
+    html.Div(html.Button(id='load'),
+             ),
 
-html.Div(html.Button('Run',id='run'),
-),
+    html.Div(html.Button(id='run'),
+             ),
 
-    dcc.Tabs(className= 'Tabs', id='tabs', children=[
-        dcc.Tab( label='Navigation', children=[
+    dcc.Tabs(className='Tabs', id='tabs', children=[
+        dcc.Tab(label='Navigation', children=[
             html.Div(className='Sunburst',
                      children=html.Div(
-                         children=[html.Button(
-                                       id="add",
-                                       children="add",
-                                       className="button-a"
-                                   ),
-                             Sunburst(id='sunburst', data=create_data_from_node([]), height=800, width=800,
-                                            selectedPath=[])],
-                         style={'position': 'absolute', 'margin-top': '100px', 'margin-left': '35px'}), ),
-            html.Div(className='path', id='output'),
-            html.Div(className='Search', children=[
-                dcc.Input(
-                    id="search-input",
-                    className='search-input',
-                    type='text',
-                    style={'textAlign': 'center', 'width': '50%'},
-                ),
-                html.Button(
-                    id="search",
-                    children="search",
-                    className="button-s"
-                ),
-                html.Button(
-                    id="reset",
-                    children="reset",
-                    className="button-r"
-                )]),
+                         children=[
+                             html.Div(className='path', id='output'),
+                             html.Button(
+                                 id="add",
+                                 # children="add",
+                                 className="button-a"
+                             ),
+                             Sunburst(id='sunburst', data=create_data_from_node([]), height=650, width=800,
+                                      selectedPath=[])],
+                         style={'position': 'absolute', 'margin-left': '35px', 'margin-top': '30px'}), ),
+            html.Div(className='Search', children=html.Div()),
             html.Div(className='Navigation', children=html.Div()),
             html.Div(className='NumberOfPatients', id="count",
                      children=['Count: ', qs.bottom().kohortengröße, ' (', qs.bottom().kohortengröße_prozent, '%)']),
@@ -146,7 +150,7 @@ html.Div(html.Button('Run',id='run'),
                              figure=go.Figure(
                                  data=[go.Pie(labels=['Male', 'Female'],
                                               values=qs.bottom().geschlecht_value_counts,
-                                              marker=dict(colors=['#5CABFF','#4875E8']))],
+                                              marker=dict(colors=['#5CABFF', '#4875E8']))],
                                  layout=go.Layout(title={
                                      'text': 'Gender',
                                      'x': 0.49,
@@ -171,18 +175,19 @@ html.Div(html.Button('Run',id='run'),
                                      'x': 0.49,
                                      'y': 0.70
 
-                                 }, height=300, xaxis=dict( title='Age groups'), yaxis=dict( title='Number of patients'))))
-                ]),
+                                 }, height=300, xaxis=dict(title='Age groups'),
+                                     yaxis=dict(title='Number of patients'))))
+                     ]),
 
-       ], style={'font-size': '20px', }
-                  ),
+        ], style={'font-size': '20px', }
+                ),
         dcc.Tab(className='TabDia', label='Diagram', children=[
             html.Div(className='DiaBar', children=[
 
+                html.Div(
+                    children=['Count: ', qs.bottom().kohortengröße, ' (', qs.bottom().kohortengröße_prozent, '%)']),
 
-                html.Div(children=['Number of patients: ', kh.frage1.kohortengröße]),
-
-                 html.Div(className = 'alterBar', children =[
+                html.Div(className='alterBar', children=[
                     dcc.Graph(
                         id='diagramm-alter',
                         figure=go.Figure(
@@ -201,8 +206,7 @@ html.Div(html.Button('Run',id='run'),
                             }, xaxis=dict(title='Age groups'), yaxis=dict(title='Number of patients'))))
                 ], style={'display': 'block'}),
 
-
-                html.Div(className = 'sdBar', children =[
+                html.Div(className='sdBar', children=[
 
                     dcc.Graph(
                         id='diagramm-sd',
@@ -221,40 +225,39 @@ html.Div(html.Button('Run',id='run'),
                 ], style={'display': 'block'}),
             ]),
 
-
             html.Div(className='DiaPie', children=[
 
-                html.Div(className = 'genderPie', children = [
-                dcc.Graph(
-                    id='diagramm-geschlecht',
-                    figure=go.Figure(
-                        data=[go.Pie(labels=['Male', 'Female'],
-                                     values=qs.bottom().geschlecht_value_counts,
-                                     marker=dict(colors=['#5CABFF', ' #4875E8']))],
-                        layout=go.Layout(title= {
-                                   'text':  'Gender',
-                                     'x': 0.49,
-                                     'y': 0.80
+                html.Div(className='genderPie', children=[
+                    dcc.Graph(
+                        id='diagramm-geschlecht',
+                        figure=go.Figure(
+                            data=[go.Pie(labels=['Male', 'Female'],
+                                         values=qs.bottom().geschlecht_value_counts,
+                                         marker=dict(colors=['#5CABFF', ' #4875E8']))],
+                            layout=go.Layout(title={
+                                'text': 'Gender',
+                                'x': 0.49,
+                                'y': 0.80
 
-                                 },height = 330)))
-            ], style={'display': 'block', 'textAlign': 'center'}),
+                            }, height=330)))
+                ], style={'display': 'block', 'textAlign': 'center'}),
 
-            html.Div(className = 'racePie', children = [
-                dcc.Graph(
-                    id='diagramm-racepie',
-                    figure=go.Figure(
-                        data=[go.Pie(labels=qs.bottom().racex,
-                                     values=qs.bottom().racey,
-                                     marker=dict(colors=['#4F5EFF', '#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF']))],
-                        layout=go.Layout(title= {
-                                   'text':  'Race',
-                                     'x': 0.49,
-                                     'y': 0.80
+                html.Div(className='racePie', children=[
+                    dcc.Graph(
+                        id='diagramm-racepie',
+                        figure=go.Figure(
+                            data=[go.Pie(labels=qs.bottom().racex,
+                                         values=qs.bottom().racey,
+                                         marker=dict(colors=['#4F5EFF', '#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF']))],
+                            layout=go.Layout(title={
+                                'text': 'Race',
+                                'x': 0.49,
+                                'y': 0.80
 
-                                 },height = 330, autosize = True)))
-            ], style={'display': 'block', 'textAlign': 'center'}),
+                            }, height=330, autosize=True)))
+                ], style={'display': 'block', 'textAlign': 'center'}),
 
-            html.Div(className = 'sprachePie', children = [
+                html.Div(className='sprachePie', children=[
                     dcc.Graph(
                         id='diagramm-sprachepie',
                         figure=go.Figure(
@@ -262,27 +265,19 @@ html.Div(html.Button('Run',id='run'),
                                          values=qs.bottom().sprachey,
                                          marker=dict(colors=['#4F5EFF', ' #5CABFF', '#37E7FF']))],
                             layout=go.Layout(title='Language', margin={"l": 300, "r": 300},
-                                             legend={"x": 0.49, "y": 0.80}, height = 330)))
+                                             legend={"x": 0.49, "y": 0.80}, height=330)))
                 ], style={'display': 'block', 'textAlign': 'center', }),
 
+            ]),
 
-
-                 ]),
-
-
-            html.Div(className='Search', children=
-            dcc.Input(
-                placeholder='Search',
-                type='text',
-                style={'textAlign': 'center'},
-            )),
-            html.Div(className='Navigation', children=html.Div()),
+            html.Div(className='Search', children=html.Div()),
+            # html.Div(className='Navigation', children=html.Div()),
             html.Div(className='Types', children=['Types ',
                                                   dcc.Checklist(
                                                       id='checklistAge',
                                                       options=[{'label': 'Age', 'value': 'on'}],
                                                       values=['on']),
-                                                    dcc.Checklist(
+                                                  dcc.Checklist(
                                                       id='checklistSd',
                                                       options=[{'label': 'Secondary Diagnosis', 'value': 'on'}],
                                                       values=['on']),
@@ -290,22 +285,20 @@ html.Div(html.Button('Run',id='run'),
                                                       id='checklistGender',
                                                       options=[{'label': 'Gender', 'value': 'on'}],
                                                       values=['on']),
-                                                dcc.Checklist(
+                                                  dcc.Checklist(
                                                       id='checklistRace',
                                                       options=[{'label': 'Race', 'value': 'on'}],
                                                       values=['on']),
-                                                    dcc.Checklist(
+                                                  dcc.Checklist(
                                                       id='checklistSprache',
                                                       options=[{'label': 'Language', 'value': 'on'}],
                                                       values=['on']),
-
 
                                                   ]),
 
         ], style={'font-size': '20px'}),
     ]),
 ])
-
 
 
 @app.callback(
@@ -319,41 +312,43 @@ def show_hide_element(visibility_state):
 
 
 @app.callback(
-        Output(component_id='diagramm-sd', component_property='style'),
-        [Input(component_id='checklistSd', component_property='values')])
+    Output(component_id='diagramm-sd', component_property='style'),
+    [Input(component_id='checklistSd', component_property='values')])
 def show_hide_element(visibility_state):
-        if visibility_state == ['on']:
-            return {'display': 'block'}
-        else:
-            return {'display': 'none'}
+    if visibility_state == ['on']:
+        return {'display': 'block'}
+    else:
+        return {'display': 'none'}
 
 
 @app.callback(
-            Output(component_id='diagramm-sprachepie', component_property='style'),
-            [Input(component_id='checklistSprache', component_property='values')])
+    Output(component_id='diagramm-sprachepie', component_property='style'),
+    [Input(component_id='checklistSprache', component_property='values')])
 def show_hide_element(visibility_state):
-            if visibility_state == ['on']:
-                return {'display': 'block'}
-            else:
-                return {'display': 'none'}
+    if visibility_state == ['on']:
+        return {'display': 'block'}
+    else:
+        return {'display': 'none'}
+
 
 @app.callback(
     Output(component_id='diagramm-racepie', component_property='style'),
     [Input(component_id='checklistRace', component_property='values')])
 def show_hide_element(visibility_state):
-                if visibility_state == ['on']:
-                    return {'display': 'block'}
-                else:
-                    return {'display': 'none'}
+    if visibility_state == ['on']:
+        return {'display': 'block'}
+    else:
+        return {'display': 'none'}
+
 
 @app.callback(
- Output(component_id='diagramm-alter', component_property='style'),
-[Input(component_id='checklistAge', component_property='values')])
+    Output(component_id='diagramm-alter', component_property='style'),
+    [Input(component_id='checklistAge', component_property='values')])
 def show_hide_element(visibility_state):
-                    if visibility_state == ['on']:
-                        return {'display': 'block'}
-                    else:
-                        return {'display': 'none'}
+    if visibility_state == ['on']:
+        return {'display': 'block'}
+    else:
+        return {'display': 'none'}
 
 
 @app.callback(Output('sunburst', 'data'), [Input('sunburst', 'selectedPath')])
@@ -373,12 +368,11 @@ def reset_input(n_clicks):
         return ""
 
 
-@app.callback(Output(component_id='upload-data',component_property='value'),
-              [Input(component_id='add',component_property='n_clicks')],
-              [State(component_id='sunburst',component_property='selectedPath'),
-               State(component_id='upload-data',component_property='value')])
-def kriterium_sunburst_adden(n_clicks,selectedPath,value_vorher):
-
+@app.callback(Output(component_id='upload-data', component_property='value'),
+              [Input(component_id='add', component_property='n_clicks')],
+              [State(component_id='sunburst', component_property='selectedPath'),
+               State(component_id='upload-data', component_property='value')])
+def kriterium_sunburst_adden(n_clicks, selectedPath, value_vorher):
     if value_vorher:
         return f"""{value_vorher} AND {selectedPath[-1]}"""
     elif selectedPath:
@@ -407,7 +401,7 @@ def update_graphs(abfrage):
             return ('Ungültige Eingabe. Ergebnisse sind von vorheriger Abfrage'), \
                    {'data': [go.Pie(labels=['Male', 'Female'],
                                     values=qs.peek().geschlecht_value_counts,
-                                    marker=dict(colors=['#5CABFF','#4875E8']))],
+                                    marker=dict(colors=['#5CABFF', '#4875E8']))],
                     'layout': go.Layout(title={
                         'text': 'Gender',
                         'x': 0.49,
@@ -418,7 +412,9 @@ def update_graphs(abfrage):
                                     y=qs.peek().y_achse_altersverteilung,
                                     text=qs.peek().y_achse_altersverteilung,
                                     textposition='outside',
-                                    marker = dict(color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF', '#8093E8', '#9998FF', '#957CEB', '#BE8CFF' ])
+                                    marker=dict(
+                                        color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF',
+                                               '#8093E8', '#9998FF', '#957CEB', '#BE8CFF'])
                                     )],
                     'layout': go.Layout(title={
                         'text': 'Age',
@@ -480,7 +476,9 @@ def update_graphs(abfrage):
                                 y=qs.peek().y_achse_altersverteilung,
                                 text=qs.peek().y_achse_altersverteilung,
                                 textposition='outside',
-                                marker = dict(color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF', '#8093E8', '#9998FF', '#957CEB', '#BE8CFF' ])
+                                marker=dict(
+                                    color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF', '#8093E8',
+                                           '#9998FF', '#957CEB', '#BE8CFF'])
                                 )],
                 'layout': go.Layout(title={
                     'text': 'Age',
@@ -495,7 +493,9 @@ def update_graphs(abfrage):
                                 y=qs.peek().y_achse_altersverteilung,
                                 text=qs.peek().y_achse_altersverteilung,
                                 textposition='outside',
-                                marker = dict(color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF', '#8093E8', '#9998FF', '#957CEB', '#BE8CFF' ])
+                                marker=dict(
+                                    color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF', '#8093E8',
+                                           '#9998FF', '#957CEB', '#BE8CFF'])
                                 )],
                 'layout': go.Layout(title='Age', xaxis=dict(title='Age groups'),
                                     yaxis=dict(title='Number of patients'))}, \
@@ -541,7 +541,9 @@ def update_graphs(abfrage):
                             y=qs.bottom().y_achse_altersverteilung,
                             text=qs.bottom().y_achse_altersverteilung,
                             textposition='outside',
-                            marker = dict(color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF', '#8093E8', '#9998FF', '#957CEB', '#BE8CFF' ])
+                            marker=dict(
+                                color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF', '#8093E8',
+                                       '#9998FF', '#957CEB', '#BE8CFF'])
                             )],
             'layout': go.Layout(title={
                 'text': 'Age',
@@ -556,7 +558,9 @@ def update_graphs(abfrage):
                             y=qs.bottom().y_achse_altersverteilung,
                             text=qs.bottom().y_achse_altersverteilung,
                             textposition='outside',
-                            marker = dict(color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF', '#8093E8', '#9998FF', '#957CEB', '#BE8CFF' ])
+                            marker=dict(
+                                color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF', '#8093E8',
+                                       '#9998FF', '#957CEB', '#BE8CFF'])
                             )],
             'layout': go.Layout(title='Age', xaxis=dict(title='Age groups'),
                                 yaxis=dict(title='Number of patients'))}, \
