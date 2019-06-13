@@ -4,24 +4,22 @@ import dash_core_components as dcc
 from dash_sunburst import Sunburst
 from datenhaltung import connection as connect
 import plotly.graph_objs as go
-from dash.dependencies import Input, Output
-from logik import kohortenabfrage as kh
-
-#Master
-
+from dash.dependencies import Input, Output, State
+from logik import Kohortenabfrage as kh
 import tree_dictionary_import_export as tie
+from logik import querystack
 
-baum1 = tie.treedictionary_aus_pickle_importieren('baum_mit_var_text')
-
+baum1 = tie.treedictionary_aus_pickle_importieren('baum_mit_shortcode')
+qs = querystack.Querystack.getInstance()
 wurzel = baum1.knotenliste_mit_baum[0][0]
 
 
 def create_data_from_node(path):
     if (path == []):
         data = {
-            'name': wurzel.text,
+            'name': wurzel.shortcode,
             'children': [{
-                'name': i.text,
+                'name': i.shortcode,
                 'size': i.size,
                 # 'children':[{
                 #   'name' : j.text,
@@ -34,7 +32,7 @@ def create_data_from_node(path):
         index = 0
         # print('Angeklickt' +str(path[-1]))
         # print(len(path))
-        while baum1.knotenliste_mit_baum[len(path)][index].text != path[-1]:
+        while baum1.knotenliste_mit_baum[len(path)][index].shortcode != path[-1]:
             #    print(baum.knotenliste_mit_baum[len(path)][index].text)
 
             index += 1;
@@ -43,16 +41,16 @@ def create_data_from_node(path):
         if not zwischenwurzel.children:
 
             data = {
-                'name': zwischenwurzel.text,
+                'name': zwischenwurzel.shortcode,
                 'size': zwischenwurzel.size
 
             }
 
         else:
             data = {
-                'name': zwischenwurzel.text,
+                'name': zwischenwurzel.shortcode,
                 'children': [{
-                    'name': i.text,
+                    'name': i.shortcode,
                     'size': i.size,
                     # 'children': [{
                     #   'name': j.text,
@@ -69,7 +67,7 @@ def create_data_from_node(path):
         }
     if len(path):
         data = {
-            'name': wurzel.text,
+            'name': wurzel.shortcode,
             'children': [data]
         }
 
@@ -92,53 +90,66 @@ app = dash.Dash('__name__',
                                   ])
 app.scripts.config.serve_locally = True
 app.css.config.serve_locally = True
-
-# sunburst_data = baum1
-
 app.layout = html.Div([
 
     dcc.Input(className="drop", id="upload-data",
-             style={'height': '60px', 'width': '100%', 'border-style': 'dashed', 'line-height': '60px',
-                    'text-align': 'center', 'margin': '10px', 'border-width': '1px', 'border-radius': '5px',
-                    'border-color': 'blue', 'fonz-size': '20px'}),
-    html.Div(className='Navigation', style={'text-align': 'left', 'position': 'absolute', 'top': '185px'},
+            ),
+
+    html.Div(className='Search', children=[
+        dcc.Input(
+            id="search-input",
+            className='search-input',
+            type='text',
+            style={'textAlign': 'center', 'width': '70%'},
+        ),
+        html.Button(
+            id="search",
+            # children="search",
+            className="button-s"
+        ),
+        html.Button(
+            id="reset",
+            # children="reset",
+            className="button-r"
+        )], style={'top': '6.000em', 'position': 'absolute'}),
+    html.Div(className='Navigation', style={'text-align': 'left', 'position': 'absolute', 'top': '10.7em'},
              children=html.Div(className='container', id='jstree-tree')),
+
+    html.Div(html.Button(id='save')
+             ),
+
+    html.Div(html.Button(id='load'),
+             ),
+
+    html.Div(html.Button(id='run'),
+             ),
+
     dcc.Tabs(className='Tabs', id='tabs', children=[
         dcc.Tab(label='Navigation', children=[
-            # html.Div(className='jstree-drop', children=[
-            #     dcc.Upload(
-            #         id='upload-data',
-            #         className='DragAndDrop',
-            #         children=html.Div(['Drag and Drop']),
-            #         multiple=True
-            #     ),
-            #     html.Div(id='output-data-upload')
-            # ], style={'textAlign': 'center'}),
-
             html.Div(className='Sunburst',
                      children=html.Div(
-                         children=Sunburst(id='sunburst', data=create_data_from_node([]), height=800, width=800,
-                                           selectedPath=[]),
-                         style={'position': 'absolute', 'margin-top': '100px', 'margin-left' : '35px'}), ),
-
-            html.Div(className='path', id='output'),
-
-            html.Div(className='Search', children=
-            dcc.Input(
-                id="search-input",
-                placeholder='Search',
-                type='text',
-                style={'textAlign': 'center'},
-            )),
+                         children=[
+                             html.Div(className='path', id='output'),
+                             html.Button(
+                                 id="add",
+                                 # children="add",
+                                 className="button-a"
+                             ),
+                             Sunburst(id='sunburst', data=create_data_from_node([]), height=650, width=800,
+                                      selectedPath=[])],
+                         style={'position': 'absolute', 'margin-left': '1.750em', 'margin-top': '0.700em'}), ),
+            html.Div(className='Search', children=html.Div()),
             html.Div(className='Navigation', children=html.Div()),
-            html.Div(className='NumberOfPatients', children=['Number of patients: ', kh.frage1.kohortengröße]),
+            html.Div(className='NumberOfPatients', id="count",
+                     children=['Count: ', qs.bottom().kohortengröße, ' (', qs.bottom().kohortengröße_prozent, '%)']),
             html.Div(className='NavSex',
                      children=[
                          dcc.Graph(
                              id='sex',
                              figure=go.Figure(
                                  data=[go.Pie(labels=['Male', 'Female'],
-                                              values=kh.frage1.geschlecht_value_counts)],
+                                              values=qs.bottom().geschlecht_value_counts,
+                                              marker=dict(colors=['#5CABFF', '#4875E8']))],
                                  layout=go.Layout(title={
                                      'text': 'Gender',
                                      'x': 0.49,
@@ -149,12 +160,15 @@ app.layout = html.Div([
             html.Div(className='NavAge',
                      children=[
                          dcc.Graph(
-                             id='id',
+                             id='age',
                              figure=go.Figure(
-                                 data=[go.Bar(x=kh.frage1.x_achse_altersverteilung,
-                                              y=kh.frage1.y_achse_altersverteilung,
-                                              text=kh.frage1.y_achse_altersverteilung,
+                                 data=[go.Bar(x=qs.bottom().x_achse_altersverteilung,
+                                              y=qs.bottom().y_achse_altersverteilung,
+                                              text=qs.bottom().y_achse_altersverteilung,
                                               textposition='auto',
+hoverinfo='none',
+                                              marker=dict(color=['#4F5EFF', '#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF',
+                                                                 '#8BCAF5'])
                                               )],
                                  layout=go.Layout(title={
                                      'text': 'Age',
@@ -164,156 +178,131 @@ app.layout = html.Div([
                                  }, height=300, xaxis=dict(title='Age groups'),
                                      yaxis=dict(title='Number of patients'))))
                      ]),
-            html.Div(className='Save_Load', children=[
-                html.Button(id='save', className='Save', children=['Save']),
-                html.Button(id='load', className='Load', children='Load')
-            ])
+
         ], style={'font-size': '20px', }
                 ),
         dcc.Tab(className='TabDia', label='Diagram', children=[
-            html.Div(className='Dia', children=[
-                # Create Div to place a conditionally visible element inside
-                # html.Div([
-                # dcc.Graph(
-                # id='diagramm-alter',
-                # figure={'data': [{'x': kh.frage_test.x_achse_altersverteilung,
-                #     'y': kh.frage_test.y_achse_altersverteilung,
-                #     'text': kh.frage_test.y_achse_altersverteilung,
-                #     'textposition': 'outside',
-                #     'type': 'bar'}],
-                #  'layout': {'title': 'Age'
-                #      }}),
+            html.Div(className='DiaBar', children=[
 
-                html.Div([
+                html.Div(
+                    children=['Count: ', qs.bottom().kohortengröße, ' (', qs.bottom().kohortengröße_prozent, '%)']),
+
+                html.Div(className='alterBar', children=[
                     dcc.Graph(
                         id='diagramm-alter',
                         figure=go.Figure(
-                            data=[go.Bar(x=kh.frage1.x_achse_altersverteilung,
-                                         y=kh.frage1.y_achse_altersverteilung,
-                                         text=kh.frage1.y_achse_altersverteilung,
+                            data=[go.Bar(x=qs.bottom().x_achse_altersverteilung,
+                                         y=qs.bottom().y_achse_altersverteilung,
+                                         text=qs.bottom().y_achse_altersverteilung,
                                          textposition='auto',
+                                        hoverinfo='none',
+                                         marker=dict(
+                                             color=['#4F5EFF', '#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5'])
                                          )],
-                            layout=go.Layout(title='Age', xaxis=dict(title='Age groups'),
-                                             yaxis=dict(title='Number of patients'))))
+                            layout=go.Layout(title={
+                                'text': 'Age',
+                                'x': 0.49,
+                                'y': 0.85
+
+                            }, xaxis=dict(title='Age groups'), yaxis=dict(title='Number of patients'))))
                 ], style={'display': 'block'}),
 
-                html.Div(className='GeschlechtDia', children=[
+                html.Div(className='sdBar', children=[
+
+                    dcc.Graph(
+                        id='diagramm-sd',
+                        figure=go.Figure(
+                            data=[go.Bar(x=qs.bottom().nd_prozent_value_list,
+                                         y=qs.bottom().nd_diagnose_value_list,
+                                         text=qs.bottom().nd_prozent_value_list,
+                                         textposition='auto',
+                                         orientation='h',
+                                            hoverinfo='none',
+                                         marker=dict(
+                                             color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF',
+                                                    '#8093E8', '#9998FF', '#957CEB', '#BE8CFF']))],
+                            layout=go.Layout(title='Secondary Diagnosis', xaxis=dict(title='Number of patients in %'), margin=go.layout.Margin(l=400, r= 20
+
+    ),
+                                             yaxis=go.layout.YAxis(automargin=True, autorange="reversed",
+                                                                   ))))
+                ], style={'display': 'block'}),
+            ]),
+
+            html.Div(className='DiaPie', children=[
+
+                html.Div(className='genderPie', children=[
                     dcc.Graph(
                         id='diagramm-geschlecht',
                         figure=go.Figure(
                             data=[go.Pie(labels=['Male', 'Female'],
-                                         values=kh.frage1.geschlecht_value_counts)],
-                            layout=go.Layout(title='Gender', margin={"l": 300, "r": 300}, legend={"x": 0.9, "y": 0.7})))
+                                         values=qs.bottom().geschlecht_value_counts,
+                                         marker=dict(colors=['#5CABFF', ' #4875E8']))],
+                            layout=go.Layout(title={
+                                'text': 'Gender',
+                                'x': 0.49,
+                                'y': 0.80
+
+                            }, height=330)))
                 ], style={'display': 'block', 'textAlign': 'center'}),
 
-                html.Div([
-                    dcc.Graph(
-                        id='diagramm-sd',
-                        figure=go.Figure(
-                            data=[go.Bar(x=kh.frage1.nd_prozent_value_list,
-                                         y=kh.frage1.nd_diagnose_value_list,
-                                         text=kh.frage1.nd_prozent_value_list,
-                                         textposition='outside',
-                                         orientation='h', )],
-                            layout=go.Layout(title='Secondary Diagnosis', xaxis=dict(title='Number of patients in %'),
-                                             yaxis=go.layout.YAxis(automargin=True, autorange="reversed",
-                                                                   ))))
-                ], style={'display': 'block'}),
-
-                #   html.Div([
-                #   dcc.Graph(
-                #     id='diagramm-sprache',
-                #    figure={'data': [{'x': sprachex,
-                #                 'y': sprachey,
-                #                 'text': sprachey,
-                #                 'textposition': 'outside',
-                #                 'type': 'bar'}],
-                #       'layout': {'title': 'Language'
-                #                                }})
-                #    ], style={'display': 'block'}  # <-- This is the line that will be changed by the checklist callback
-                #   ),
-
-                #  html.Div([
-                #    dcc.Graph(
-                #        id='diagramm-race',
-                #       figure={'data': [{'x': racex,
-                #                        'y': racey,
-                #                       'text': racey,
-                #                      'textposition': 'outside',
-                #                     'type': 'bar'}],
-                #          'layout': {'title': 'Race'
-                #                                   }})
-                #       ], style={'display': 'block'}  # <-- This is the line that will be changed by the checklist callback
-                #      ),
-
-                html.Div(className='race', children=[
+                html.Div(className='racePie', children=[
                     dcc.Graph(
                         id='diagramm-racepie',
                         figure=go.Figure(
-                            data=[go.Pie(labels=kh.frage1.racex,
-                                         values=kh.frage1.racey)],
-                            layout=go.Layout(title='Race', margin={"l": 300, "r": 300}, legend={"x": 0.9, "y": 0.7})))
+                            data=[go.Pie(labels=qs.bottom().racex,
+                                         values=qs.bottom().racey,
+                                         marker=dict(colors=['#4F5EFF', '#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF']))],
+                            layout=go.Layout(title={
+                                'text': 'Race',
+                                'x': 0.49,
+                                'y': 0.80
+
+                            }, height=330, autosize=True)))
                 ], style={'display': 'block', 'textAlign': 'center'}),
 
-                html.Div(className='sprache', children=[
+                html.Div(className='sprachePie', children=[
                     dcc.Graph(
                         id='diagramm-sprachepie',
                         figure=go.Figure(
-                            data=[go.Pie(labels=kh.frage1.sprachex,
-                                         values=kh.frage1.sprachey)],
-                            layout=go.Layout(title='Language', margin={"l": 300, "r": 300},
-                                             legend={"x": 0.9, "y": 0.7})))
+                            data=[go.Pie(labels=qs.bottom().sprachex,
+                                         values=qs.bottom().sprachey,
+                                         marker=dict(colors=['#4F5EFF', ' #5CABFF', '#37E7FF']))],
+                            layout=go.Layout(title='Language',
+                                             legend={"x": 0.49, "y": 0.80}, height=330)))
                 ], style={'display': 'block', 'textAlign': 'center', }),
 
             ]),
 
-            html.Div(className='Search', children=
-            dcc.Input(
-                placeholder='Search',
-                type='text',
-                style={'textAlign': 'center'},
-            )),
-            html.Div(className='Navigation', children=html.Div()),
+            html.Div(className='Search', children=html.Div()),
+            # html.Div(className='Navigation', children=html.Div()),
             html.Div(className='Types', children=['Types ',
                                                   dcc.Checklist(
                                                       id='checklistAge',
                                                       options=[{'label': 'Age', 'value': 'on'}],
                                                       values=['on']),
                                                   dcc.Checklist(
-                                                      id='checklistGender',
-                                                      options=[{'label': 'Gender', 'value': 'on'}],
-                                                      values=['on']),
-                                                  dcc.Checklist(
                                                       id='checklistSd',
                                                       options=[{'label': 'Secondary Diagnosis', 'value': 'on'}],
                                                       values=['on']),
                                                   dcc.Checklist(
-                                                      id='checklistSprache',
-                                                      options=[{'label': 'Language', 'value': 'on'}],
+                                                      id='checklistGender',
+                                                      options=[{'label': 'Gender', 'value': 'on'}],
                                                       values=['on']),
                                                   dcc.Checklist(
                                                       id='checklistRace',
                                                       options=[{'label': 'Race', 'value': 'on'}],
                                                       values=['on']),
+                                                  dcc.Checklist(
+                                                      id='checklistSprache',
+                                                      options=[{'label': 'Language', 'value': 'on'}],
+                                                      values=['on']),
 
                                                   ]),
-            html.Div(className='Save_Load', children=[
-                html.Button(id='save2', className='Save', children='Save'),
-                html.Button(id='load2', className='Load', children='Load')
-            ])
+
         ], style={'font-size': '20px'}),
     ]),
 ])
-
-
-@app.callback(
-    Output(component_id='diagramm-alter', component_property='style'),
-    [Input(component_id='checklistAge', component_property='values')])
-def show_hide_element(visibility_state):
-    if visibility_state == ['on']:
-        return {'display': 'block'}
-    else:
-        return {'display': 'none'}
 
 
 @app.callback(
@@ -356,6 +345,16 @@ def show_hide_element(visibility_state):
         return {'display': 'none'}
 
 
+@app.callback(
+    Output(component_id='diagramm-alter', component_property='style'),
+    [Input(component_id='checklistAge', component_property='values')])
+def show_hide_element(visibility_state):
+    if visibility_state == ['on']:
+        return {'display': 'block'}
+    else:
+        return {'display': 'none'}
+
+
 @app.callback(Output('sunburst', 'data'), [Input('sunburst', 'selectedPath')])
 def display_sun(selectedPath):
     # print(selectedPath)
@@ -367,12 +366,250 @@ def display_selected(selected_path):
     return 'Path: {}'.format('->'.join(selected_path or []) or 'Diagnoses')
 
 
-# @app.callback(Output('output-data-upload', component_property='children'),
-#               [Input('upload-data', 'contents')])
-# def update_output(list_of_contents):
-#     if list_of_contents is not None:
-#         children = 'Hallo!'
-#         return children
+@app.callback(Output('search-input', 'value'), [Input('reset', 'n_clicks')])
+def reset_input(n_clicks):
+    if (n_clicks is not None):
+        return ""
+
+
+@app.callback(Output(component_id='upload-data', component_property='value'),
+              [Input(component_id='add', component_property='n_clicks')],
+              [State(component_id='sunburst', component_property='selectedPath'),
+               State(component_id='upload-data', component_property='value')])
+def kriterium_sunburst_adden(n_clicks, selectedPath, value_vorher):
+    if value_vorher:
+        return f"""{value_vorher} AND {selectedPath[-1]}"""
+    elif selectedPath:
+        return selectedPath[-1]
+
+
+@app.callback([Output(component_id='count', component_property='children'),
+               Output(component_id='sex', component_property='figure'),
+               Output(component_id='age', component_property='figure'),
+               Output(component_id='diagramm-alter', component_property='figure'),
+               Output(component_id='diagramm-geschlecht', component_property='figure'),
+               Output(component_id='diagramm-sd', component_property='figure'),
+               Output(component_id='diagramm-racepie', component_property='figure'),
+               Output(component_id='diagramm-sprachepie', component_property='figure')
+               ],
+              [Input(component_id='upload-data', component_property='value')])
+def update_graphs(abfrage):
+    print(abfrage)
+    qs = querystack.Querystack.getInstance()
+    if abfrage:
+
+        try:
+            kh.Kohortenabfrage.umwandeln_in_fullname(abfrage=abfrage, baum=baum1)
+
+        except IndexError:
+            return ('Ungültige Eingabe. Ergebnisse sind von vorheriger Abfrage'), \
+                   {'data': [go.Pie(labels=['Male', 'Female'],
+                                    values=qs.peek().geschlecht_value_counts,
+                                    marker=dict(colors=['#5CABFF', '#4875E8']))],
+                    'layout': go.Layout(title={
+                        'text': 'Gender',
+                        'x': 0.49,
+                        'y': 0.75
+
+                    }, height=300)}, \
+                   {'data': [go.Bar(x=qs.peek().x_achse_altersverteilung,
+                                    y=qs.peek().y_achse_altersverteilung,
+                                    text=qs.peek().y_achse_altersverteilung,
+                                    textposition='auto',
+                                    hoverinfo='none',
+                                    marker=dict(
+                                        color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF',
+                                               '#8093E8', '#9998FF', '#957CEB', '#BE8CFF'])
+                                    )],
+                    'layout': go.Layout(title={
+                        'text': 'Age',
+                        'x': 0.49,
+                        'y': 0.70
+
+                    }, height=300, xaxis=dict(title='Age groups'),
+                        yaxis=dict(title='Number of patients'))
+
+                    }, \
+                   {'data': [go.Bar(x=qs.peek().x_achse_altersverteilung,
+                                    y=qs.peek().y_achse_altersverteilung,
+                                    text=qs.peek().y_achse_altersverteilung,
+                                    textposition='auto',
+                                    hoverinfo='none',
+                                    marker=dict(
+                                        color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF',
+                                               '#8093E8', '#9998FF', '#957CEB', '#BE8CFF'])
+                                    )],
+                    'layout': go.Layout(title='Age', xaxis=dict(title='Age groups'),
+                                        yaxis=dict(title='Number of patients'))}, \
+                   {'data': [go.Pie(labels=['Male', 'Female'],
+                                    values=qs.peek().geschlecht_value_counts,
+                                    marker=dict(colors=['#5CABFF', '#4875E8']))],
+                    'layout': go.Layout(title='Gender', legend={"x": 1.2, "y": 0.7})
+                    }, \
+                   {'data': [go.Bar(x=qs.peek().nd_prozent_value_list,
+                                    y=qs.peek().nd_diagnose_value_list,
+                                    text=qs.peek().nd_prozent_value_list,
+                                    textposition='auto',
+                                    hoverinfo='none',
+                                    orientation='h',
+                                    marker=dict(
+                                        color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF',
+                                               '#8093E8', '#9998FF', '#957CEB', '#BE8CFF']))],
+                    'layout': go.Layout(title='Secondary Diagnosis', xaxis=dict(title='Number of patients in %'), margin=go.layout.Margin(l=400, r= 20
+
+    ),
+                                        yaxis=go.layout.YAxis(automargin=True, autorange="reversed", ))
+                    }, \
+                   {'data': [go.Pie(labels=qs.peek().racex,
+                                    values=qs.peek().racey,
+                                    marker=dict(colors=['#4F5EFF', '#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF']))],
+                    'layout': go.Layout(title='Race', legend={"x": 1.2, "y": 0.7})
+                    }, \
+                   {'data': [go.Pie(labels=qs.peek().sprachex,
+                                    values=qs.peek().sprachey,
+                                    marker=dict(colors=['#4F5EFF', ' #5CABFF', '#37E7FF']))],
+                    'layout': go.Layout(title='Language',
+                                        legend={"x": 1.2, "y": 0.7})
+                    }
+        return ('Count: ', qs.peek().kohortengröße, ' (', qs.peek().kohortengröße_prozent, '%)'), \
+               {'data': [go.Pie(labels=['Male', 'Female'],
+                                values=qs.peek().geschlecht_value_counts,
+                                marker=dict(colors=['#5CABFF', ' #4875E8']))],
+                'layout': go.Layout(title={
+                    'text': 'Gender',
+                    'x': 0.49,
+                    'y': 0.75
+
+                }, height=300)}, \
+               {'data': [go.Bar(x=qs.peek().x_achse_altersverteilung,
+                                y=qs.peek().y_achse_altersverteilung,
+                                text=qs.peek().y_achse_altersverteilung,
+                                textposition='auto',
+                                hoverinfo='none',
+                                marker=dict(
+                                    color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF', '#8093E8',
+                                           '#9998FF', '#957CEB', '#BE8CFF'])
+                                )],
+                'layout': go.Layout(title={
+                    'text': 'Age',
+                    'x': 0.49,
+                    'y': 0.70
+
+                }, height=300, xaxis=dict(title='Age groups'),
+                    yaxis=dict(title='Number of patients'))
+
+                }, \
+               {'data': [go.Bar(x=qs.peek().x_achse_altersverteilung,
+                                y=qs.peek().y_achse_altersverteilung,
+                                text=qs.peek().y_achse_altersverteilung,
+                                textposition='auto',
+                                hoverinfo='none',
+                                marker=dict(
+                                    color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF', '#8093E8',
+                                           '#9998FF', '#957CEB', '#BE8CFF'])
+                                )],
+                'layout': go.Layout(title='Age', xaxis=dict(title='Age groups'),
+                                    yaxis=dict(title='Number of patients'))}, \
+               {'data': [go.Pie(labels=['Male', 'Female'],
+                                values=qs.peek().geschlecht_value_counts,
+                                marker=dict(colors=['#5CABFF', ' #4875E8']))],
+                'layout': go.Layout(title='Gender', legend={"x": 1.2, "y": 0.7})
+                }, \
+               {'data': [go.Bar(x=qs.peek().nd_prozent_value_list,
+                                y=qs.peek().nd_diagnose_value_list,
+                                text=qs.peek().nd_prozent_value_list,
+                                textposition='auto',
+                                hoverinfo='none',
+                                orientation='h',
+                                marker=dict(
+                                    color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF', '#8093E8',
+                                           '#9998FF', '#957CEB', '#BE8CFF']))],
+                'layout': go.Layout(title='Secondary Diagnosis', xaxis=dict(title='Number of patients in %'), margin=go.layout.Margin(l=400, r= 20
+
+    ),
+                                    yaxis=go.layout.YAxis(automargin=True, autorange="reversed", ))
+                }, \
+               {'data': [go.Pie(labels=qs.peek().racex,
+                                values=qs.peek().racey,
+                                marker=dict(colors=['#4F5EFF', '#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF']))],
+                'layout': go.Layout(title='Race', legend={"x": 1.2, "y": 0.7})
+                }, \
+               {'data': [go.Pie(labels=qs.peek().sprachex,
+                                values=qs.peek().sprachey,
+                                marker=dict(colors=['#4F5EFF', ' #5CABFF', '#37E7FF']))],
+                'layout': go.Layout(title='Language',
+                                    legend={"x": 1.2, "y": 0.7})
+                }
+
+    return ('Count: ', qs.bottom().kohortengröße, ' (', qs.bottom().kohortengröße_prozent, '%)'), {
+        'data': [go.Pie(labels=['Male', 'Female'],
+                        values=qs.bottom().geschlecht_value_counts,
+                        marker=dict(colors=['#5CABFF', ' #4875E8']))],
+        'layout': go.Layout(title={
+            'text': 'Gender',
+            'x': 0.49,
+            'y': 0.75
+
+        }, height=300)}, \
+           {'data': [go.Bar(x=qs.bottom().x_achse_altersverteilung,
+                            y=qs.bottom().y_achse_altersverteilung,
+                            text=qs.bottom().y_achse_altersverteilung,
+                            textposition='auto',
+                            hoverinfo='none',
+                            marker=dict(
+                                color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF', '#8093E8',
+                                       '#9998FF', '#957CEB', '#BE8CFF'])
+                            )],
+            'layout': go.Layout(title={
+                'text': 'Age',
+                'x': 0.49,
+                'y': 0.70
+
+            }, height=300, xaxis=dict(title='Age groups'),
+                yaxis=dict(title='Number of patients'))
+
+            }, \
+           {'data': [go.Bar(x=qs.bottom().x_achse_altersverteilung,
+                            y=qs.bottom().y_achse_altersverteilung,
+                            text=qs.bottom().y_achse_altersverteilung,
+                            textposition='auto',
+                            hoverinfo='none',
+                            marker=dict(
+                                color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF', '#8093E8',
+                                       '#9998FF', '#957CEB', '#BE8CFF'])
+                            )],
+            'layout': go.Layout(title='Age', xaxis=dict(title='Age groups'),
+                                yaxis=dict(title='Number of patients'))}, \
+           {'data': [go.Pie(labels=['Male', 'Female'],
+                            values=qs.bottom().geschlecht_value_counts,
+                            marker=dict(colors=['#5CABFF', ' #4875E8']))],
+            'layout': go.Layout(title='Gender', legend={"x": 1.2, "y": 0.7})
+            }, \
+           {'data': [go.Bar(x=qs.bottom().nd_prozent_value_list,
+                            y=qs.bottom().nd_diagnose_value_list,
+                            text=qs.bottom().nd_prozent_value_list,
+                            textposition='auto',
+                            hoverinfo='none',
+                            orientation='h',
+                            marker=dict(
+                                color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF', '#8093E8',
+                                       '#9998FF', '#957CEB', '#BE8CFF']))],
+            'layout': go.Layout(title='Secondary Diagnosis', xaxis=dict(title='Number of patients in %'), margin=go.layout.Margin(l=400, r= 20
+
+    ),
+                                yaxis=go.layout.YAxis(automargin=True, autorange="reversed",
+                                                      ))}, \
+           {'data': [go.Pie(labels=qs.bottom().racex,
+                            values=qs.bottom().racey,
+                            marker=dict(colors=['#4F5EFF', '#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF']))],
+            'layout': go.Layout(title='Race',  legend={"x": 1.2, "y": 0.7})
+            }, \
+           {'data': [go.Pie(labels=qs.bottom().sprachex,
+                            values=qs.bottom().sprachey,
+                            marker=dict(colors=['#4F5EFF', ' #5CABFF', '#37E7FF']))],
+            'layout': go.Layout(title='Language',
+                                legend={"x": 1.2, "y": 0.7})
+            }
 
 
 if __name__ == '__main__':

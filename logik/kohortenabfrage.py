@@ -1,23 +1,132 @@
 import datetime
 from logik import Verarbeitungsschicht_neu as bl
-#import Querystack as qs
+from logik import querystack as qs
+import re
 
 class Kohortenabfrage():
 
-    __x_achse_altersverteilung=['0-9', '10-17', '18-34', '35-44', '45-54', '55-64', '65-74', '75-84', '>=65', '>=85', 'Not recorded']
+    __x_achse_altersverteilung=['0-9', '10-17', '18-34', '35-44', '45-54', '55-64', '65-74', '75-84', '>=65', '>=85', 'Unknown']
+
+
+    def __reihenfolge_verknüpfungen(or_positions, and_positions):
+
+        verknüpfungen=[]
+
+        if or_positions ==[] and and_positions==[]:
+            return verknüpfungen
+
+
+        if or_positions != [] and and_positions == [] :
+            for i in or_positions:
+                verknüpfungen.append('OR')
+            return verknüpfungen
+
+        if or_positions==[] and and_positions !=[]:
+            for i in and_positions:
+                verknüpfungen.append('AND')
+            return verknüpfungen
+
+        if or_positions != [] and and_positions != []:
+            or_index=0
+            and_index = 0
+
+            while  or_index < len(or_positions) and and_index < len(and_positions):
+                if (or_positions[or_index] < and_positions[and_index]):
+                    verknüpfungen.append('OR')
+                    or_index+=1
+                else:
+                    verknüpfungen.append('AND')
+                    and_index+=1
+
+            if or_index < len(or_positions):
+                for i in range(or_index,len(or_positions)):
+                    verknüpfungen.append('OR')
+
+            if and_index< len(and_positions):
+                for i in range(and_index,len(and_positions)):
+                    verknüpfungen.append('AND')
+
+            return verknüpfungen
+
+        return verknüpfungen
+
+
+    def umwandeln_in_fullname(abfrage,baum):
 
 
 
-    def __init__(self,kriterien,verknüpfungen):
+
+
+
+        kriterien = re.split(' AND | OR ',abfrage)
+
+        for i in range(len(kriterien)):
+            kriterien[i]=kriterien[i].strip()
+
+        or_positions=[match.start() for match in re.finditer(re.escape(' OR '), abfrage)]
+        and_positions=[match.start() for match in re.finditer(re.escape(' AND '), abfrage)]
+
+        verknüpfungen = Kohortenabfrage.__reihenfolge_verknüpfungen(or_positions,and_positions)
+        fullnames = []
+
+
+
+
+        #print(abfrage_in_liste)
+
+
+
+
+
+
+        #print(kriterien)
+
+
+        for i in kriterien:
+            #print(i)
+            found=False
+            for j in baum.knotenliste_mit_baum:
+                breakflag=False
+                #print(j)
+                for k in j:
+                    #print(k.text)
+                    if k.shortcode==i or k.text==i :
+                        fullnames.append(k.fullname)
+                        breakflag=True
+                        found=True
+                        break
+
+                if breakflag==True:
+                    break
+
+            if found==False:
+                raise IndexError
+
+        print(fullnames)
+        print(verknüpfungen)
+
+        return Kohortenabfrage(fullnames, verknüpfungen)
+
+
+    def __init__(self,kriterien,verknüpfungen,flag_push=True):
+#    def __init__(self,abfrage,baum):
         self.kriterien = kriterien
         self.verknüpfungen=verknüpfungen
+
+#        self.kriterien, self.verknüpfungen = self.umwandeln_in_fullname(abfrage,baum=baum)
+
+
         self.zeitpunkt = datetime.datetime.now()
 
+
+        print('Abfrage gestartet')
         self.hd_sql_statement ,self.nd_sql_statement,\
-        self.df_hauptdia,self.df_nebendia=bl.umwandeln_in_sql_statement_und_df_hauptdia_nebendia(kriterien, verknüpfungen)
+        self.df_hauptdia,self.df_nebendia=bl.umwandeln_in_sql_statement_und_df_hauptdia_nebendia(self.kriterien, self.verknüpfungen)
 
 
         self.kohortengröße =len(self.df_hauptdia)
+        #self.kohortengröße_prozent = round(((self.kohortengröße/133) *100),2)
+        print(self.kohortengröße)
 
         self.df_alter = self.df_hauptdia['age_in_years_num']
         self.x_achse_altersverteilung=Kohortenabfrage.__x_achse_altersverteilung
@@ -52,9 +161,14 @@ class Kohortenabfrage():
         self.nd_prozent_value_list = self.nd_df_prozent.values.tolist()
 
 
+        if (flag_push==True):
+            querystack = qs.Querystack.getInstance()
+            self.kohortengröße_prozent = round(((self.kohortengröße / querystack.bottom().kohortengröße) * 100), 2)
+            print(self.kohortengröße_prozent)
+            querystack.push(self)
+        else:
+            self.kohortengröße_prozent = 100
 
-      #  querystack=qs.Querystack.instance()
-      #  querystack.push(self)
 
 
     def __altersverteilung_y_achse(self,df_alter):
@@ -79,8 +193,8 @@ class Kohortenabfrage():
 
 
 
-frage1=Kohortenabfrage(kriterien=["\Diagnoses\(A00-B99) Cert~ugmm"],  #["\Diagnoses\(I00-I99) Dise~3w8h","\Diagnoses\(Q00-Q99) Cong~t96i","\Diagnoses\(K00-K94) Dise~rl1r","\Diagnoses\(A00-B99) Cert~ugmm"],
-                       verknüpfungen=[])#['AND','AND','OR'])
+#frage1=Kohortenabfrage(kriterien=["\Diagnoses"],  #["\Diagnoses\(I00-I99) Dise~3w8h","\Diagnoses\(Q00-Q99) Cong~t96i","\Diagnoses\(K00-K94) Dise~rl1r","\Diagnoses\(A00-B99) Cert~ugmm"],
+#                       verknüpfungen=[])#['AND','AND','OR'])
 
 #frage2=Kohortenabfrage(kriterien=["\Diagnoses\(I00-I99) Dise~3w8h","\Diagnoses\(Q00-Q99) Cong~t96i","\Diagnoses\(K00-K94) Dise~rl1r","\Diagnoses\(A00-B99) Cert~ugmm"],
 #                       verknüpfungen=['AND','AND','OR'])
@@ -96,7 +210,7 @@ frage1=Kohortenabfrage(kriterien=["\Diagnoses\(A00-B99) Cert~ugmm"],  #["\Diagno
 
 
 
-print(frage1.hd_sql_statement)
+#print(frage1.hd_sql_statement)
 
 
 
