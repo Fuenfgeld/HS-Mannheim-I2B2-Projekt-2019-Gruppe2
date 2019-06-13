@@ -6,8 +6,8 @@ from datenhaltung import connection as connect
 import plotly.graph_objs as go
 from dash.dependencies import Input, Output, State
 from logik import kohortenabfrage as kh
-from logik import querystack
 import tree_dictionary_import_export as tie
+from logik import querystack
 
 baum1 = tie.treedictionary_aus_pickle_importieren('baum_mit_var_text')
 qs = querystack.Querystack.getInstance()
@@ -90,7 +90,9 @@ app = dash.Dash('__name__',
                                   ])
 app.scripts.config.serve_locally = True
 app.css.config.serve_locally = True
+app.title = "IndiGraph"
 app.layout = html.Div([
+
     dcc.Input(className="drop", id="upload-data",
               style={'height': '60px', 'width': '100%', 'border-style': 'dashed', 'line-height': '60px',
                      'text-align': 'center', 'margin': '10px', 'border-width': '1px', 'border-radius': '5px',
@@ -103,28 +105,14 @@ app.layout = html.Div([
             type='text',
             style={'textAlign': 'center', 'width': '70%'},
         ),
-        html.Button(
-            id="search",
-            # children="search",
-            className="button-s"
-        ),
-        html.Button(
-            id="reset",
-            # children="reset",
-            className="button-r"
+        html.Button(id="search",title="search"),
+        html.Button(id="reset", title="reset",
         )], style={'top': '120px', 'position': 'absolute'}),
     html.Div(className='Navigation', style={'text-align': 'left', 'position': 'absolute', 'top': '160px'},
              children=html.Div(className='container', id='jstree-tree')),
-
-    html.Div(html.Button(id='save')
-             ),
-
-    html.Div(html.Button(id='load'),
-             ),
-
-    html.Div(html.Button(id='run'),
-             ),
-
+    html.Div(html.Button(id='save', title="save")),
+    html.Div(html.Button(id='load', title="load")),
+    html.Div(html.Button(id='run', title="run")),
     dcc.Tabs(className='Tabs', id='tabs', children=[
         dcc.Tab(label='Navigation', children=[
             html.Div(className='Sunburst',
@@ -132,13 +120,10 @@ app.layout = html.Div([
                          children=[
                              html.Div(className='path', id='output'),
                              html.Button(
-                                 id="add",
-                                 # children="add",
-                                 className="button-a"
-                             ),
+                                 id="add",title="add"),
                              Sunburst(id='sunburst', data=create_data_from_node([]), height=650, width=800,
                                       selectedPath=[])],
-                         style={'position': 'absolute', 'margin-left': '35px', 'margin-top': '30px'}), ),
+                         style={'position': 'absolute', 'margin-left': '35px', 'margin-top': '10px'}), ),
             html.Div(className='Search', children=html.Div()),
             html.Div(className='Navigation', children=html.Div()),
             html.Div(className='NumberOfPatients', id="count",
@@ -166,7 +151,7 @@ app.layout = html.Div([
                                  data=[go.Bar(x=qs.bottom().x_achse_altersverteilung,
                                               y=qs.bottom().y_achse_altersverteilung,
                                               text=qs.bottom().y_achse_altersverteilung,
-                                              textposition='outside',
+                                              textposition='auto',
                                               marker=dict(color=['#4F5EFF', '#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF',
                                                                  '#8BCAF5'])
                                               )],
@@ -184,7 +169,7 @@ app.layout = html.Div([
         dcc.Tab(className='TabDia', label='Diagram', children=[
             html.Div(className='DiaBar', children=[
 
-                html.Div(
+                html.Div(style={'text-align' : 'center'}, id= 'count2',
                     children=['Count: ', qs.bottom().kohortengröße, ' (', qs.bottom().kohortengröße_prozent, '%)']),
 
                 html.Div(className='alterBar', children=[
@@ -194,7 +179,7 @@ app.layout = html.Div([
                             data=[go.Bar(x=qs.bottom().x_achse_altersverteilung,
                                          y=qs.bottom().y_achse_altersverteilung,
                                          text=qs.bottom().y_achse_altersverteilung,
-                                         textposition='outside',
+                                         textposition='auto',
                                          marker=dict(
                                              color=['#4F5EFF', '#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5'])
                                          )],
@@ -236,8 +221,8 @@ app.layout = html.Div([
                                          marker=dict(colors=['#5CABFF', ' #4875E8']))],
                             layout=go.Layout(title={
                                 'text': 'Gender',
-                                'x': 0.49,
-                                'y': 0.80
+                                'x': 1,
+                                'y': 0.7
 
                             }, height=330)))
                 ], style={'display': 'block', 'textAlign': 'center'}),
@@ -251,8 +236,8 @@ app.layout = html.Div([
                                          marker=dict(colors=['#4F5EFF', '#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF']))],
                             layout=go.Layout(title={
                                 'text': 'Race',
-                                'x': 0.49,
-                                'y': 0.80
+                                'x': 1,
+                                'y': 0.7
 
                             }, height=330, autosize=True)))
                 ], style={'display': 'block', 'textAlign': 'center'}),
@@ -264,15 +249,15 @@ app.layout = html.Div([
                             data=[go.Pie(labels=qs.bottom().sprachex,
                                          values=qs.bottom().sprachey,
                                          marker=dict(colors=['#4F5EFF', ' #5CABFF', '#37E7FF']))],
-                            layout=go.Layout(title='Language', margin={"l": 300, "r": 300},
-                                             legend={"x": 0.49, "y": 0.80}, height=330)))
+                            layout=go.Layout(title='Language',
+                                             legend={"x": 1, "y": 0.7}, height=330)))
                 ], style={'display': 'block', 'textAlign': 'center', }),
 
             ]),
 
             html.Div(className='Search', children=html.Div()),
             # html.Div(className='Navigation', children=html.Div()),
-            html.Div(className='Types', children=['Types ',
+            html.Div(className='Types', children=[html.H1("Types", style={"font-size" : '30px', 'color' : 'blue', 'margin-left' : '10px'}),
                                                   dcc.Checklist(
                                                       id='checklistAge',
                                                       options=[{'label': 'Age', 'value': 'on'}],
@@ -380,6 +365,7 @@ def kriterium_sunburst_adden(n_clicks, selectedPath, value_vorher):
 
 
 @app.callback([Output(component_id='count', component_property='children'),
+               Output(component_id='count2', component_property='children'),
                Output(component_id='sex', component_property='figure'),
                Output(component_id='age', component_property='figure'),
                Output(component_id='diagramm-alter', component_property='figure'),
@@ -411,7 +397,7 @@ def update_graphs(abfrage):
                    {'data': [go.Bar(x=qs.peek().x_achse_altersverteilung,
                                     y=qs.peek().y_achse_altersverteilung,
                                     text=qs.peek().y_achse_altersverteilung,
-                                    textposition='outside',
+                                    textposition='auto',
                                     marker=dict(
                                         color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF',
                                                '#8093E8', '#9998FF', '#957CEB', '#BE8CFF'])
@@ -428,7 +414,7 @@ def update_graphs(abfrage):
                    {'data': [go.Bar(x=qs.peek().x_achse_altersverteilung,
                                     y=qs.peek().y_achse_altersverteilung,
                                     text=qs.peek().y_achse_altersverteilung,
-                                    textposition='outside',
+                                    textposition='auto',
                                     marker=dict(
                                         color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF',
                                                '#8093E8', '#9998FF', '#957CEB', '#BE8CFF'])
@@ -438,7 +424,7 @@ def update_graphs(abfrage):
                    {'data': [go.Pie(labels=['Male', 'Female'],
                                     values=qs.peek().geschlecht_value_counts,
                                     marker=dict(colors=['#5CABFF', '#4875E8']))],
-                    'layout': go.Layout(title='Gender', margin={"l": 300, "r": 300}, legend={"x": 0.9, "y": 0.7})
+                    'layout': go.Layout(title='Gender', legend={"x": 1, "y": 0.7})
                     }, \
                    {'data': [go.Bar(x=qs.peek().nd_prozent_value_list,
                                     y=qs.peek().nd_diagnose_value_list,
@@ -454,15 +440,16 @@ def update_graphs(abfrage):
                    {'data': [go.Pie(labels=qs.peek().racex,
                                     values=qs.peek().racey,
                                     marker=dict(colors=['#4F5EFF', '#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF']))],
-                    'layout': go.Layout(title='Race', margin={"l": 300, "r": 300}, legend={"x": 0.9, "y": 0.7})
+                    'layout': go.Layout(title='Race', legend={"x": 1, "y": 0.7})
                     }, \
                    {'data': [go.Pie(labels=qs.peek().sprachex,
                                     values=qs.peek().sprachey,
                                     marker=dict(colors=['#4F5EFF', ' #5CABFF', '#37E7FF']))],
-                    'layout': go.Layout(title='Language', margin={"l": 300, "r": 300},
-                                        legend={"x": 0.9, "y": 0.7})
+                    'layout': go.Layout(title='Language',
+                                        legend={"x": 1, "y": 0.7})
                     }
         return ('Count: ', qs.peek().kohortengröße, ' (', qs.peek().kohortengröße_prozent, '%)'), \
+               ('Count: ', qs.peek().kohortengröße, ' (', qs.peek().kohortengröße_prozent, '%)'), \
                {'data': [go.Pie(labels=['Male', 'Female'],
                                 values=qs.peek().geschlecht_value_counts,
                                 marker=dict(colors=['#5CABFF', ' #4875E8']))],
@@ -475,7 +462,7 @@ def update_graphs(abfrage):
                {'data': [go.Bar(x=qs.peek().x_achse_altersverteilung,
                                 y=qs.peek().y_achse_altersverteilung,
                                 text=qs.peek().y_achse_altersverteilung,
-                                textposition='outside',
+                                textposition='auto',
                                 marker=dict(
                                     color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF', '#8093E8',
                                            '#9998FF', '#957CEB', '#BE8CFF'])
@@ -492,7 +479,7 @@ def update_graphs(abfrage):
                {'data': [go.Bar(x=qs.peek().x_achse_altersverteilung,
                                 y=qs.peek().y_achse_altersverteilung,
                                 text=qs.peek().y_achse_altersverteilung,
-                                textposition='outside',
+                                textposition='auto',
                                 marker=dict(
                                     color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF', '#8093E8',
                                            '#9998FF', '#957CEB', '#BE8CFF'])
@@ -502,7 +489,7 @@ def update_graphs(abfrage):
                {'data': [go.Pie(labels=['Male', 'Female'],
                                 values=qs.peek().geschlecht_value_counts,
                                 marker=dict(colors=['#5CABFF', ' #4875E8']))],
-                'layout': go.Layout(title='Gender', margin={"l": 300, "r": 300}, legend={"x": 0.9, "y": 0.7})
+                'layout': go.Layout(title='Gender', legend={"x": 1, "y": 0.7})
                 }, \
                {'data': [go.Bar(x=qs.peek().nd_prozent_value_list,
                                 y=qs.peek().nd_diagnose_value_list,
@@ -518,16 +505,18 @@ def update_graphs(abfrage):
                {'data': [go.Pie(labels=qs.peek().racex,
                                 values=qs.peek().racey,
                                 marker=dict(colors=['#4F5EFF', '#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF']))],
-                'layout': go.Layout(title='Race', margin={"l": 300, "r": 300}, legend={"x": 0.9, "y": 0.7})
+                'layout': go.Layout(title='Race', legend={"x": 1, "y": 0.7})
                 }, \
                {'data': [go.Pie(labels=qs.peek().sprachex,
                                 values=qs.peek().sprachey,
                                 marker=dict(colors=['#4F5EFF', ' #5CABFF', '#37E7FF']))],
-                'layout': go.Layout(title='Language', margin={"l": 300, "r": 300},
-                                    legend={"x": 0.9, "y": 0.7})
+                'layout': go.Layout(title='Language',
+                                    legend={"x": 1, "y": 0.7})
                 }
 
-    return ('Count: ', qs.bottom().kohortengröße, ' (', qs.bottom().kohortengröße_prozent, '%)'), {
+    return ('Count: ', qs.bottom().kohortengröße, ' (', qs.bottom().kohortengröße_prozent, '%)'), \
+           ('Count: ', qs.peek().kohortengröße, ' (', qs.peek().kohortengröße_prozent, '%)'), \
+           {
         'data': [go.Pie(labels=['Male', 'Female'],
                         values=qs.bottom().geschlecht_value_counts,
                         marker=dict(colors=['#5CABFF', ' #4875E8']))],
@@ -540,7 +529,7 @@ def update_graphs(abfrage):
            {'data': [go.Bar(x=qs.bottom().x_achse_altersverteilung,
                             y=qs.bottom().y_achse_altersverteilung,
                             text=qs.bottom().y_achse_altersverteilung,
-                            textposition='outside',
+                            textposition='auto',
                             marker=dict(
                                 color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF', '#8093E8',
                                        '#9998FF', '#957CEB', '#BE8CFF'])
@@ -557,7 +546,7 @@ def update_graphs(abfrage):
            {'data': [go.Bar(x=qs.bottom().x_achse_altersverteilung,
                             y=qs.bottom().y_achse_altersverteilung,
                             text=qs.bottom().y_achse_altersverteilung,
-                            textposition='outside',
+                            textposition='auto',
                             marker=dict(
                                 color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF', '#8093E8',
                                        '#9998FF', '#957CEB', '#BE8CFF'])
@@ -567,7 +556,7 @@ def update_graphs(abfrage):
            {'data': [go.Pie(labels=['Male', 'Female'],
                             values=qs.bottom().geschlecht_value_counts,
                             marker=dict(colors=['#5CABFF', ' #4875E8']))],
-            'layout': go.Layout(title='Gender', margin={"l": 300, "r": 300}, legend={"x": 0.9, "y": 0.7})
+            'layout': go.Layout(title='Gender', legend={"x": 1, "y": 0.7})
             }, \
            {'data': [go.Bar(x=qs.bottom().nd_prozent_value_list,
                             y=qs.bottom().nd_diagnose_value_list,
@@ -583,13 +572,14 @@ def update_graphs(abfrage):
            {'data': [go.Pie(labels=qs.bottom().racex,
                             values=qs.bottom().racey,
                             marker=dict(colors=['#4F5EFF', '#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF']))],
-            'layout': go.Layout(title='Race', margin={"l": 300, "r": 300}, legend={"x": 0.9, "y": 0.7})
+            'layout': go.Layout(title='Race',  legend={"x": 1, "y": 0.7})
             }, \
            {'data': [go.Pie(labels=qs.bottom().sprachex,
                             values=qs.bottom().sprachey,
                             marker=dict(colors=['#4F5EFF', ' #5CABFF', '#37E7FF']))],
-            'layout': go.Layout(title='Language', margin={"l": 300, "r": 300},
-                                legend={"x": 0.9, "y": 0.7})
+            'layout': go.Layout(title='Language',
+                                legend={"x": 1
+                                    , "y": 0.7})
             }
 
 
