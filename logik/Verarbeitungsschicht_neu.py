@@ -3,7 +3,7 @@ import pandas as pd
 
 
 def connection_zu_datenbank_aufbauen():
-    connection = psy.connect(database="i2b2", user="i2b2", password="demouser", host="129.206.7.75", port="5432")
+    connection = psy.connect(database="i2b2", user="i2b2", password="demouser", host="129.206.7.80", port="5432")
 
     return connection
 

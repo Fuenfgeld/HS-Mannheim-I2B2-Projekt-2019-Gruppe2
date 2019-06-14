@@ -81,12 +81,10 @@ connection = connect.create_connection()
 app = dash.Dash('__name__',
                 external_stylesheets=['https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css',
                                       'https://static.jstree.com/3.0.9/assets/dist/themes/default/style.min.css',
-
                                       ],
 
                 external_scripts=['http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js',
                                   'https://cdnjs.cloudflare.com/ajax/libs/jstree/3.0.9/jstree.min.js',
-
                                   ])
 app.scripts.config.serve_locally = True
 app.css.config.serve_locally = True
@@ -180,7 +178,6 @@ app.layout = html.Div([
                                          y=qs.bottom().y_achse_altersverteilung,
                                          text=qs.bottom().y_achse_altersverteilung,
                                          textposition='auto',
-                                        hoverinfo='none',
                                          marker=dict(
                                              color=['#4F5EFF', '#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5'])
                                          )],
@@ -200,15 +197,12 @@ app.layout = html.Div([
                             data=[go.Bar(x=qs.bottom().nd_prozent_value_list,
                                          y=qs.bottom().nd_diagnose_value_list,
                                          text=qs.bottom().nd_prozent_value_list,
-                                         textposition='auto',
+                                         textposition='outside',
                                          orientation='h',
-                                            hoverinfo='none',
                                          marker=dict(
                                              color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF',
                                                     '#8093E8', '#9998FF', '#957CEB', '#BE8CFF']))],
-                            layout=go.Layout(title='Secondary Diagnosis', xaxis=dict(title='Number of patients in %'), margin=go.layout.Margin(l=400, r= 20
-
-    ),
+                            layout=go.Layout(title='Secondary Diagnosis', xaxis=dict(title='Number of patients in %'),
                                              yaxis=go.layout.YAxis(automargin=True, autorange="reversed",
                                                                    ))))
                 ], style={'display': 'block'}),
@@ -225,8 +219,8 @@ app.layout = html.Div([
                                          marker=dict(colors=['#5CABFF', ' #4875E8']))],
                             layout=go.Layout(title={
                                 'text': 'Gender',
-                                'x': 0.49,
-                                'y': 0.80
+                                'x': 1,
+                                'y': 0.7
 
                             }, height=330)))
                 ], style={'display': 'block', 'textAlign': 'center'}),
@@ -240,8 +234,8 @@ app.layout = html.Div([
                                          marker=dict(colors=['#4F5EFF', '#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF']))],
                             layout=go.Layout(title={
                                 'text': 'Race',
-                                'x': 0.49,
-                                'y': 0.80
+                                'x': 1,
+                                'y': 0.7
 
                             }, height=330, autosize=True)))
                 ], style={'display': 'block', 'textAlign': 'center'}),
@@ -254,7 +248,7 @@ app.layout = html.Div([
                                          values=qs.bottom().sprachey,
                                          marker=dict(colors=['#4F5EFF', ' #5CABFF', '#37E7FF']))],
                             layout=go.Layout(title='Language',
-                                             legend={"x": 0.49, "y": 0.80}, height=330)))
+                                             legend={"x": 1, "y": 0.7}, height=330)))
                 ], style={'display': 'block', 'textAlign': 'center', }),
 
             ]),
@@ -453,7 +447,7 @@ def update_graphs(abfrage):
                                     values=qs.peek().sprachey,
                                     marker=dict(colors=['#4F5EFF', ' #5CABFF', '#37E7FF']))],
                     'layout': go.Layout(title='Language',
-                                        legend={"x": 1.2, "y": 0.7})
+                                        legend={"x": 1, "y": 0.7})
                     }
         return ('Count: ', qs.peek().kohortengröße, ' (', qs.peek().kohortengröße_prozent, '%)'), \
                ('Count: ', qs.peek().kohortengröße, ' (', qs.peek().kohortengröße_prozent, '%)'), \
@@ -509,7 +503,7 @@ def update_graphs(abfrage):
                                 marker=dict(
                                     color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF', '#8093E8',
                                            '#9998FF', '#957CEB', '#BE8CFF']))],
-                'layout': go.Layout(title='Secondary Diagnosis', xaxis=dict(title='Number of patients in %'),margin=go.layout.Margin(l=400, r= 20),
+                'layout': go.Layout(title='Secondary Diagnosis', xaxis=dict(title='Number of patients in %'), margin=go.layout.Margin(l=400, r= 20),
                                     yaxis=go.layout.YAxis(automargin=True, autorange="reversed", ))
                 }, \
                {'data': [go.Pie(labels=qs.peek().racex,
@@ -540,6 +534,7 @@ def update_graphs(abfrage):
                             y=qs.bottom().y_achse_altersverteilung,
                             text=qs.bottom().y_achse_altersverteilung,
                             textposition='auto',
+                            hoverinfo='none',
                             marker=dict(
                                 color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF', '#8093E8',
                                        '#9998FF', '#957CEB', '#BE8CFF'])
@@ -557,6 +552,7 @@ def update_graphs(abfrage):
                             y=qs.bottom().y_achse_altersverteilung,
                             text=qs.bottom().y_achse_altersverteilung,
                             textposition='auto',
+                            hoverinfo='none',
                             marker=dict(
                                 color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF', '#8093E8',
                                        '#9998FF', '#957CEB', '#BE8CFF'])
@@ -571,12 +567,13 @@ def update_graphs(abfrage):
            {'data': [go.Bar(x=qs.bottom().nd_prozent_value_list,
                             y=qs.bottom().nd_diagnose_value_list,
                             text=qs.bottom().nd_prozent_value_list,
-                            textposition='outside',
+                            textposition='auto',
+                            hoverinfo='none',
                             orientation='h',
                             marker=dict(
                                 color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF', '#8093E8',
                                        '#9998FF', '#957CEB', '#BE8CFF']))],
-            'layout': go.Layout(title='Secondary Diagnosis', xaxis=dict(title='Number of patients in %'),margin=go.layout.Margin(l=400, r= 20),
+            'layout': go.Layout(title='Secondary Diagnosis', xaxis=dict(title='Number of patients in %'), margin=go.layout.Margin(l=400, r= 20),
                                 yaxis=go.layout.YAxis(automargin=True, autorange="reversed",
                                                       ))}, \
            {'data': [go.Pie(labels=qs.bottom().racex,
