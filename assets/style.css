@@ -3,8 +3,8 @@ label {
     margin-left: 0.5em;
 }
 
-body{
-font-size: 20px;
+body {
+    font-size: 20px;
 }
 
 
@@ -25,6 +25,17 @@ font-size: 20px;
     width: 75%;
     float: right;
     border-style: solid;
+}
+
+.Liste {
+    width: 20%;
+    height: 25em;
+    border-style: dashed;
+    border-color: #4875E8;
+    position: relative;
+    left: 38em;
+    top: -27em;
+
 }
 
 .Tabs {
@@ -126,20 +137,20 @@ font-size: 20px;
 .genderPie .js-plotly-plot .plot-container .svg-container {
 
 
-height: 300px !important;
-        top: -1.5em;
+    height: 300px !important;
+    top: -1.5em;
 }
 
 .racePie .js-plotly-plot .plot-container .svg-container {
 
-height: 300px !important;
-        top: -1.5em;
+    height: 300px !important;
+    top: -1.5em;
 }
 
 .sprachePie .js-plotly-plot .plot-container .svg-container {
 
-height: 300px !important;
-        top: -1.5em;
+    height: 300px !important;
+    top: -1.5em;
 }
 
 .Types {
@@ -167,7 +178,8 @@ height: 300px !important;
 .path {
     position: absolute;
     font-size: 15px;
-    top: -0.7em
+    top: -0.7em;
+    margin-left: 3em
 }
 
 #search {
@@ -230,20 +242,23 @@ height: 300px !important;
     color: #ffffff;
     text-decoration: none;
 }
+
 #reset:hover,
 #reset:focus {
     border: 0.1em solid #4149ff;
     color: #ffffff;
     text-decoration: none;
 }
+
 #reset:active {
     background: #5CABFF;
     background: -webkit-gradient(linear, left top, left bottom, from(#5CABFF), to(#5CABFF));
     background: -moz-linear-gradient(top, #5CABFF, #5CABFF);
     background: linear-gradient(to bottom, #5CABFF, #5CABFF);
 }
-#reset:before{
-    content:  "\0000a0";
+
+#reset:before {
+    content: "\0000a0";
     display: inline-block;
     height: 1.2em;
     width: 1.2em;
@@ -258,7 +273,8 @@ height: 300px !important;
 
 #add {
     position: relative;
-    top: 15%;
+    top: 10%;
+    left: -0.5em;
     float: right;
     display: inline-block;
     text-align: center;
