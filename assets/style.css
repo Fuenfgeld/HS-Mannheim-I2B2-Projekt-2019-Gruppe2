@@ -28,7 +28,7 @@ label {
     top: -5px;
     height: 40px;
     width: 25%;
-    color: blue;
+    color: #4875E8;
 }
 
 .Navigation {
@@ -170,7 +170,7 @@ label {
     text-align: center;
     vertical-align: middle;
     padding: 3px 5px;
-    border: 2px solid #1a1db8;
+    border: 2px solid #4875E8;
     border-radius: 100px;
     background: #ffffff;
     background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
@@ -188,10 +188,10 @@ label {
 }
 
 #search:active {
-    background: #1a1db8;
-    background: -webkit-gradient(linear, left top, left bottom, from(#1a1db8), to(#1a1db8));
-    background: -moz-linear-gradient(top, #1a1db8, #1a1db8);
-    background: linear-gradient(to bottom, #1a1db8, #1a1db8);
+    background: #5CABFF;
+    background: -webkit-gradient(linear, left top, left bottom, from(#5CABFF), to(#5CABFF));
+    background: -moz-linear-gradient(top, #5CABFF, #5CABFF);
+    background: linear-gradient(to bottom, #5CABFF, #5CABFF);
 }
 
 #search:before {
@@ -214,7 +214,7 @@ label {
     text-align: center;
     vertical-align: middle;
     padding: 3px 5px;
-    border: 2px solid #1a1db8;
+    border: 2px solid #4875E8;
     border-radius: 100px;
     background: #ffffff;
     background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
@@ -231,10 +231,10 @@ label {
     text-decoration: none;
 }
 #reset:active {
-    background: #1a1db8;
-    background: -webkit-gradient(linear, left top, left bottom, from(#1a1db8), to(#1a1db8));
-    background: -moz-linear-gradient(top, #1a1db8, #1a1db8);
-    background: linear-gradient(to bottom, #1a1db8, #1a1db8);
+    background: #5CABFF;
+    background: -webkit-gradient(linear, left top, left bottom, from(#5CABFF), to(#5CABFF));
+    background: -moz-linear-gradient(top, #5CABFF, #5CABFF);
+    background: linear-gradient(to bottom, #5CABFF, #5CABFF);
 }
 #reset:before{
     content:  "\0000a0";
@@ -258,7 +258,7 @@ label {
     text-align: center;
     vertical-align: middle;
     padding: 12px 13px;
-    border: 2px solid #1a1db8;
+    border: 2px solid #4875E8;
     border-radius: 100px;
     background: #ffffff;
     background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
@@ -270,17 +270,17 @@ label {
 }
 
 #add:hover,
-.button:focus {
+#add:focus {
     border: 2px solid #4149ff;
     color: #ffffff;
     text-decoration: none;
 }
 
 #add:active {
-    background: #1a1db8;
-    background: -webkit-gradient(linear, left top, left bottom, from(#1a1db8), to(#1a1db8));
-    background: -moz-linear-gradient(top, #1a1db8, #1a1db8);
-    background: linear-gradient(to bottom, #1a1db8, #1a1db8);
+    background: #5CABFF;
+    background: -webkit-gradient(linear, left top, left bottom, from(#5CABFF), to(#5CABFF));
+    background: -moz-linear-gradient(top, #5CABFF, #5CABFF);
+    background: linear-gradient(to bottom, #5CABFF, #5CABFF);
 }
 
 #add:before {
@@ -307,7 +307,7 @@ label {
     text-align: center;
     vertical-align: middle;
     padding: 12px 13px;
-    border: 2px solid #1a1db8;
+    border: 2px solid #4875E8;
     border-radius: 100px;
     background: #ffffff;
     background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
@@ -326,10 +326,10 @@ label {
 }
 
 #run:active {
-    background: #1a1db8;
-    background: -webkit-gradient(linear, left top, left bottom, from(#1a1db8), to(#1a1db8));
-    background: -moz-linear-gradient(top, #1a1db8, #1a1db8);
-    background: linear-gradient(to bottom, #1a1db8, #1a1db8);
+    background: #5CABFF;
+    background: -webkit-gradient(linear, left top, left bottom, from(#5CABFF), to(#5CABFF));
+    background: -moz-linear-gradient(top, #5CABFF, #5CABFF);
+    background: linear-gradient(to bottom, #5CABFF, #5CABFF);
 }
 
 #run:before {
@@ -356,7 +356,7 @@ label {
     text-align: center;
     vertical-align: middle;
     padding: 12px 13px;
-    border: 2px solid #1a1db8;
+    border: 2px solid #4875E8;
     border-radius: 100px;
     background: #ffffff;
     background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
@@ -375,10 +375,10 @@ label {
 }
 
 #save:active {
-    background: #1a1db8;
-    background: -webkit-gradient(linear, left top, left bottom, from(#1a1db8), to(#1a1db8));
-    background: -moz-linear-gradient(top, #1a1db8, #1a1db8);
-    background: linear-gradient(to bottom, #1a1db8, #1a1db8);
+    background: #5CABFF;
+    background: -webkit-gradient(linear, left top, left bottom, from(#5CABFF), to(#5CABFF));
+    background: -moz-linear-gradient(top, #5CABFF, #5CABFF);
+    background: linear-gradient(to bottom, #5CABFF, #5CABFF);
 }
 
 #save:before {
@@ -406,7 +406,7 @@ label {
     text-align: center;
     vertical-align: middle;
     padding: 12px 13px;
-    border: 2px solid #1a1db8;
+    border: 2px solid #4875E8;
     border-radius: 100px;
     background: #ffffff;
     background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
@@ -425,10 +425,10 @@ label {
 }
 
 #load:active {
-    background: #1a1db8;
-    background: -webkit-gradient(linear, left top, left bottom, from(#1a1db8), to(#1a1db8));
-    background: -moz-linear-gradient(top, #1a1db8, #1a1db8);
-    background: linear-gradient(to bottom, #1a1db8, #1a1db8);
+    background: #5CABFF;
+    background: -webkit-gradient(linear, left top, left bottom, from(#5CABFF), to(#5CABFF));
+    background: -moz-linear-gradient(top, #5CABFF, #5CABFF);
+    background: linear-gradient(to bottom, #5CABFF, #5CABFF);
 }
 
 #load:before {

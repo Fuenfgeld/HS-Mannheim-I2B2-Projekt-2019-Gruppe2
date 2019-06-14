@@ -257,7 +257,7 @@ app.layout = html.Div([
 
             html.Div(className='Search', children=html.Div()),
             # html.Div(className='Navigation', children=html.Div()),
-            html.Div(className='Types', children=[html.H1("Types", style={"font-size" : '30px', 'color' : 'blue', 'margin-left' : '10px'}),
+            html.Div(className='Types', children=[html.H1("Types", style={"font-size" : '30px', 'color' : '#4875E8', 'margin-left' : '10px'}),
                                                   dcc.Checklist(
                                                       id='checklistAge',
                                                       options=[{'label': 'Age', 'value': 'on'}],
