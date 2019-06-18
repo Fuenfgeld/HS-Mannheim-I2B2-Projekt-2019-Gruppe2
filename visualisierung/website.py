@@ -119,10 +119,8 @@ app.layout = html.Div([
                              html.Div(className='path', id='output'),
                              html.Button(id="add", title="add"),
                              Sunburst(id='sunburst', data=create_data_from_node([]), height=650, width=800,
-                                      selectedPath=[]),
-                             html.Div(className='Liste')],
-                         style={'position': 'relative', 'margin-left': '-30px'
-                                                                       '', 'margin-top': '25px'}), ),
+                                      selectedPath=[])],
+                         style={'position': 'relative', 'margin-left': '-30px', 'margin-top': '25px'}), ),
             html.Div(className='Search', children=html.Div()),
             html.Div(className='Navigation', children=html.Div()),
             html.Div(className='NumberOfPatients', id="count",
