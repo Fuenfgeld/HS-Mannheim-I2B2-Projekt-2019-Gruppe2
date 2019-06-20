@@ -9,7 +9,7 @@ def create_table():
     cur = conn.cursor()
     try:
         cur.execute("DROP TABLE saved")
-        cur.execute("CREATE TABLE saved(id serial PRIMARY KEY, name varchar not null, query varchar not null);")
+        cur.execute("CREATE TABLE saved(id serial PRIMARY KEY, name varchar, zeitpunkt varchar, kriterien varchar, verknüpfungen varchar, kohortengröße integer );")
     except:
         print("Erstellen fehlgeschlagen")
     conn.commit()

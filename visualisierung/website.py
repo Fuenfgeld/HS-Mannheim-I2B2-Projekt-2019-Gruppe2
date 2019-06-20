@@ -8,6 +8,8 @@ from dash.dependencies import Input, Output, State
 from logik import kohortenabfrage as kh
 import tree_dictionary_import_export as tie
 from logik import querystack
+import re
+
 
 baum1 = tie.treedictionary_aus_pickle_importieren('baum_mit_shortcode')
 qs = querystack.Querystack.getInstance()
@@ -77,7 +79,7 @@ def create_data_from_node(path):
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 connection = connect.create_connection()
-
+cur = connection.cursor()
 app = dash.Dash('__name__',
                 external_stylesheets=['https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css',
                                       'https://static.jstree.com/3.0.9/assets/dist/themes/default/style.min.css',
@@ -90,7 +92,14 @@ app.scripts.config.serve_locally = True
 app.css.config.serve_locally = True
 app.title = "IndiGraph"
 app.layout = html.Div([
-
+    dcc.ConfirmDialog(
+        id='confirm',
+        message='Do you want to save this query?',
+    ),
+dcc.ConfirmDialog(
+        id='saved',
+        message='Saved.',
+    ),
     dcc.Input(className="drop", id="upload-data",
               style={'height': '60px', 'width': '100%', 'border-style': 'dashed', 'line-height': '60px',
                      'text-align': 'center', 'margin': '10px', 'border-width': '1px', 'border-radius': '5px',
@@ -284,6 +293,27 @@ app.layout = html.Div([
     ]),
 ])
 
+@app.callback(Output('confirm', 'displayed'),
+              [Input('save', 'n_clicks')])
+def display_confirm(n_clicks):
+    if(n_clicks is not None):
+        return True
+    return False
+
+@app.callback(Output('saved', 'displayed'),
+              [Input('confirm', 'submit_n_clicks')])
+def display_saved(submit_n_clicks):
+    if (submit_n_clicks is not None):
+        kriterien_l = qs.peek().kriterien
+        kriterien = ','.join(kriterien_l)
+        print(kriterien)
+        verknüpfungen_l =  qs.peek().verknüpfungen
+        verknüpfungen = ','.join(verknüpfungen_l)
+        print(verknüpfungen)
+        cur.execute(f"""INSERT INTO saved (zeitpunkt, kriterien, verknüpfungen, kohortengröße) VALUES ('{qs.peek().zeitpunkt}' , '{kriterien}', '{verknüpfungen}', {qs.peek().kohortengröße})""")
+        connection.commit()
+        return True
+    return False
 
 @app.callback(
     Output(component_id='diagramm-geschlecht', component_property='style'),
