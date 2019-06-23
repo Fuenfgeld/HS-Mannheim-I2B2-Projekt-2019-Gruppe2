@@ -9,9 +9,8 @@ from logik import kohortenabfrage as kh
 from logik import querystack
 from visualisierung import sunburst_limiter as limit
 import tree_dictionary_import_export as tie
+
 baum1 = tie.treedictionary_aus_pickle_importieren('baum_mit_shortcode')
-
-
 qs = querystack.Querystack.getInstance()
 connection = connect.create_connection()
 cur = connection.cursor()
