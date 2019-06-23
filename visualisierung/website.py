@@ -6,80 +6,16 @@ from datenhaltung import connection as connect
 import plotly.graph_objs as go
 from dash.dependencies import Input, Output, State
 from logik import kohortenabfrage as kh
-import tree_dictionary_import_export as tie
 from logik import querystack
-import re
-
-
+from visualisierung import sunburst_limiter as limit
+import tree_dictionary_import_export as tie
 baum1 = tie.treedictionary_aus_pickle_importieren('baum_mit_shortcode')
+
+
 qs = querystack.Querystack.getInstance()
-wurzel = baum1.knotenliste_mit_baum[0][0]
-
-
-def create_data_from_node(path):
-    if (path == []):
-        data = {
-            'name': wurzel.shortcode,
-            'children': [{
-                'name': i.shortcode,
-                'size': i.size,
-                # 'children':[{
-                #   'name' : j.text,
-                #   'size' : j.size
-                #  }for j in i.children] #Dieser Bereich könnte einen weiteren äußeren Ring hinzufürgen
-            } for i in wurzel.children]
-        }
-
-    else:
-        index = 0
-        # print('Angeklickt' +str(path[-1]))
-        # print(len(path))
-        while baum1.knotenliste_mit_baum[len(path)][index].shortcode != path[-1]:
-            #    print(baum.knotenliste_mit_baum[len(path)][index].text)
-
-            index += 1;
-        zwischenwurzel = baum1.knotenliste_mit_baum[len(path)][index]
-
-        if not zwischenwurzel.children:
-
-            data = {
-                'name': zwischenwurzel.shortcode,
-                'size': zwischenwurzel.size
-
-            }
-
-        else:
-            data = {
-                'name': zwischenwurzel.shortcode,
-                'children': [{
-                    'name': i.shortcode,
-                    'size': i.size,
-                    # 'children': [{
-                    #   'name': j.text,
-                    #    'size': j.size
-                    # }for j in i.children]#Dieser Bereich könnte eine zweiten äußeren Ring realisieren
-
-                } for i in zwischenwurzel.children]
-            }
-
-    for name in reversed(path[:-1]):
-        data = {
-            'name': name,
-            'children': [data]
-        }
-    if len(path):
-        data = {
-            'name': wurzel.shortcode,
-            'children': [data]
-        }
-
-    return data
-
-
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-
 connection = connect.create_connection()
 cur = connection.cursor()
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash('__name__',
                 external_stylesheets=['https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css',
                                       'https://static.jstree.com/3.0.9/assets/dist/themes/default/style.min.css',
@@ -96,7 +32,7 @@ app.layout = html.Div([
         id='confirm',
         message='Do you want to save this query?',
     ),
-dcc.ConfirmDialog(
+    dcc.ConfirmDialog(
         id='saved',
         message='Saved.',
     ),
@@ -127,7 +63,7 @@ dcc.ConfirmDialog(
                          children=[
                              html.Div(className='path', id='output'),
                              html.Button(id="add", title="add"),
-                             Sunburst(id='sunburst', data=create_data_from_node([]), height=650, width=800,
+                             Sunburst(id='sunburst', data=limit.create_data_from_node([]), height=650, width=800,
                                       selectedPath=[])],
                          style={'position': 'relative', 'margin-left': '-30px', 'margin-top': '25px'}), ),
             html.Div(className='Search', children=html.Div()),
@@ -368,7 +304,7 @@ def show_hide_element(visibility_state):
 @app.callback(Output('sunburst', 'data'), [Input('sunburst', 'selectedPath')])
 def display_sun(selectedPath):
     # print(selectedPath)
-    return create_data_from_node(path=selectedPath)
+    return limit.create_data_from_node(path=selectedPath)
 
 
 @app.callback(Output('output', 'children'), [Input('sunburst', 'selectedPath')])
@@ -414,6 +350,8 @@ def update_graphs(abfrage):
 
         except IndexError:
             return ('Ungültige Eingabe. Ergebnisse sind von vorheriger Abfrage'), \
+                   ('Count: ', qs.peek().kohortengröße, ' (', qs.peek().kohortengröße_prozent, '%)'), \
+                   ('Count: ', qs.peek().kohortengröße, ' (', qs.peek().kohortengröße_prozent, '%)'), \
                    {'data': [go.Pie(labels=['Male', 'Female'],
                                     values=qs.peek().geschlecht_value_counts,
                                     marker=dict(colors=['#5CABFF', '#4875E8']))],
@@ -552,7 +490,7 @@ def update_graphs(abfrage):
                 }
 
     return ('Count: ', qs.bottom().kohortengröße, ' (', qs.bottom().kohortengröße_prozent, '%)'), \
-           ('Count: ', qs.peek().kohortengröße, ' (', qs.peek().kohortengröße_prozent, '%)'), \
+           ('Count: ', qs.bottom().kohortengröße, ' (', qs.peek().kohortengröße_prozent, '%)'), \
            {
                'data': [go.Pie(labels=['Male', 'Female'],
                                values=qs.bottom().geschlecht_value_counts,
