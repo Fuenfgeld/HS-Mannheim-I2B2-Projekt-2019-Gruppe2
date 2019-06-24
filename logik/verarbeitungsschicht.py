@@ -1,10 +1,39 @@
 import pandas as pd
 from datenhaltung import connection
+import psycopg2 as psy
 
+def connection_zu_datenbank_aufbauen():
+    connection = psy.connect(database="i2b2", user="i2b2", password="demouser", host="129.206.7.75", port="5432")
+    return connection
+
+def abfrage_grundgesamtheit(db_connection):#db_connection als globale finale statische Variable
+    grundgesamtheit_data_frame=pd.read_sql_query('SELECT * from i2b2demodata.patient_dimension', con = db_connection)
+    return grundgesamtheit_data_frame
+
+def abfrage_durchführen(sql_statement,db_connection):#Idee ist ob man db_conmection als finale statische Variable
+    query_ergebniss_data_frame=pd.read_sql_query(sql_statement,db_connection)
+    print(query_ergebniss_data_frame)
+    return query_ergebniss_data_frame
+
+def umwandeln_zu_sql_statement(queryelements):
+    sql_statement='SELECT * FROM i2b2demodata.patient_dimension WHERE'
+    for i in queryelements:
+        sql_statement='%s %s' % (sql_statement,i)
+    return sql_statement
+
+def query_umwandeln_in_ergebniss_dataframes(db_connection, query=[]):
+    if query==[]:
+        sql_statement="SELECT patient_num, sex_cd, age_in_years_num from i2b2demodata.patient_dimension where age_in_years_num =19"#Frage ob wir bei der Grundgesamtheit andere Informationen als die Standartsattribute wie patient_num, sex-cd und age_in_years_num
+    else:
+        sql_statement=umwandeln_zu_sql_statement(query)
+    query_ergebnis_dataframe=abfrage_durchführen(sql_statement,db_connection=db_connection)
+    geschlechter_dataframe=query_ergebnis_dataframe['sex_cd']
+    altersverteilung_dataframe=query_ergebnis_dataframe['age_in_years_num']
+    patienten_anzahl=query_ergebnis_dataframe['patient_num'].count()
+    return patienten_anzahl, geschlechter_dataframe, altersverteilung_dataframe
 
 def connection_zu_datenbank_schließen(con):
     con.close()
-
 
 def hd_abfrage_grundgesamtheit(
         con=connection.create_connection()):  # db_connection als globale finale statische Variable
@@ -12,7 +41,6 @@ def hd_abfrage_grundgesamtheit(
                                                         race_cd from i2b2demodata.patient_dimension"""
     hd_grundgesamtheit_data_frame = pd.read_sql_query(sql_statement, con=con)
     return sql_statement, hd_grundgesamtheit_data_frame
-
 
 def nd_abfrage_grundgesamtheit(hd_grundgesamtheit_anzahl, con=connection.create_connection()):
     sql_statement = f"""select i2b2demodata.concept_dimension.name_char diagnose, count(distinct i2b2demodata.observation_fact.patient_num) Anzahl,
@@ -26,12 +54,10 @@ order by Anzahl desc, i2b2demodata.observation_fact.concept_cd limit 10;"""
     nd_grundgesamtheit_data_frame = pd.read_sql_query(sql_statement, con=con)
     return sql_statement, nd_grundgesamtheit_data_frame
 
-
 def abfrage_durchführen(sql_statement,
                         con=connection.create_connection()):  # Idee ist ob man db_conmection als finale statische Variable
     query_ergebniss_data_frame = pd.read_sql_query(sql_statement, con)
     return query_ergebniss_data_frame
-
 
 def hauptdia_nebendia_grundgesamtheit():
     hd_query_grundgesamtheit, df_hd_query_grundgesamtheit = hd_abfrage_grundgesamtheit()
@@ -39,7 +65,6 @@ def hauptdia_nebendia_grundgesamtheit():
         hd_grundgesamtheit_anzahl=len(df_hd_query_grundgesamtheit))
 
     return hd_query_grundgesamtheit, nd_query_grundgesamtheit, df_hd_query_grundgesamtheit, df_nd_query_grundgesamtheit
-
 
 def umwandeln_in_sql_statement_und_df_hauptdia_nebendia_neu(kriterien, verknüpfungen):
     if not (kriterien == [] and verknüpfungen == []):
@@ -112,7 +137,6 @@ where i2b2demodata.patient_dimension.patient_num {kriterien[0][0]} in (
         hd_query_gesamt, df_hd_query_gesamt = hd_abfrage_grundgesamtheit()
         nd_query_gesamt, df_nd_query_gesamt = nd_abfrage_grundgesamtheit(len(df_hd_query_gesamt))
         return hd_query_gesamt, nd_query_gesamt, df_hd_query_gesamt, df_nd_query_gesamt
-
 
 def umwandeln_in_sql_statement_nebendiagnose_neu(kriterien, hd_query, hd_anzahl):
     nd_query_begin = f'''
