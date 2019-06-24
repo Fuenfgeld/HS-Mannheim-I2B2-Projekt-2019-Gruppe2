@@ -9,12 +9,12 @@ from logik import kohortenabfrage as kh
 from visualisierung import sunburst_limiter as limit
 from visualisierung import sunburst_table as table
 from visualisierung import builder
-import tree_dictionary_import_export as tie
+from logik import tree_dictionary_import_export as tie
 from logik import querystack
 import visdcc
 import dash_table
 
-baum1 = tie.treedictionary_aus_pickle_importieren('baum_mit_shortcode')
+baum1 = tie.treedictionary_aus_pickle_importieren('baum_pickle')
 qs = querystack.Querystack.getInstance()
 connection = connect.create_connection()
 cur = connection.cursor()
