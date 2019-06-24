@@ -10,6 +10,10 @@ from logik import querystack
 from visualisierung import sunburst_limiter as limit
 from visualisierung import builder
 import tree_dictionary_import_export as tie
+from logik import querystack
+import visdcc
+import pandas as pd
+import dash_table
 
 baum1 = tie.treedictionary_aus_pickle_importieren('baum_mit_shortcode')
 qs = querystack.Querystack.getInstance()
@@ -36,38 +40,168 @@ app.layout = html.Div([
         id='saved',
         message='Saved.',
     ),
-    dcc.Input(className="drop", id="upload-data",
-              style={'height': '60px', 'width': '100%', 'border-style': 'dashed', 'line-height': '60px',
-                     'text-align': 'center', 'margin': '10px', 'border-width': '1px', 'border-radius': '5px',
-                     'border-color': 'blue', 'fonz-size': '20px'}),
+    visdcc.Run_js(id='runscript'),
+    visdcc.Run_js(id='treescript'),
+    html.Div(id='aktuellerKnoten', style={'display': 'none'}),
+    visdcc.Run_js(id='addscript', run=
+    '''var addbutton=document.getElementById('add');
+    addbutton.addEventListener('click',inputverändern);
 
-    html.Div(className='Search', children=[
-        dcc.Input(
+    function inputverändern(){
+
+    var aktuellerKnoten = document.getElementById('aktuellerKnoten').innerHTML;
+    //alert(aktuellerKnoten);
+
+    //var selectedPath = document.getElementById('sunburst').selectedPath;
+    //alert(selectedPath);
+
+    var bisherigeEingabe = document.getElementById('upload-data').value;
+
+    //if ((/^\s*$/).test(bisherigeEingabe)) {
+    //    document.getElementById('upload-data').value=aktuellerKnoten;
+    //}
+
+
+    //alert(document.getElementById('upload-data').value);
+
+    //else{
+    document.getElementById('upload-data').value=document.getElementById('upload-data').value+" "+aktuellerKnoten;
+    //}
+
+
+
+    }
+
+
+
+    '''),
+
+    visdcc.Run_js(id='andscript', run=
+    '''
+
+    var andbutton = document.getElementById('and');
+    andbutton.addEventListener('click',andhinzufügen);
+
+    function andhinzufügen(){
+    let bisherigeEingabe = document.getElementById('upload-data').value; 
+
+    document.getElementById('run').focus();
+    bisherigeEingabe = document.getElementById('upload-data').value;  
+    document.getElementById('upload-data').value=bisherigeEingabe+" AND";
+
+    }
+    '''),
+
+    visdcc.Run_js(id='orscript', run='''
+
+        var orbutton = document.getElementById('or');
+        orbutton.addEventListener('click',orhinzufügen);
+
+        function orhinzufügen(){
+        document.getElementById('run').focus();
+        document.getElementById('upload-data').value=document.getElementById('upload-data').value+" OR";
+        }
+        '''),
+
+    visdcc.Run_js(id='notscript', run='''
+        var notbutton = document.getElementById('not');
+        notbutton.addEventListener('click',nothinzufügen);
+
+        function nothinzufügen(){
+        document.getElementById('run').focus();
+        document.getElementById('upload-data').value=document.getElementById('upload-data').value+" NOT";
+
+        }
+        '''),
+
+    visdcc.Run_js(id='clearscript', run='''
+        var clearbutton= document.getElementById('clear');
+        clearbutton.addEventListener('click',clearall);
+
+        function clearall(){
+        document.getElementById('upload-data').value='';
+        }
+
+        '''),
+
+    dcc.Input(className="drop", id="upload-data",
+              ),
+
+    dcc.Input(
             id="search-input",
             className='search-input',
             type='text',
-            style={'textAlign': 'center', 'width': '70%'},
+
         ),
-        html.Button(id="search", title="search"),
-        html.Button(id="reset", title="reset",
-                    )], style={'top': '120px', 'position': 'absolute'}),
-    html.Div(className='Navigation', style={'text-align': 'left', 'position': 'absolute', 'top': '160px'},
+
+    html.Div(html.Button(className = 'button-search', id ='search' )
+             ),
+
+    html.Div(html.Button(className="buttonClear", id='clear'),
+             ),
+
+    html.Div(html.Button(className="button-reset", id ='reset'),
+             ),
+
+    html.Div(className='Tree',
              children=html.Div(className='container', id='jstree-tree')),
-    html.Div(html.Button(id='save', title="save")),
-    html.Div(html.Button(id='load', title="load")),
-    html.Div(html.Button(id='run', title="run")),
+
+    html.Div(html.Button(id='save')
+             ),
+
+    html.Div(html.Button(id='load'),
+             ),
+
+    html.Div(html.Button(id='run'),
+             ),
+html.Div(html.Button('AND', className="and", id='and'),
+
+             ),
+html.Div(html.Button('OR', className="or", id='or'),
+             ),
+html.Div(html.Button('NOT', className="not", id='not'),
+             ),
+
+
     dcc.Tabs(className='Tabs', id='tabs', children=[
         dcc.Tab(label='Navigation', children=[
             html.Div(className='Sunburst',
                      children=html.Div(
                          children=[
                              html.Div(className='path', id='output'),
-                             html.Button(id="add", title="add"),
-                             Sunburst(id='sunburst', data=limit.create_data_from_node([]), height=650, width=800,
-                                      selectedPath=[])],
-                         style={'position': 'relative', 'margin-left': '-30px', 'margin-top': '25px'}), ),
+                             html.Button(
+                                 id="add",
+                                 # children="add",
+                                 className="button-add"
+                             ),
+                             Sunburst(id='sunburst', data=create_data_from_node([]), height=650, width=800,
+                                      selectedPath=[]),
+
+                           html.Div(  dash_table.DataTable(
+                                 id='table',
+                                 columns=[{"name": "Shortcode", "id": "Shortcode"}, {"name": "Text", "id": "Text"}],
+            style_data={'whiteSpace': 'normal'},
+            content_style='grow',
+            css=[{
+                'selector': '.dash-cell div.dash-cell-value',
+                'rule': 'display: inline; white-space: inherit; overflow: inherit; text-overflow: inherit;'
+            }],
+                                style_table={
+                                    'width': '100%',
+                                    'textAlign': 'left'
+                                    },
+                               style_cell_conditional=[
+                                   {
+                                       'textAlign': 'left'
+                                   }
+                               ]
+                           ))],
+                         # style={'position': 'relative', 'margin-left': '-30px'
+                         #       '', 'margin-top': '-100px'}
+                     ), ),
+
             html.Div(className='Search', children=html.Div()),
-            html.Div(className='Navigation', children=html.Div()),
+            #html.Div(className='Navigation', children=html.Div()),
             html.Div(className='NumberOfPatients', id="count",
                      children=['Count: ', qs.bottom().kohortengröße, ' (', qs.bottom().kohortengröße_prozent, '%)']),
             html.Div(className='NavSex',
@@ -94,6 +228,7 @@ app.layout = html.Div([
                                               y=qs.bottom().y_achse_altersverteilung,
                                               text=qs.bottom().y_achse_altersverteilung,
                                               textposition='auto',
+                                              hoverinfo='none',
                                               marker=dict(color=['#4F5EFF', '#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF',
                                                                  '#8BCAF5'])
                                               )],
@@ -111,9 +246,8 @@ app.layout = html.Div([
         dcc.Tab(className='TabDia', label='Diagram', children=[
             html.Div(className='DiaBar', children=[
 
-                html.Div(style={'text-align': 'center'}, id='count2',
-                         children=['Count: ', qs.bottom().kohortengröße, ' (', qs.bottom().kohortengröße_prozent,
-                                   '%)']),
+                html.Div(
+                    children=['Count: ', qs.bottom().kohortengröße, ' (', qs.bottom().kohortengröße_prozent, '%)']),
 
                 html.Div(className='alterBar', children=[
                     dcc.Graph(
@@ -123,6 +257,7 @@ app.layout = html.Div([
                                          y=qs.bottom().y_achse_altersverteilung,
                                          text=qs.bottom().y_achse_altersverteilung,
                                          textposition='auto',
+                                         hoverinfo='none',
                                          marker=dict(
                                              color=['#4F5EFF', '#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5'])
                                          )],
@@ -142,12 +277,16 @@ app.layout = html.Div([
                             data=[go.Bar(x=qs.bottom().nd_prozent_value_list,
                                          y=qs.bottom().nd_diagnose_value_list,
                                          text=qs.bottom().nd_prozent_value_list,
-                                         textposition='outside',
+                                         textposition='auto',
                                          orientation='h',
+                                         hoverinfo='none',
                                          marker=dict(
                                              color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF',
                                                     '#8093E8', '#9998FF', '#957CEB', '#BE8CFF']))],
                             layout=go.Layout(title='Secondary Diagnosis', xaxis=dict(title='Number of patients in %'),
+                                             margin=go.layout.Margin(l=400, r=20
+
+                                                                     ),
                                              yaxis=go.layout.YAxis(automargin=True, autorange="reversed",
                                                                    ))))
                 ], style={'display': 'block'}),
@@ -164,8 +303,8 @@ app.layout = html.Div([
                                          marker=dict(colors=['#5CABFF', ' #4875E8']))],
                             layout=go.Layout(title={
                                 'text': 'Gender',
-                                'x': 1,
-                                'y': 0.7
+                                'x': 0.49,
+                                'y': 0.80
 
                             }, height=330)))
                 ], style={'display': 'block', 'textAlign': 'center'}),
@@ -179,8 +318,8 @@ app.layout = html.Div([
                                          marker=dict(colors=['#4F5EFF', '#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF']))],
                             layout=go.Layout(title={
                                 'text': 'Race',
-                                'x': 1,
-                                'y': 0.7
+                                'x': 0.49,
+                                'y': 0.80
 
                             }, height=330, autosize=True)))
                 ], style={'display': 'block', 'textAlign': 'center'}),
@@ -193,37 +332,36 @@ app.layout = html.Div([
                                          values=qs.bottom().sprachey,
                                          marker=dict(colors=['#4F5EFF', ' #5CABFF', '#37E7FF']))],
                             layout=go.Layout(title='Language',
-                                             legend={"x": 1, "y": 0.7}, height=330)))
+                                             legend={"x": 0.49, "y": 0.80}, height=330)))
                 ], style={'display': 'block', 'textAlign': 'center', }),
 
             ]),
 
             html.Div(className='Search', children=html.Div()),
             # html.Div(className='Navigation', children=html.Div()),
-            html.Div(className='Types',
-                     children=[html.H1("Types", style={"font-size": '30px', 'color': '#4875E8', 'margin-left': '10px'}),
-                               dcc.Checklist(
-                                   id='checklistAge',
-                                   options=[{'label': 'Age', 'value': 'on'}],
-                                   values=['on']),
-                               dcc.Checklist(
-                                   id='checklistSd',
-                                   options=[{'label': 'Secondary Diagnosis', 'value': 'on'}],
-                                   values=['on']),
-                               dcc.Checklist(
-                                   id='checklistGender',
-                                   options=[{'label': 'Gender', 'value': 'on'}],
-                                   values=['on']),
-                               dcc.Checklist(
-                                   id='checklistRace',
-                                   options=[{'label': 'Race', 'value': 'on'}],
-                                   values=['on']),
-                               dcc.Checklist(
-                                   id='checklistSprache',
-                                   options=[{'label': 'Language', 'value': 'on'}],
-                                   values=['on']),
+            html.Div(className='Types', children=['Types ',
+                                                  dcc.Checklist(
+                                                      id='checklistAge',
+                                                      options=[{'label': 'Age', 'value': 'on'}],
+                                                      values=['on']),
+                                                  dcc.Checklist(
+                                                      id='checklistSd',
+                                                      options=[{'label': 'Secondary Diagnosis', 'value': 'on'}],
+                                                      values=['on']),
+                                                  dcc.Checklist(
+                                                      id='checklistGender',
+                                                      options=[{'label': 'Gender', 'value': 'on'}],
+                                                      values=['on']),
+                                                  dcc.Checklist(
+                                                      id='checklistRace',
+                                                      options=[{'label': 'Race', 'value': 'on'}],
+                                                      values=['on']),
+                                                  dcc.Checklist(
+                                                      id='checklistSprache',
+                                                      options=[{'label': 'Language', 'value': 'on'}],
+                                                      values=['on']),
 
-                               ]),
+                                                  ]),
 
         ], style={'font-size': '20px'}),
     ]),
@@ -250,6 +388,7 @@ def display_saved(submit_n_clicks):
         connection.commit()
         return True
     return False
+
 
 @app.callback(
     Output(component_id='diagramm-geschlecht', component_property='style'),
@@ -301,16 +440,42 @@ def show_hide_element(visibility_state):
         return {'display': 'none'}
 
 
-@app.callback(Output('sunburst', 'data'), [Input('sunburst', 'selectedPath')])
+@app.callback(Output('sunburst', 'data'),
+              [Input('sunburst', 'selectedPath')])
 def display_sun(selectedPath):
     # print(selectedPath)
     return limit.create_data_from_node(path=selectedPath)
 
 
-@app.callback(Output('output', 'children'), [Input('sunburst', 'selectedPath')])
-def display_selected(selected_path):
-    return 'Path: {}'.format('->'.join(selected_path or []) or 'Diagnoses')
+@app.callback(Output('table', 'data'),
+              [Input('sunburst', 'selectedPath')])
+def update_table(selectedPath):
+    print('verändere Tabelle')
+    return create_table_from_node(path=selectedPath)
 
+
+@app.callback([Output('output', 'children'),
+               Output('aktuellerKnoten', 'children')],
+
+              [Input('sunburst', 'selectedPath')])
+def display_selected(selected_path):
+    return 'Path: {}'.format('->'.join(selected_path or []) or 'Diagnoses'), \
+           selected_path[-1]
+
+@app.callback(Output(component_id='runscript', component_property='run'),
+              [Input(component_id='run', component_property='n_clicks')])
+def inputfeld_auslesen(clicks):
+    if clicks == 0:
+        return ''
+
+    else:
+
+        return '''
+        setProps({
+        'event':document.getElementById('upload-data').value
+        })  
+        //alert(document.getElementById('upload-data').value);    
+        '''
 
 @app.callback(Output('search-input', 'value'), [Input('reset', 'n_clicks')])
 def reset_input(n_clicks):
