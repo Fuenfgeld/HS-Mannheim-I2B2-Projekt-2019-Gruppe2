@@ -447,5 +447,6 @@ def update_graphs(abfrage):
     return builder.builder_bottom()
 
 
+
 if __name__ == '__main__':
     app.run_server(debug=False)

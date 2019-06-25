@@ -134,7 +134,9 @@ html {
     width: 49%;
     top: 14.6%;
     float: right;
-    border-style: solid;
+    border-top: solid;
+    border-bottom: solid;
+    border-left: solid;
     position: absolute;
     left: 30%;
 }

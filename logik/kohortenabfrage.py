@@ -101,6 +101,7 @@ class Kohortenabfrage():
         else:
             self.kohortengröße_prozent = 100
 
+
     def __altersverteilung_y_achse(self, df_alter):
         df_alter.fillna(value='-')
         x_not_recorded = ((df_alter).eq('-')).sum()
