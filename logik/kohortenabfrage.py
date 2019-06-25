@@ -45,7 +45,6 @@ class Kohortenabfrage():
             kriterien[i] = kriterien[i].strip()
             if 'NOT ' in kriterien[i]:
                 kriterien[i] = ['NOT', (re.sub('NOT', '', kriterien[i])).strip()]
-                print(kriterien[i])
             else:
                 kriterien[i] = ['', kriterien[i]]
         or_positions = [match.start() for match in re.finditer(re.escape(' OR '), abfrage)]
@@ -98,7 +97,6 @@ class Kohortenabfrage():
         if (flag_push == True):
             querystack = qs.Querystack.getInstance()
             self.kohortengröße_prozent = round(((self.kohortengröße / querystack.bottom().kohortengröße) * 100), 2)
-            print(self.kohortengröße_prozent)
             querystack.push(self)
         else:
             self.kohortengröße_prozent = 100

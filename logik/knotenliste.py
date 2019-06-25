@@ -34,7 +34,6 @@ def knotenliste_für_eine_ebene_erstellen(df_ebene):
 
 def aus_knotenliste_baum_erstellen(knotenliste_gesamt, con):
     for i in range(10, 0, -1):
-        print(len(knotenliste_gesamt[i]))
         for j in range(len(knotenliste_gesamt[i])):
             ebenenindex = 0
             while knotenliste_gesamt[i - 1][ebenenindex].fullname != knotenliste_gesamt[i][j].pfad:

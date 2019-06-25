@@ -31,14 +31,14 @@ app.scripts.config.serve_locally = True
 app.css.config.serve_locally = True
 app.title = "IndiGraph"
 app.layout = html.Div([
-    dcc.ConfirmDialog(
-        id='confirm',
-        message='Do you want to save this query?',
-    ),
-    dcc.ConfirmDialog(
-        id='saved',
-        message='Saved.',
-    ),
+    # dcc.ConfirmDialog(
+    #     id='confirm',
+    #     message='Do you want to save this query?',
+    # ),
+    # dcc.ConfirmDialog(
+    #     id='saved',
+    #     message='Saved.',
+    # ),
     visdcc.Run_js(id='runscript'),
     visdcc.Run_js(id='treescript'),
     html.Div(id='aktuellerKnoten', style={'display': 'none'}),
@@ -46,8 +46,10 @@ app.layout = html.Div([
                     var addbutton=document.getElementById('add');
                     addbutton.addEventListener('click',inputverändern);
                     function inputverändern(){
-                    var aktuellerKnoten = document.getElementById('aktuellerKnoten').innerHTML;
-                    var bisherigeEingabe = document.getElementById('upload-data').value;}'''
+                        var aktuellerKnoten = document.getElementById('aktuellerKnoten').innerHTML;
+                        var bisherigeEingabe = document.getElementById('upload-data').value;
+                    document.getElementById('upload-data').value=document.getElementById('upload-data').value+" "+aktuellerKnoten;
+                    }'''
                   ),
     visdcc.Run_js(id='andscript', run='''
                     var andbutton = document.getElementById('and');
@@ -287,29 +289,27 @@ app.layout = html.Div([
 ])
 
 
-@app.callback(Output('confirm', 'displayed'),
-              [Input('save', 'n_clicks')])
-def display_confirm(n_clicks):
-    if (n_clicks is not None):
-        return True
-    return False
-
-
-@app.callback(Output('saved', 'displayed'),
-              [Input('confirm', 'submit_n_clicks')])
-def display_saved(submit_n_clicks):
-    if (submit_n_clicks is not None):
-        kriterien_l = qs.peek().kriterien
-        kriterien = ','.join(kriterien_l)
-        print(kriterien)
-        verknüpfungen_l = qs.peek().verknüpfungen
-        verknüpfungen = ','.join(verknüpfungen_l)
-        print(verknüpfungen)
-        cur.execute(
-            f"""INSERT INTO saved (zeitpunkt, kriterien, verknüpfungen, kohortengröße) VALUES ('{qs.peek().zeitpunkt}' , '{kriterien}', '{verknüpfungen}', {qs.peek().kohortengröße})""")
-        connection.commit()
-        return True
-    return False
+# @app.callback(Output('confirm', 'displayed'),
+#               [Input('save', 'n_clicks')])
+# def display_confirm(n_clicks):
+#     if (n_clicks is not None):
+#         return True
+#     return False
+#
+#
+# @app.callback(Output('saved', 'displayed'),
+#               [Input('confirm', 'submit_n_clicks')])
+# def display_saved(submit_n_clicks):
+#     if (submit_n_clicks is not None):
+#         kriterien_l = qs.peek().kriterien
+#         kriterien = ','.join(kriterien_l)
+#         verknüpfungen_l = qs.peek().verknüpfungen
+#         verknüpfungen = ','.join(verknüpfungen_l)
+#         cur.execute(
+#             f"""INSERT INTO saved (zeitpunkt, kriterien, verknüpfungen, kohortengröße) VALUES ('{qs.peek().zeitpunkt}' , '{kriterien}', '{verknüpfungen}', {qs.peek().kohortengröße})""")
+#         connection.commit()
+#         return True
+#     return False
 
 
 @app.callback(
@@ -394,10 +394,17 @@ def öffne_Baum(children):
 
 @app.callback([Output('output', 'children'),
                Output('aktuellerKnoten', 'children')],
+
               [Input('sunburst', 'selectedPath')])
 def display_selected(selected_path):
-    return 'Path: {}'.format('->'.join(selected_path or []) or 'Diagnoses'), \
-           selected_path[-1]
+    if selected_path:
+
+        return 'Path: {}'.format('->'.join(selected_path or []) or 'Diagnoses'),\
+                selected_path[-1]
+
+    else:
+        return 'Path: {}'.format('->'.join(selected_path or []) or 'Diagnoses'), \
+               'Diagnoses'
 
 
 @app.callback(Output(component_id='runscript', component_property='run'),
@@ -438,17 +445,6 @@ def update_graphs(abfrage):
             return builder.builder_error()
         return builder.builder_peek()
     return builder.builder_bottom()
-
-#
-# @app.callback(Output(component_id='upload-data', component_property='value'),
-#               [Input(component_id='add', component_property='n_clicks')],
-#               [State(component_id='sunburst', component_property='selectedPath'),
-#                State(component_id='upload-data', component_property='value')])
-# def kriterium_sunburst_adden(n_clicks, selectedPath, value_vorher):
-#     if value_vorher:
-#         return f"""{value_vorher} AND {selectedPath[-1]}"""
-#     elif selectedPath:
-#         return selectedPath[-1]
 
 
 if __name__ == '__main__':

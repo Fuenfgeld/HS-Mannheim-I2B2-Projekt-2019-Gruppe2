@@ -10,7 +10,6 @@ class testQuery(TestCase):
 
     def test_push1_size(self):
         item = 5
-        print(s.push(item))
         self.assertEqual(s.push(item), None)
 
     def test_push2_size(self):
@@ -73,7 +72,6 @@ class TestQueryStackSingleton(TestCase):
         import pytest
         with pytest.raises(Exception):
             qIK = querystack.getInstance()
-            print(qIK)
             qIK2 = querystack.queryStack()
             self.assertEqual(qIK, qIK2)
 
@@ -88,7 +86,5 @@ class TestQueryStackSingleton(TestCase):
     def testQueryStackerstInstanzDannInstanz(self):
         from logik import querystack
         q1 = querystack.Querystack.getInstance()
-        print(q1)
         q2 = querystack.Querystack.getInstance()
-        print(q2)
         self.assertEqual(q1, q2)

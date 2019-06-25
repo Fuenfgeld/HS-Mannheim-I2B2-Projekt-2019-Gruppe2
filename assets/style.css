@@ -78,9 +78,9 @@ html {
     overflow: scroll;
     height: 26%;
     width: 30.24%;
-    font-size: 15px;
     border-top: solid;
     border-left: solid;
+    font-size: 22px;
 }
 
 .NumberOfPatients {
@@ -89,7 +89,9 @@ html {
     height: 4%;
     width: 30.24%;
     text-align: center;
-    border: solid;
+    border-bottom: solid;
+    border-top: solid;
+    border-left: solid;
     font-size: 20px;
 }
 
@@ -589,8 +591,8 @@ html {
     display: inline-block;
     text-align: center;
     vertical-align: middle;
-    padding: 11px 25px;
-    border: 5px solid #e01010;
+    padding: 0% 2%;
+    border: 5px solid #3148e0;
     border-radius: 69px;
     background: #ffffff;
     background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
@@ -606,16 +608,17 @@ html {
 }
 .not:hover,
 .not:focus {
-    border: 5px solid #ff1a1a;
+    border: 5px solid #4e73ff;
     color: #000000;
     text-decoration: none;
 }
 .not:active {
-    background: #ff5c5c;
-    background: -webkit-gradient(linear, left top, left bottom, from(#ff5c5c), to(#ff5c5c));
-    background: -moz-linear-gradient(top, #ff5c5c, #ff5c5c);
-    background: linear-gradient(to bottom, #ff5c5c, #ff5c5c);
+    background: #5CABFF;
+    background: -webkit-gradient(linear, left top, left bottom, from(#5CABFF), to(#5CABFF));
+    background: -moz-linear-gradient(top, #5CABFF, #5CABFF);
+    background: linear-gradient(to bottom, #5CABFF, #5CABFF);
 }
+
 
 .buttonClear {
     height: 4%;

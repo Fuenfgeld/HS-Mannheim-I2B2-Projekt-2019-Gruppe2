@@ -12,7 +12,6 @@ def abfrage_grundgesamtheit(db_connection):#db_connection als globale finale sta
 
 def abfrage_durchführen(sql_statement,db_connection):#Idee ist ob man db_conmection als finale statische Variable
     query_ergebniss_data_frame=pd.read_sql_query(sql_statement,db_connection)
-    print(query_ergebniss_data_frame)
     return query_ergebniss_data_frame
 
 def umwandeln_zu_sql_statement(queryelements):
@@ -127,8 +126,6 @@ where i2b2demodata.patient_dimension.patient_num {kriterien[0][0]} in (
                                                                 hd_anzahl=len(df_hd_query))
 
         df_nd_query = abfrage_durchführen(sql_statement=nd_query)
-
-        print(df_nd_query)
 
         return hd_query, nd_query, df_hd_query, df_nd_query
 

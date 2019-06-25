@@ -41,8 +41,7 @@ class TestKnotenliste_für_eine_ebene_erstellen(TestCase):
                       'Pfad': ['Pfad1', 'Pfad2'],
                       'Symbol': ['Symbol1', 'Symbol2'], 'Size': [0, 1]}
         df_ebene = pd.DataFrame(data=dict_ebene)
-        print(df_ebene)
-        from logik.knoten import node_with_value
+        from knoten import node_with_value
         knotenliste = [
             node_with_value(name='Knoten1', fullname='Fullname1', pfad='Pfad1', size=0),
             node_with_value(name='Knoten2', fullname='Fullname2', pfad='Pfad2', size=1)]
