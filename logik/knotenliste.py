@@ -1,4 +1,4 @@
-from logik import knoten as kn
+import knoten as kn
 from logik import abfragen as ab
 import re
 from datenhaltung import connection

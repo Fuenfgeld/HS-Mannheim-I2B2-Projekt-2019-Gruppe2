@@ -2,6 +2,8 @@ from logik import tree_dictionary_import_export as tie
 
 baum1 = tie.treedictionary_aus_pickle_importieren('baum_pickle')
 wurzel = baum1.knotenliste_mit_baum[0][0]
+wurzel.shortcode = 'Diagnoses'
+wurzel.id='Diagnoses'
 
 def create_data_from_node(path):
     if (path == []):

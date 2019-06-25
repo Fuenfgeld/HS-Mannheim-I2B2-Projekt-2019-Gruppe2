@@ -1,32 +1,32 @@
 import dash
 import dash_html_components as html
 import dash_core_components as dcc
+import plotly.graph_objs as go
+import visdcc
+import dash_table
+from dash.dependencies import Input, Output, State
 from dash_sunburst import Sunburst
 from datenhaltung import connection as connect
-import plotly.graph_objs as go
-from dash.dependencies import Input, Output, State
 from logik import kohortenabfrage as kh
+from logik import tree_dictionary_import_export as tie
+from logik import querystack
 from visualisierung import sunburst_limiter as limit
 from visualisierung import sunburst_table as table
 from visualisierung import builder
-from logik import tree_dictionary_import_export as tie
-from logik import querystack
-import visdcc
-import dash_table
 
 baum1 = tie.treedictionary_aus_pickle_importieren('baum_pickle')
 qs = querystack.Querystack.getInstance()
 connection = connect.create_connection()
 cur = connection.cursor()
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash('__name__',
                 external_stylesheets=['https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css',
                                       'https://static.jstree.com/3.0.9/assets/dist/themes/default/style.min.css',
+                                      'https://codepen.io/chriddyp/pen/bWLwgP.css'
                                       ],
-
                 external_scripts=['http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js',
-                                  'https://cdnjs.cloudflare.com/ajax/libs/jstree/3.0.9/jstree.min.js',
-                                  ])
+                                  'https://cdnjs.cloudflare.com/ajax/libs/jstree/3.0.9/jstree.min.js'
+                                  ]
+                )
 app.scripts.config.serve_locally = True
 app.css.config.serve_locally = True
 app.title = "IndiGraph"
@@ -42,54 +42,47 @@ app.layout = html.Div([
     visdcc.Run_js(id='runscript'),
     visdcc.Run_js(id='treescript'),
     html.Div(id='aktuellerKnoten', style={'display': 'none'}),
-    visdcc.Run_js(id='addscript', run=
-    '''var addbutton=document.getElementById('add');
-    addbutton.addEventListener('click',inputverändern);
-    function inputverändern(){
-    var aktuellerKnoten = document.getElementById('aktuellerKnoten').innerHTML;
-    var bisherigeEingabe = document.getElementById('upload-data').value;}
-    '''),
-    visdcc.Run_js(id='andscript', run=
-    '''
-    var andbutton = document.getElementById('and');
-    andbutton.addEventListener('click',andhinzufügen);
-    function andhinzufügen(){
-    let bisherigeEingabe = document.getElementById('upload-data').value; 
-    document.getElementById('run').focus();
-    bisherigeEingabe = document.getElementById('upload-data').value;  
-    document.getElementById('upload-data').value=bisherigeEingabe+" AND";}
-    '''),
+    visdcc.Run_js(id='addscript', run='''
+                    var addbutton=document.getElementById('add');
+                    addbutton.addEventListener('click',inputverändern);
+                    function inputverändern(){
+                    var aktuellerKnoten = document.getElementById('aktuellerKnoten').innerHTML;
+                    var bisherigeEingabe = document.getElementById('upload-data').value;}'''
+                  ),
+    visdcc.Run_js(id='andscript', run='''
+                    var andbutton = document.getElementById('and');
+                    andbutton.addEventListener('click',andhinzufügen);
+                    function andhinzufügen(){
+                    let bisherigeEingabe = document.getElementById('upload-data').value; 
+                    document.getElementById('run').focus();
+                    bisherigeEingabe = document.getElementById('upload-data').value;  
+                    document.getElementById('upload-data').value=bisherigeEingabe+" AND";}'''
+                  ),
     visdcc.Run_js(id='orscript', run='''
-        var orbutton = document.getElementById('or');
-        orbutton.addEventListener('click',orhinzufügen);
-        function orhinzufügen(){
-        document.getElementById('run').focus();
-        document.getElementById('upload-data').value=document.getElementById('upload-data').value+" OR";
-        }
-        '''),
-
+                    var orbutton = document.getElementById('or');
+                    orbutton.addEventListener('click',orhinzufügen);
+                    function orhinzufügen(){
+                    document.getElementById('run').focus();
+                    document.getElementById('upload-data').value=document.getElementById('upload-data').value+" OR";}'''
+                  ),
     visdcc.Run_js(id='notscript', run='''
-        var notbutton = document.getElementById('not');
-        notbutton.addEventListener('click',nothinzufügen);
-        function nothinzufügen(){
-        document.getElementById('run').focus();
-        document.getElementById('upload-data').value=document.getElementById('upload-data').value+" NOT";}
-        '''),
-
+                    var notbutton = document.getElementById('not');
+                    notbutton.addEventListener('click',nothinzufügen);
+                    function nothinzufügen(){
+                    document.getElementById('run').focus();
+                    document.getElementById('upload-data').value=document.getElementById('upload-data').value+" NOT";}'''
+                  ),
     visdcc.Run_js(id='clearscript', run='''
-        var clearbutton= document.getElementById('clear');
-        clearbutton.addEventListener('click',clearall);
-        function clearall(){
-        document.getElementById('upload-data').value='';}
-        '''),
+                    var clearbutton= document.getElementById('clear');
+                    clearbutton.addEventListener('click',clearall);
+                    function clearall(){
+                    document.getElementById('upload-data').value='';}'''
+                  ),
     dcc.Input(className="drop", id="upload-data"),
-    dcc.Input(
-            id="search-input",
-            className='search-input',
-            type='text'),
-    html.Div(html.Button(className = 'button-search', id ='search' )),
+    dcc.Input(id="search-input", className='search-input', type='text'),
+    html.Div(html.Button(className='button-search', id='search')),
     html.Div(html.Button(className="buttonClear", id='clear')),
-    html.Div(html.Button(className="button-reset", id ='reset')),
+    html.Div(html.Button(className="button-reset", id='reset')),
     html.Div(className='Tree', children=html.Div(className='container', id='jstree-tree')),
     html.Div(html.Button(id='save')),
     html.Div(html.Button(id='load')),
@@ -103,38 +96,21 @@ app.layout = html.Div([
                      children=html.Div(
                          children=[
                              html.Div(className='path', id='output'),
-                             html.Button(
-                                 id="add",
-                                 # children="add",
-                                 className="button-add"
-                             ),
-                             Sunburst(id='sunburst', data=limit.create_data_from_node([]),
-                                      selectedPath=[]),
-                           html.Div(  dash_table.DataTable(
+                             html.Button(id="add", className="button-add"),
+                             Sunburst(id='sunburst', data=limit.create_data_from_node([]), selectedPath=[], width= 700, height= 650),
+                             html.Div(dash_table.DataTable(
                                  id='table',
                                  columns=[{"name": "Shortcode", "id": "Shortcode"}, {"name": "Text", "id": "Text"}],
-            style_data={'whiteSpace': 'normal'},
-            content_style='grow',
-            css=[{
-                'selector': '.dash-cell div.dash-cell-value',
-                'rule': 'display: inline; white-space: inherit; overflow: inherit; text-overflow: inherit;'
-            }],
-                                style_table={
-                                    'width': '100%',
-                                    'textAlign': 'left'
-                                    },
-                               style_cell_conditional=[
-                                   {
-                                       'textAlign': 'left'
-                                   }
-                               ]
-                           ))],
-                         # style={'position': 'relative', 'margin-left': '-30px'
-                         #       '', 'margin-top': '-100px'}
-                     ), ),
-
+                                 style_data={'whiteSpace': 'normal'},
+                                 content_style='grow',
+                                 css=[{'selector': '.dash-cell div.dash-cell-value',
+                                       'rule': 'display: inline; white-space: inherit; overflow: inherit; text-overflow: inherit;'}],
+                                 style_table={'width': '100%', 'textAlign': 'left'},
+                                 style_cell_conditional=[{'textAlign': 'left'}]
+                             ))
+                         ]
+                     )),
             html.Div(className='Search', children=html.Div()),
-            #html.Div(className='Navigation', children=html.Div()),
             html.Div(className='NumberOfPatients', id="count",
                      children=['Count: ', qs.bottom().kohortengröße, ' (', qs.bottom().kohortengröße_prozent, '%)']),
             html.Div(className='NavSex',
@@ -144,12 +120,13 @@ app.layout = html.Div([
                              figure=go.Figure(
                                  data=[go.Pie(labels=['Male', 'Female'],
                                               values=qs.bottom().geschlecht_value_counts,
-                                              marker=dict(colors=['#5CABFF', '#4875E8']))],
+                                              marker=dict(colors=['#5CABFF', '#4875E8'])
+                                              )
+                                       ],
                                  layout=go.Layout(title={
                                      'text': 'Gender',
                                      'x': 0.49,
                                      'y': 0.75
-
                                  }, height=300)))
                      ]),
             html.Div(className='NavAge',
@@ -164,14 +141,16 @@ app.layout = html.Div([
                                               hoverinfo='none',
                                               marker=dict(color=['#4F5EFF', '#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF',
                                                                  '#8BCAF5'])
-                                              )],
+                                              )
+                                       ],
                                  layout=go.Layout(title={
                                      'text': 'Age',
                                      'x': 0.49,
                                      'y': 0.70
-
-                                 }, height=300, xaxis=dict(title='Age groups'),
-                                     yaxis=dict(title='Number of patients'))))
+                                 }, height=300, xaxis=dict(title='Age groups'), yaxis=dict(title='Number of patients')
+                                 )
+                             )
+                         )
                      ]),
 
         ], style={'font-size': '20px', }
@@ -179,7 +158,8 @@ app.layout = html.Div([
         dcc.Tab(className='TabDia', label='Diagram', children=[
             html.Div(className='DiaBar', children=[
                 html.Div(
-                    children=['Count: ', qs.bottom().kohortengröße, ' (', qs.bottom().kohortengröße_prozent, '%)'], id="count2"),
+                    children=['Count: ', qs.bottom().kohortengröße, ' (', qs.bottom().kohortengröße_prozent, '%)'],
+                    id="count2"),
                 html.Div(className='alterBar', children=[
                     dcc.Graph(
                         id='diagramm-alter',
@@ -191,17 +171,17 @@ app.layout = html.Div([
                                          hoverinfo='none',
                                          marker=dict(
                                              color=['#4F5EFF', '#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5'])
-                                         )],
+                                         )
+                                  ],
                             layout=go.Layout(title={
                                 'text': 'Age',
                                 'x': 0.49,
                                 'y': 0.85
 
                             }, xaxis=dict(title='Age groups'), yaxis=dict(title='Number of patients'))))
-                ], style={'display': 'block'}),
-
+                ], style={'display': 'block'}
+                         ),
                 html.Div(className='sdBar', children=[
-
                     dcc.Graph(
                         id='diagramm-sd',
                         figure=go.Figure(
@@ -213,48 +193,54 @@ app.layout = html.Div([
                                          hoverinfo='none',
                                          marker=dict(
                                              color=['#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF', '#8BCAF5', '#75AAFF',
-                                                    '#8093E8', '#9998FF', '#957CEB', '#BE8CFF']))],
+                                                    '#8093E8', '#9998FF', '#957CEB', '#BE8CFF'
+                                                    ])
+                                         )
+                                  ],
                             layout=go.Layout(title='Secondary Diagnosis', xaxis=dict(title='Number of patients in %'),
-                                             margin=go.layout.Margin(l=400, r=20
-
-                                                                     ),
-                                             yaxis=go.layout.YAxis(automargin=True, autorange="reversed",
-                                                                   ))))
+                                             margin=go.layout.Margin(l=400, r=20),
+                                             yaxis=go.layout.YAxis(automargin=True, autorange="reversed")
+                                             )
+                        )
+                    )
                 ], style={'display': 'block'}),
             ]),
-
             html.Div(className='DiaPie', children=[
-
                 html.Div(className='genderPie', children=[
                     dcc.Graph(
                         id='diagramm-geschlecht',
                         figure=go.Figure(
                             data=[go.Pie(labels=['Male', 'Female'],
                                          values=qs.bottom().geschlecht_value_counts,
-                                         marker=dict(colors=['#5CABFF', ' #4875E8']))],
+                                         marker=dict(colors=['#5CABFF', ' #4875E8'])
+                                         )
+                                  ],
                             layout=go.Layout(title={
                                 'text': 'Gender',
                                 'x': 0.49,
                                 'y': 0.80
-
-                            }, height=330)))
-                ], style={'display': 'block', 'textAlign': 'center'}),
-
+                            }, height=330)
+                        )
+                    )
+                ], style={'display': 'block', 'textAlign': 'center'}
+                         ),
                 html.Div(className='racePie', children=[
                     dcc.Graph(
                         id='diagramm-racepie',
                         figure=go.Figure(
                             data=[go.Pie(labels=qs.bottom().racex,
                                          values=qs.bottom().racey,
-                                         marker=dict(colors=['#4F5EFF', '#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF']))],
+                                         marker=dict(colors=['#4F5EFF', '#4875E8', ' #5CABFF', '#48B5E8', '#37E7FF'])
+                                         )
+                                  ],
                             layout=go.Layout(title={
                                 'text': 'Race',
                                 'x': 0.49,
                                 'y': 0.80
-
-                            }, height=330, autosize=True)))
+                            }, height=330, autosize=True)
+                        )
+                    )
                 ], style={'display': 'block', 'textAlign': 'center'}),
-
                 html.Div(className='sprachePie', children=[
                     dcc.Graph(
                         id='diagramm-sprachepie',
@@ -263,14 +249,15 @@ app.layout = html.Div([
                                          values=qs.bottom().sprachey,
                                          marker=dict(colors=['#4F5EFF', ' #5CABFF', '#37E7FF']))],
                             layout=go.Layout(title='Language',
-                                             legend={"x": 0.49, "y": 0.80}, height=330)))
+                                             legend={"x": 0.49, "y": 0.80},
+                                             height=330
+                                             )
+                        )
+                    )
                 ], style={'display': 'block', 'textAlign': 'center', }),
-
             ]),
-
             html.Div(className='Search', children=html.Div()),
-            # html.Div(className='Navigation', children=html.Div()),
-            html.Div(className='Types', children=['Types ',
+            html.Div(className='Types', children=[html.H1("Types", style={"font-size": '30px', 'color': '#4875E8', 'margin-left': '10px'}),
                                                   dcc.Checklist(
                                                       id='checklistAge',
                                                       options=[{'label': 'Age', 'value': 'on'}],
@@ -291,19 +278,22 @@ app.layout = html.Div([
                                                       id='checklistSprache',
                                                       options=[{'label': 'Language', 'value': 'on'}],
                                                       values=['on']),
-
-                                                  ]),
-
-        ], style={'font-size': '20px'}),
-    ]),
+                                                  ]
+                     ),
+        ], style={'font-size': '20px'}
+                ),
+    ]
+             ),
 ])
+
 
 @app.callback(Output('confirm', 'displayed'),
               [Input('save', 'n_clicks')])
 def display_confirm(n_clicks):
-    if(n_clicks is not None):
+    if (n_clicks is not None):
         return True
     return False
+
 
 @app.callback(Output('saved', 'displayed'),
               [Input('confirm', 'submit_n_clicks')])
@@ -312,13 +302,15 @@ def display_saved(submit_n_clicks):
         kriterien_l = qs.peek().kriterien
         kriterien = ','.join(kriterien_l)
         print(kriterien)
-        verknüpfungen_l =  qs.peek().verknüpfungen
+        verknüpfungen_l = qs.peek().verknüpfungen
         verknüpfungen = ','.join(verknüpfungen_l)
         print(verknüpfungen)
-        cur.execute(f"""INSERT INTO saved (zeitpunkt, kriterien, verknüpfungen, kohortengröße) VALUES ('{qs.peek().zeitpunkt}' , '{kriterien}', '{verknüpfungen}', {qs.peek().kohortengröße})""")
+        cur.execute(
+            f"""INSERT INTO saved (zeitpunkt, kriterien, verknüpfungen, kohortengröße) VALUES ('{qs.peek().zeitpunkt}' , '{kriterien}', '{verknüpfungen}', {qs.peek().kohortengröße})""")
         connection.commit()
         return True
     return False
+
 
 @app.callback(
     Output(component_id='diagramm-geschlecht', component_property='style'),
@@ -329,6 +321,7 @@ def show_hide_element(visibility_state):
     else:
         return {'display': 'none'}
 
+
 @app.callback(
     Output(component_id='diagramm-sd', component_property='style'),
     [Input(component_id='checklistSd', component_property='values')])
@@ -337,6 +330,7 @@ def show_hide_element(visibility_state):
         return {'display': 'block'}
     else:
         return {'display': 'none'}
+
 
 @app.callback(
     Output(component_id='diagramm-sprachepie', component_property='style'),
@@ -347,6 +341,7 @@ def show_hide_element(visibility_state):
     else:
         return {'display': 'none'}
 
+
 @app.callback(
     Output(component_id='diagramm-racepie', component_property='style'),
     [Input(component_id='checklistRace', component_property='values')])
@@ -355,6 +350,7 @@ def show_hide_element(visibility_state):
         return {'display': 'block'}
     else:
         return {'display': 'none'}
+
 
 @app.callback(
     Output(component_id='diagramm-alter', component_property='style'),
@@ -365,25 +361,44 @@ def show_hide_element(visibility_state):
     else:
         return {'display': 'none'}
 
+
 @app.callback(Output('sunburst', 'data'),
               [Input('sunburst', 'selectedPath')])
 def display_sun(selectedPath):
-    # print(selectedPath)
     return limit.create_data_from_node(path=selectedPath)
+
 
 @app.callback(Output('table', 'data'),
               [Input('sunburst', 'selectedPath')])
 def update_table(selectedPath):
-    print('verändere Tabelle')
     return table.create_table_from_node(path=selectedPath)
+
+
+@app.callback(Output('treescript', 'run'),
+              [Input('aktuellerKnoten', 'children')])
+def öffne_Baum(children):
+    return '''
+        var aktuellerKnoten = document.getElementById('aktuellerKnoten').innerHTML;
+        if (aktuellerKnoten == 'Diagnoses'){
+            $("#jstree-tree").jstree("deselect_all", aktuellerKnoten);
+            $("#jstree-tree").jstree("close_all");
+            $("#jstree-tree").jstree("select_node", 'Diagnoses');
+        }
+        else
+            {$("#jstree-tree").jstree("deselect_all", aktuellerKnoten);
+            $("#jstree-tree").jstree("close_all", aktuellerKnoten);
+            $("#jstree-tree").jstree("select_node", aktuellerKnoten);}
+        window.location.hash = aktuellerKnoten;
+        '''
+
 
 @app.callback([Output('output', 'children'),
                Output('aktuellerKnoten', 'children')],
-
               [Input('sunburst', 'selectedPath')])
 def display_selected(selected_path):
     return 'Path: {}'.format('->'.join(selected_path or []) or 'Diagnoses'), \
            selected_path[-1]
+
 
 @app.callback(Output(component_id='runscript', component_property='run'),
               [Input(component_id='run', component_property='n_clicks')])
@@ -398,10 +413,12 @@ def inputfeld_auslesen(clicks):
         //alert(document.getElementById('upload-data').value);    
         '''
 
+
 @app.callback(Output('search-input', 'value'), [Input('reset', 'n_clicks')])
 def reset_input(n_clicks):
     if (n_clicks is not None):
         return ""
+
 
 @app.callback([Output(component_id='count', component_property='children'),
                Output(component_id='count2', component_property='children'),
@@ -411,8 +428,7 @@ def reset_input(n_clicks):
                Output(component_id='diagramm-geschlecht', component_property='figure'),
                Output(component_id='diagramm-sd', component_property='figure'),
                Output(component_id='diagramm-racepie', component_property='figure'),
-               Output(component_id='diagramm-sprachepie', component_property='figure')
-               ],
+               Output(component_id='diagramm-sprachepie', component_property='figure')],
               [Input(component_id='runscript', component_property='event')])
 def update_graphs(abfrage):
     if abfrage:
@@ -422,6 +438,17 @@ def update_graphs(abfrage):
             return builder.builder_error()
         return builder.builder_peek()
     return builder.builder_bottom()
+
+#
+# @app.callback(Output(component_id='upload-data', component_property='value'),
+#               [Input(component_id='add', component_property='n_clicks')],
+#               [State(component_id='sunburst', component_property='selectedPath'),
+#                State(component_id='upload-data', component_property='value')])
+# def kriterium_sunburst_adden(n_clicks, selectedPath, value_vorher):
+#     if value_vorher:
+#         return f"""{value_vorher} AND {selectedPath[-1]}"""
+#     elif selectedPath:
+#         return selectedPath[-1]
 
 
 if __name__ == '__main__':
